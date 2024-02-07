@@ -1,0 +1,16 @@
+# config
+node_modules
+.vscode
+.env
+
+# dev
+guildModel.js
+oldModel.js
+test*
+.bashrc
+format.js
+
+# other files
+logs
+archive
+*.txt

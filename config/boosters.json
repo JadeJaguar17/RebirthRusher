@@ -1,0 +1,102 @@
+[
+    {
+        "id": "<:sizeCommon:537249486662139914>",
+        "type": "size",
+        "emoji": "<:cSize:800831677697097759>"
+    },
+    {
+        "id": "<:speedCommon:536181807628943360>",
+        "type": "speed",
+        "emoji": "<:cSpeed:800831677706403862>"
+    },
+    {
+        "id": "<:sellCommon:537258770921816077>",
+        "type": "sell",
+        "emoji": "<:cSell:800831677836034078>"
+    },
+    {
+        "id": "<:sizeUncommon:537249486896889856>",
+        "type": "size",
+        "emoji": "<:uSize:800831698815418439>"
+    },
+    {
+        "id": "<:speedUncommon:536181809155932161>",
+        "type": "speed",
+        "emoji": "<:uSpeed:800831698676875366>"
+    },
+    {
+        "id": "<:sellUncommon:537258770871615514>",
+        "type": "sell",
+        "emoji": "<:uSell:800831699009011752>"
+    },
+    {
+        "id": "<:sizeRare:537249486691368961>",
+        "type": "size",
+        "emoji": "<:rSize:800831727442460673>"
+    },
+    {
+        "id": "<:speedRare:536181808489037824>",
+        "type": "speed",
+        "emoji": "<:rSpeed:800831727882338384>"
+    },
+    {
+        "id": "<:sellRare:537258770586271745>",
+        "type": "sell",
+        "emoji": "<:rSell:800831727894790144>"
+    },
+    {
+        "id": "<:sizeEpic:537249486666465280>",
+        "type": "size",
+        "emoji": "<:eSize:800831744865206273>"
+    },
+    {
+        "id": "<:speedEpic:536181810246451213>",
+        "type": "speed",
+        "emoji": "<:eSpeed:800831745200488478>"
+    },
+    {
+        "id": "<:sellEpic:537258770896781343>",
+        "type": "sell",
+        "emoji": "<:eSell:800831744819462146>"
+    },
+    {
+        "id": "<:sizeMythical:537249487110930432>",
+        "type": "size",
+        "emoji": "<:mSize:800831775269453868>"
+    },
+    {
+        "id": "<:speedMythical:536181808887234560>",
+        "type": "speed",
+        "emoji": "<:mSpeed:800831775601065994>"
+    },
+    {
+        "id": "<:sellMythical:537258770888130560>",
+        "type": "sell",
+        "emoji": "<:mSell:800831775256608808>"
+    },
+    {
+        "id": "<:sizeLegendary:537249486762803200>",
+        "type": "size",
+        "emoji": "<:lSize:800831808434470952>"
+    },
+    {
+        "id": "<:speedLegendary:536181808824582144>",
+        "type": "speed",
+        "emoji": "<:lSpeed:800831808429752350>"
+    },
+    {
+        "id": "<:sellLegendary:537258770682609675>",
+        "type": "sell",
+        "emoji": "<:lSell:800831808404848660>"
+    },
+    {
+        "id": "rage",
+        "type": "speed",
+        "emoji": "`rage`"
+    },
+    {
+        "id": "wings",
+        "type": "sell",
+        "emoji": "`wings`"
+    }
+]

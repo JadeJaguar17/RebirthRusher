@@ -1,0 +1,115 @@
+[
+    {
+        "name": "**<:redL:877021173811118121> Light Red**",
+        "category": "graphColors",
+        "id": 1,
+        "price": 20,
+        "hex": "#E74C3C"
+    },
+    {
+        "name": "**<:redD:877021174108921866> Dark Red**",
+        "category": "graphColors",
+        "id": 2,
+        "price": 20,
+        "hex": "#992D22"
+    },
+    {
+        "name": "**<:yellowL:877021174142496768> Light Yellow**",
+        "category": "graphColors",
+        "id": 3,
+        "price": 20,
+        "hex": "#F1C40F"
+    },
+    {
+        "name": "**<:yellowD:877021173907595345> Dark Yellow**",
+        "category": "graphColors",
+        "id": 4,
+        "price": 20,
+        "hex": "#C27C0E"
+    },
+    {
+        "name": "**<:pinkL:877021174146666506> Light Pink**",
+        "category": "graphColors",
+        "id": 5,
+        "price": 20,
+        "hex": "#E91E63"
+    },
+    {
+        "name": "**<:pinkD:877021174004084776> Dark Pink**",
+        "category": "graphColors",
+        "id": 6,
+        "price": 20,
+        "hex": "#AD1457"
+    },
+    {
+        "name": "**<:purpleL:877021174159249408> Light Purple**",
+        "category": "graphColors",
+        "id": 7,
+        "price": 20,
+        "hex": "#9B59B6"
+    },
+    {
+        "name": "**<:purpleD:877021174113120346> Dark Purple**",
+        "category": "graphColors",
+        "id": 8,
+        "price": 20,
+        "hex": "#71368A"
+    },
+    {
+        "name": "**<:blueL:877021174134108221> Light Blue**",
+        "category": "graphColors",
+        "id": 9,
+        "price": 20,
+        "hex": "#3498DB"
+    },
+    {
+        "name": "**<:blueD:877021174025031790> Dark Blue**",
+        "category": "graphColors",
+        "id": 10,
+        "price": 20,
+        "hex": "#206694"
+    },
+    {
+        "name": "**<:greenL:877021173978902578> Light Green**",
+        "category": "graphColors",
+        "id": 11,
+        "price": 20,
+        "hex": "#2ECC71"
+    },
+    {
+        "name": "**<:greenD:877021174117326848> Dark Green**",
+        "category": "graphColors",
+        "id": 12,
+        "price": 20,
+        "hex": "#1F8B4C"
+    },
+    {
+        "name": "**<:jade:877021174020857906> Jade**",
+        "category": "graphColors",
+        "id": 13,
+        "price": 25,
+        "hex": "#35B48A",
+        "description": "The official Jade color"
+    },
+    {
+        "name": "**<:custom:877021174318653450> Custom Color**",
+        "category": "graphColors",
+        "id": 14,
+        "price": 30,
+        "description": "Don't like the current selection of colors? No worries, get a custom color tailored to your desires. Give us the hex and the custom color on your graph will show up in no time!"
+    },
+    {
+        "name": "**:new_moon_with_face: Dark Mode**",
+        "category": "theme",
+        "id": 15,
+        "price": 50,
+        "description": "No more flashbang graphs! To apply your new theme, you can do `/graph set theme dark`"
+    },
+    {
+        "name": "**<:customRole:877026306972332112> Custom Color Role**",
+        "category": "server",
+        "id": 23,
+        "price": 250,
+        "description": "Get a *permanent* custom color role in the [support](https://discord.gg/QmrEbsyKYB) server!"
+    }
+]
