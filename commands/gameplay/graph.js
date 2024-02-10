@@ -64,6 +64,7 @@ module.exports = {
         let discordUser = undefined;
         try {
             discordUser = await bot.users.get(identifier)
+                || bot.users.find(u => identifier === u.username)
                 || bot.users.find(u => identifier === `${u.username}#${u.discriminator}`)
                 || bot.users.find(u => identifier === u.username)
                 || await bot.getRESTUser(identifier);

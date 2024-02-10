@@ -27,7 +27,7 @@ module.exports = {
                     .setColor(RBR)
                     .setTitle("User")
                     .setThumbnail(user.avatarURL)
-                    .setDescription(`${user.username}#${user.discriminator}`)
+                    .setDescription(user.username)
                     .addFields(
                         { name: "Additional info", value: `RbR user: ${isRbRUser}` }
                     );
@@ -73,7 +73,7 @@ module.exports = {
                     .setDescription(guild.name)
                     .addFields({
                         name: "Additional info",
-                        value: `Owner tag: ${owner.username}#${owner.discriminator}\n`
+                        value: `Owner tag: ${owner.username}\n`
                             + `Owner ID: \`${guild.ownerID}\`\n`
                             + `Owner RbR user: ${isRbRUser}`
                     });

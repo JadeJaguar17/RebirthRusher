@@ -82,7 +82,10 @@ module.exports = async (bot, interaction) => {
                             .setColor(ERROR)
                             .setThumbnail(interaction.member.user.avatarURL)
                             .setTitle("Deleted User")
-                            .setDescription(`**Name:** ${interaction.member.user.username}#${interaction.member.user.discriminator}\n**ID:** \`${interaction.member.user.id}\``)
+                            .setDescription(
+                                `**Name:** ${interaction.member.user.username}\n`
+                                + `**ID:** \`${interaction.member.user.id}\``
+                            )
                             .setTimestamp();
 
                         return bot.log("account", deleteUserEmbed);

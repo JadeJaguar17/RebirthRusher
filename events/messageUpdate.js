@@ -101,8 +101,8 @@ module.exports = async (bot, message) => {
                 }
 
                 if (message.content?.startsWith("**")) {
-                    const tag = message.content.split("**")[1];
-                    const user = await bot.users.find(u => `${u.username}#${u.discriminator}` === tag);
+                    const username = message.content.split("**")[1];
+                    const user = await bot.users.find(u => u.username === username);
 
                     if (user && !isBanned(user.id) && await users.exists({ _id: user.id })) {
                         if (message.content.includes("You didn't get any pet")) {

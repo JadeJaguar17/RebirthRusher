@@ -20,8 +20,7 @@ module.exports = {
             .setThumbnail(interaction.member.user.avatarURL)
             .setTitle("New user")
             .setDescription(
-                `**Name:** ${interaction.member.user.username}`
-                + `#${interaction.member.user.discriminator}\n`
+                `**Name:** ${interaction.member.user.username}\n`
                 + `**ID:** \`${interaction.member.user.id}\``)
             .setTimestamp();
 
