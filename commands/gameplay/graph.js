@@ -1,6 +1,7 @@
 const users = require("../../models/userModel.js");
 const Canvas = require('chartjs-node-canvas');
 const { RBR, DEV } = require("../../config/embedColors.json");
+const { dev } = require("../../config/discordIds.json");
 
 // bring out the Canvas's since they take a lot of memory to generate
 // 0 = dark, 1 = light
@@ -78,7 +79,11 @@ module.exports = {
         const user = discordUser && await users.findById(discordUser.id);
         if (!user) {
             return "Graph was not found for this user";
-        } else if (user.settings.isPrivate && user._id !== interaction.member.user.id) {
+        } else if (
+            user.settings.isPrivate
+            && user._id !== interaction.member.user.id
+            && interaction.member.user.id !== dev
+        ) {
             return "User has set their graph to private";
         }
 
