@@ -12,6 +12,21 @@ module.exports = {
             }
         }
 
+        maxPetLevels = {}
+
+        //finds the maximum Pet Level for each rarity
+        //  done outside the other identical loop, so the petLevel is always already found
+        embed.fields && embed.fields.forEach(field => {
+            const rarity = field.name.trim().split("**")[1].toLowerCase();
+            const pets = field.value.trim().split("\n");
+
+            pets.forEach(pet => {
+                if (pet.includes("Max. level:")) {
+                    maxPetLevels[rarity] = Number(pet.trim().split(":")[1].trim());
+                }
+            });
+        });
+
         embed.fields && embed.fields.forEach(field => {
             const rarity = field.name.trim().split("**")[1].toLowerCase();
             const pets = field.value.trim().split("\n");
@@ -25,6 +40,9 @@ module.exports = {
 
                         const db = (pet.includes("★") && `★ ${rarity}`) || rarity;
                         user.pets[db] += petLevel;
+                        const db2 = "max " + db + " Upgrades"
+                        user.pets[db2] += maxPetLevels[rarity];
+                        user.pets[db2] -= petLevel;
                     }
                 });
             } else if (rarity === "mythical") {

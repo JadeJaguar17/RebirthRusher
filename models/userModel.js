@@ -49,6 +49,16 @@ const userSchema = new mongoose.Schema({
         "★ rare": { type: Number, default: 0 },
         "★ epic": { type: Number, default: 0 },
 
+        "max common Upgrades": { type: Number, default: 0 },
+        "max uncommon Upgrades": { type: Number, default: 0 },
+        "max rare Upgrades": { type: Number, default: 0 },
+        "max epic Upgrades": { type: Number, default: 0 },
+
+        "max ★ common Upgrades": { type: Number, default: 0 },
+        "max ★ uncommon Upgrades": { type: Number, default: 0 },
+        "max ★ rare Upgrades": { type: Number, default: 0 },
+        "max ★ epic Upgrades": { type: Number, default: 0 },
+
         "zombie-horse": { type: Number, default: 0 },
         "spider-jockey": { type: Number, default: 0 },
         "skeleton-horse": { type: Number, default: 0 },

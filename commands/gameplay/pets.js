@@ -74,6 +74,7 @@ module.exports = {
 
             nextOptimalUpgrade[upgrade]++;
             user.pets[upgrade]++;
+            user.pets[("max " + upgrade + " Upgrades")]--;
             userShards -= price;
         }
 
@@ -176,27 +177,49 @@ function getOptimalUpgrade(pets) {
     const epics = pets.epic + 2 * pets["★ epic"];
     const upgrades = [];
 
-    if (petPrices.uncommon - pets["spider-jockey"] > 0) {
-        const uncommonBoost = ((1 + (uncommons + 1 + (pets["★ uncommon"] > 0)) * 0.1 * (1 + epics * 0.02))
+    if (petPrices.uncommon - pets["spider-jockey"] > 0 && pets["max ★ uncommon Upgrades"] > 0) {
+        const boost = ((1 + (uncommons + 2) * 0.1 * (1 + epics * 0.02))
             - (1 + uncommons * 0.1 * (1 + epics * 0.02))) / (1 + uncommons * 0.1 * (1 + epics * 0.02));
 
-        upgrades.push([(uncommonBoost / petPrices.uncommon) || 0, `${(pets["★ uncommon"] > 0 && "★ ") || ""}uncommon`]);
+        upgrades.push([(boost / petPrices.uncommon) || 0, `★ uncommon`]);
+    }
+    else if (petPrices.uncommon - pets["spider-jockey"] > 0 && pets.maxUncommonUpgrades > 0) {
+        const boost = ((1 + (uncommons + 1) * 0.1 * (1 + epics * 0.02))
+            - (1 + uncommons * 0.1 * (1 + epics * 0.02))) / (1 + uncommons * 0.1 * (1 + epics * 0.02));
+
+        upgrades.push([(boost / petPrices.uncommon) || 0, `uncommon`]);
     }
 
-    if (petPrices.rare - pets["spider-jockey"] > 0) {
-        const rareBoost = ((1 + (rares + 1 + (pets["★ rare"] > 0)) * 0.075 * (1 + epics * 0.02))
+    if (petPrices.rare - pets["spider-jockey"] > 0 && pets["max ★ rare Upgrades"]) {
+        const boost = ((1 + (rares + 2) * 0.075 * (1 + epics * 0.02))
             - (1 + rares * 0.075 * (1 + epics * 0.02))) / (1 + rares * 0.075 * (1 + epics * 0.02));
 
-        upgrades.push([(rareBoost / petPrices.rare) || 0, `${(pets["★ rare"] > 0 && "★ ") || ""}rare`]);
+        upgrades.push([(boost / petPrices.rare) || 0, `★ rare`]);
+    }
+    else if (petPrices.rare - pets["spider-jockey"] > 0 && pets.maxRareUpgrades > 0) {
+        const boost = ((1 + (rares + 1) * 0.075 * (1 + epics * 0.02))
+            - (1 + rares * 0.075 * (1 + epics * 0.02))) / (1 + rares * 0.075 * (1 + epics * 0.02));
+
+        upgrades.push([(boost / petPrices.rare) || 0, `rare`]);
     }
 
-    if (petPrices.epic - pets["spider-jockey"] > 0) {
-        const epicBoost = (1 + ((1 + uncommons * 0.1 * (1 + 0.02 * (epics + 1 + (pets["★ epic"] > 0))))
+    if (petPrices.epic - pets["spider-jockey"] > 0 && pets["max ★ epic Upgrades"]) {
+        const boost = (1 + ((1 + uncommons * 0.1 * (1 + 0.02 * (epics + 2)))
             - (1 + uncommons * 0.1 * (1 + 0.02 * epics))) / (1 + uncommons * 0.1 * (1 + 0.02 * epics)))
-            * (1 + ((1 + rares * 0.05 * (1 + 0.02 * (epics + 1 + (pets["★ epic"] > 0))))
+            * (1 + ((1 + rares * 0.05 * (1 + 0.02 * (epics + 2)))
                 - (1 + rares * 0.05 * (1 + 0.02 * epics))) / (1 + rares * 0.05 * (1 + 0.02 * epics))) - 1;
 
-        upgrades.push([(epicBoost / petPrices.epic) || 0, `${(pets["★ epic"] > 0 && "★ ") || ""}epic`]);
+        upgrades.push([(boost / petPrices.epic) || 0, `★ epic`]);
     }
+    else if (petPrices.epic - pets["spider-jockey"] > 0 && pets.maxEpicUpgrades > 0) {
+        const boost = (1 + ((1 + uncommons * 0.1 * (1 + 0.02 * (epics + 1)))
+            - (1 + uncommons * 0.1 * (1 + 0.02 * epics))) / (1 + uncommons * 0.1 * (1 + 0.02 * epics)))
+            * (1 + ((1 + rares * 0.05 * (1 + 0.02 * (epics + 1)))
+                - (1 + rares * 0.05 * (1 + 0.02 * epics))) / (1 + rares * 0.05 * (1 + 0.02 * epics))) - 1;
+
+        upgrades.push([(boost / petPrices.epic) || 0, `epic`]);
+    }
+
+
     return upgrades.sort((a, b) => b[0] - a[0])[0][1];
 }
