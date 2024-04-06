@@ -60,3 +60,11 @@ module.exports.deleteTimerForUser = async function (userID, timerName) {
         await user.save();
     }
 }
+
+/**
+ * Get all timers that exist in database
+ * @returns list of all timers
+ */
+module.exports.getAllTimers = async function () {
+    return await timers.find();
+}

@@ -7,8 +7,8 @@ const app = require("express")();
 // Database
 const mongoose = require("mongoose");
 const Timer = require("./Timer.js");
-const users = require("../models/userModel.js");
-const timers = require("../models/timerModel.js");
+const UserDB = require("../database/userController.js");
+const TimerDB = require("../database/timerController.js");
 
 // JS libraries
 const fs = require("fs")
@@ -86,7 +86,7 @@ class RebirthRusher extends Client {
         rule.tz = 'Etc/UTC';
 
         schedule.scheduleJob(rule, async function () {
-            for await (const user of users.find()) {
+            for await (const user of UserDB.getAllUsers()) {
                 if (user.timers.kits.daily === "ready" && user.settings.daily) {
                     await bot.send(
                         {
@@ -224,7 +224,7 @@ class RebirthRusher extends Client {
 
     async resetTimers() {
         console.log("Resetting timers...");
-        for await (const user of users.find()) {
+        for await (const user of UserDB.getAllUsers()) {
             let hasChanged = false;
             for (const category of Object.keys(user.timers)) {
                 for (const timer of Object.keys(user.timers[category])) {
@@ -240,15 +240,15 @@ class RebirthRusher extends Client {
     }
 
     async loadTimers() {
-        for await (const timer of timers.find()) {
-            const user = await users.findById(timer.message.author.id);
+        for await (const timer of TimerDB.getAllTimers()) {
+            const user = await UserDB.getUserById(timer.message.author.id)
 
             const now = new Date();
             const end = new Date(timer.endTime);
             const duration = (end - now) / 1000;
 
             if (duration <= -5 || !user) {
-                await timers.findByIdAndDelete(timer._id);
+                await TimerDB.deleteTimer(timer._id);
             } else if (duration <= 60) {
                 if (user.timers[timer.timerCategory][timer.timerName] !== "off") {
                     await new Timer().startTimer(
@@ -260,7 +260,7 @@ class RebirthRusher extends Client {
                         timer._id
                     );
                 }
-                await timers.findByIdAndDelete(timer._id);
+                await TimerDB.deleteTimer(timer._id);
             } else if (user.timers[timer.timerCategory][timer.timerName] === "ready") {
                 user.timers[timer.timerCategory][timer.timerName] = "running";
                 await user.save();
@@ -284,7 +284,7 @@ class RebirthRusher extends Client {
 
     async rewardVote(userID) {
         try {
-            const user = await users.findById(userID);
+            const user = await UserDB.getUserById(userID);
 
             if (user) {
                 const today = new Date();

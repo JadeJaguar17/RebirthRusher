@@ -52,3 +52,11 @@ module.exports.getTopTenTokens = async function () {
         .sort({ "inventory.tokens": -1 })
         .limit(10);
 }
+
+/**
+ * Get all users that exist in database
+ * @returns list of all users
+ */
+module.exports.getAllUsers = async function () {
+    return await users.find();
+}
