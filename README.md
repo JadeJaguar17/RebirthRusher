@@ -51,11 +51,17 @@ To do so, all you have to do is make a branch, do your thing, and make a pull
 request. If it looks good, I'll approve it and add it to the bot. However, to
 ensure this process goes smoothly, there are a few overall rules that I have:
 - Commits should be clean and follow good practices (see [this article](https://cbea.ms/git-commit/))
-- The code should also be clean with good comments
+- The code should also be clean with good comments. Try using JSDoc comments
+  when you can (helps both developers and VSCode's IntelliSense)
 - Generally speaking, I prefer code width to not exceed 80 characters
-- The PR description should be detailed
+- The PR description should be detailed so I can easily understand what your PR
+  is trying to do
 - Make sure your code works and there's no bugs whatsover <small>(at the very
-least, you should document what bugs you found and why you didn't fix them)</small>
+  least, you should document what bugs you found and why you didn't fix them)</small>
+- **PRs should not be made to the `main` branch.** Instead, please have your PRs
+  use the development branch as its base. The development branch typically
+  follows a `#.#.#.` naming scheme depending on the upcoming version number of
+  the bot.
 
 My code is licensed by [Creative Commons BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en).
 Basically, you are free to fork, make changes, and re-release on your own, but
