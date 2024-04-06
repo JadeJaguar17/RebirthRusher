@@ -31,6 +31,11 @@ module.exports = async (bot, interaction) => {
                     interaction.editOriginalMessage({ content: "Time's up, your data deletion was cancelled", components: [] })
                 }, 15000);
             }
+            else if (command.name === "resetstats") {
+                setTimeout(() => {
+                    interaction.editOriginalMessage({ content: "Time's up, your stats reset was cancelled", components: [] })
+                }, 15000);
+            }
 
             return interaction.createMessage(result, result.file);
         }
@@ -89,6 +94,18 @@ module.exports = async (bot, interaction) => {
                             .setTimestamp();
 
                         return bot.log("account", deleteUserEmbed);
+                    }
+                case "reset":
+                    if (args[0] === "cancel") {
+                        return interaction.editMessage(interaction.message.id, { content: "Your stats reset was cancelled", components: [] });
+                    }
+
+                    if (args[0] === "confirm") {
+                        await UserDB.resetPersonalBest(interaction.member.user.id);
+
+                        interaction.editMessage(interaction.message.id, { content: "Your stats has been reset", components: [] });
+
+                        return;
                     }
             }
         }
