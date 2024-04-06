@@ -86,7 +86,8 @@ class RebirthRusher extends Client {
         rule.tz = 'Etc/UTC';
 
         schedule.scheduleJob(rule, async function () {
-            for await (const user of UserDB.getAllUsers()) {
+            const allUsers = await UserDB.getAllUsers();
+            for (const user of allUsers) {
                 if (user.timers.kits.daily === "ready" && user.settings.daily) {
                     await bot.send(
                         {
@@ -226,7 +227,8 @@ class RebirthRusher extends Client {
 
     async resetTimers() {
         console.log("Resetting timers...");
-        for await (const user of UserDB.getAllUsers()) {
+        const allUsers = await UserDB.getAllUsers();
+        for (const user of allUsers) {
             let hasChanged = false;
             for (const category of Object.keys(user.timers)) {
                 for (const timer of Object.keys(user.timers[category])) {
@@ -242,7 +244,8 @@ class RebirthRusher extends Client {
     }
 
     async loadTimers() {
-        for await (const timer of TimerDB.getAllTimers()) {
+        const allTimers = await TimerDB.getAllTimers();
+        for (const timer of allTimers) {
             const user = await UserDB.getUserById(timer.message.author.id)
 
             const now = new Date();
