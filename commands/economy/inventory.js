@@ -1,4 +1,4 @@
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/controllers/userController");
 const { RBR } = require("../../config/embedColors.json");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { token } = require("../../config/emojis.json");
@@ -9,7 +9,7 @@ module.exports = {
     syntax: "`/inventory`",
     needsAccount: true,
     execute: async function (interaction) {
-        const user = await users.findById(interaction.member.user.id);
+        const user = await UserDB.getUserById(interaction.member.user.id);
 
         // create list of colors
         let colorString = "";

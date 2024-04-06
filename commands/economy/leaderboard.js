@@ -1,4 +1,4 @@
-const users = require("../../models/userModel");
+const { getTopTenTokens } = require("../../database/controllers/userController");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
 
@@ -8,10 +8,7 @@ module.exports = {
     syntax: "`/leaderboard`",
     execute: async function () {
         // only get the top 10 users
-        const places = await users
-            .find()
-            .sort({ "inventory.tokens": -1 })
-            .limit(10);
+        const places = await getTopTenTokens();
 
         // create string representation of the leaderboard
         let leaderboard = ""

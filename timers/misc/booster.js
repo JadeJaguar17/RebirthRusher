@@ -1,11 +1,11 @@
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/controllers/userController");
 const MessageCollector = require("../../system/collector/MessageCollector");
 const boosters = require("../../config/boosters.json");
 
 module.exports = {
     name: "booster",
     execute: async function (message, userID, boosterID, time) {
-        const user = await users.findById(userID);
+        const user = await UserDB.getUserById(userID);
         const booster = boosters.find(b => b.id === boosterID);
 
         if (!booster || user.timers.boosters[booster.type] === "off") {
@@ -13,7 +13,7 @@ module.exports = {
         }
 
         const timer = setTimeout(async () => {
-            const timerUser = await users.findById(user._id);
+            const timerUser = await UserDB.getUserById(user._id);
             if (timerUser.timers.boosters[booster.type] === "off") {
                 return;
             }

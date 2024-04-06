@@ -1,4 +1,4 @@
-const users = require("../../models/userModel");
+const UserDB = require("../../database/controllers/userController");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
 const { off, on } = require("../../config/emojis.json");
@@ -9,7 +9,7 @@ module.exports = {
     syntax: "`/votedm [enable | disable]`",
     needsAccount: true,
     execute: async function (interaction) {
-        const user = await users.findById(interaction.member.user.id);
+        const user = await UserDB.getUserById(interaction.member.user.id);
         const emoji = user.settings.voteDisabled
             ? off
             : on

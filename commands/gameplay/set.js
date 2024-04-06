@@ -1,4 +1,4 @@
-const users = require("../../models/userModel");
+const UserDB = require("../../database/controllers/userController");
 
 const defaults = {
     "rb": "#E67E22",
@@ -16,7 +16,7 @@ module.exports = {
     syntax: "`/set`",
     needsAccount: true,
     execute: async function (interaction) {
-        const user = await users.findById(interaction.member.user.id);
+        const user = await UserDB.getUserById(interaction.member.user.id);
 
         const subcommand = interaction.data.options[0];
         const args = subcommand.options[0];

@@ -1,10 +1,10 @@
-const users = require("../../models/userModel");
+const UserDB = require("../../database/controllers/userController");
 const Timer = require("../../system/Timer");
 
 module.exports = {
     name: "harvest",
     execute: async function (message, userID, harvestTime) {
-        const user = await users.findById(userID);
+        const user = await UserDB.getUserById(userID);
 
         if (user.timers.games.harvest === "ready") {
             await new Timer().startTimer(

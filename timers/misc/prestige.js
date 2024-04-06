@@ -2,7 +2,7 @@ module.exports = {
     name: "prestige",
     aliases: ["pr"],
     execute: async function (userID) {
-        const user = await users.findById(userID);
+        const user = await UserDB.getUserById(userID);
         const deletedTimers = [];
 
         const query = { "message.author.id": userID };

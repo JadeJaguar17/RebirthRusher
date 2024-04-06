@@ -1,4 +1,4 @@
-const users = require("../models/userModel.js");
+const UserDB = require("../database/controllers/userController");
 const fs = require("fs");
 
 module.exports = async (bot, message) => {
@@ -10,14 +10,14 @@ module.exports = async (bot, message) => {
                     const userID = message.embeds[0].author?.icon_url?.replace("https://cdn.discordapp.com/avatars/", "")
                         .split("/")[0].trim();
 
-                    if (isBanned(userID) || !(await users.exists({ _id: userID }))) return;
+                    if (isBanned(userID) || !(await UserDB.checkUserExists(userID))) return;
 
                     const embed = message.embeds[0];
 
                     if (embed.title === "Pets") {
                         await bot.scanners.get("petScan").execute(embed, userID);
 
-                        const user = await users.findById(userID);
+                        const user = await UserDB.getUserById(userID);
                         if (user.settings.autoPet && await bot.users.get(userID)) {
                             const petEmbed = await bot.commands.get("pets").execute({
                                 member: { user: await bot.users.get(userID) },
@@ -104,7 +104,7 @@ module.exports = async (bot, message) => {
                     const username = message.content.split("**")[1];
                     const user = await bot.users.find(u => u.username === username);
 
-                    if (user && !isBanned(user.id) && await users.exists({ _id: user.id })) {
+                    if (user && !isBanned(user.id) && await UserDB.checkUserExists(user.id)) {
                         if (message.content.includes("You didn't get any pet")) {
                             return await bot.timers.get("hunt").execute(message, user.id);
                         } else if (message.content.includes("Activated Wings")) {
@@ -132,7 +132,7 @@ module.exports = async (bot, message) => {
 
                 // clear command
                 if (message.interaction && ["clear", "bonemeal"].includes(message.interaction.name)
-                    && (await users.exists({ _id: message.interaction.member.user.id }))) {
+                    && (await UserDB.checkUserExists(message.interaction.member.user.id))) {
                     const imCommand = await bot.timers.get(message.interaction.name);
 
                     if (imCommand) {

@@ -1,6 +1,6 @@
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/controllers/userController");
 const { backpack, pick, gold, boost, shard } = require("../../config/emojis.json");
 
 const petPrices = {
@@ -22,7 +22,7 @@ module.exports = {
     aliases: ["p"],
     needsAccount: true,
     execute: async function (interaction) {
-        const user = await users.findById(interaction.member.user.id);
+        const user = await UserDB.getUserById(interaction.member.user.id);
 
         // Some initial calculations
         const commons = user.pets.common + 2 * user.pets["★ common"];

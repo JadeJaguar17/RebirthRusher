@@ -1,4 +1,4 @@
-const users = require("../../models/userModel");
+const UserDB = require("../../database/controllers/userController");
 const { dev } = require("../../config/discordIds.json");
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     execute: async function (interaction) {
         if (interaction.member.user.id === dev) {
             try {
-                const user = await users.findById(interaction.member.user.id);
+                const user = await UserDB.getUserById(interaction.member.user.id);
                 const result = eval(interaction.data.options[0].value);
 
                 return `\`\`\`js\n${result}\n\`\`\``;

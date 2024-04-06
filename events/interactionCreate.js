@@ -1,6 +1,6 @@
 const Eris = require("eris");
 const fs = require("fs");
-const users = require("../models/userModel");
+const UserDB = require("../database/controllers/userController");
 const MessageEmbed = require("../system/MessageEmbed");
 const { ERROR } = require("../config/embedColors.json");
 
@@ -19,7 +19,7 @@ module.exports = async (bot, interaction) => {
 
         const command = bot.commands.get(interaction.data.name);
 
-        if (!(await users.exists({ _id: interaction.member.user.id })) && command?.needsAccount) {
+        if (!(UserDB.checkUserExists(interaction.member.user.id)) && command?.needsAccount) {
             return interaction.createMessage("You don't have an account yet! Enter \`/start\` to make an account");
         }
 
@@ -74,7 +74,7 @@ module.exports = async (bot, interaction) => {
                     }
 
                     if (args[0] === "confirm") {
-                        await users.findByIdAndDelete(interaction.member.user.id);
+                        await UserDB.getUserByIdAndDelete(interaction.member.user.id);
 
                         interaction.editMessage(interaction.message.id, { content: "Your data has been deleted", components: [] });
 

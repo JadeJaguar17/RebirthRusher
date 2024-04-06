@@ -1,4 +1,4 @@
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/controllers/userController");
 const Canvas = require('chartjs-node-canvas');
 const { RBR, DEV } = require("../../config/embedColors.json");
 const { dev } = require("../../config/discordIds.json");
@@ -76,7 +76,7 @@ module.exports = {
         } catch (error) { }
 
         // validate graph data
-        const user = discordUser && await users.findById(discordUser.id);
+        const user = discordUser && await UserDB.getUserById(discordUser.id);
         if (!user) {
             return "Graph was not found for this user";
         } else if (

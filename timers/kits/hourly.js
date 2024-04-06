@@ -1,11 +1,11 @@
-const users = require("../../models/userModel");
+const UserDB = require("../../database/controllers/userController");
 const Timer = require("../../system/Timer");
 
 module.exports = {
     name: "hourly",
     aliases: ["hr"],
     execute: async function (message, userID) {
-        const user = await users.findById(userID);
+        const user = await UserDB.getUserById(userID);
 
         if (user.timers.kits.hourly === "ready") {
             await new Timer().startTimer(

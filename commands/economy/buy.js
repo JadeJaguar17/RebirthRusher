@@ -1,4 +1,4 @@
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/controllers/userController");
 const shop = require("../../config/shop.json");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { customRoleLog } = require("../../config/discordIds.json");
@@ -24,7 +24,7 @@ module.exports = {
             }
         }
 
-        const user = await users.findById(interaction.member.user.id);
+        const user = await UserDB.getUserById(interaction.member.user.id);
         const item = shop.find(i => itemID === i.id);
 
         if (!item) {
@@ -67,7 +67,7 @@ module.exports = {
         }
     },
     purchaseItem: async function (interaction, itemID, hex) {
-        const user = await users.findById(interaction.member.user.id);
+        const user = await UserDB.getUserById(interaction.member.user.id);
 
         const item = shop.find(i => itemID === i.id);
         const itemCopy = Object.create(item);

@@ -1,5 +1,5 @@
 const MessageEmbed = require("../../system/MessageEmbed");
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/controllers/userController");
 const { RBR } = require("../../config/embedColors.json");
 const { dev } = require("../../config/discordIds.json");
 
@@ -19,7 +19,7 @@ module.exports = {
             const user = await bot.users.get(id) || await bot.getRESTUser(id);
 
             if (user) {
-                const isRbRUser = await users.exists({ _id: id })
+                const isRbRUser = await UserDB.checkUserExists(id)
                     ? ":white_check_mark:"
                     : ":x:"
 
@@ -62,7 +62,7 @@ module.exports = {
             const owner = await bot.users.get(guild.ownerID) || await bot.getRESTUser(guild.ownerID);
 
             if (guild) {
-                const isRbRUser = await users.exists({ _id: guild.ownerID })
+                const isRbRUser = await UserDB.checkUserExists(guild.ownerID)
                     ? ":white_check_mark:"
                     : ":x:"
 
