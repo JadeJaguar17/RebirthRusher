@@ -1,4 +1,4 @@
-const UserDB = require("../../database/userController");
+const UserDB = require("../../database/controllers/userController");
 const { dev } = require("../../config/discordIds.json");
 const { token } = require("../../config/emojis.json");
 

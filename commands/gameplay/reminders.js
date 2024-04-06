@@ -1,6 +1,6 @@
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
-const UserDB = require("../../database/userController");
+const UserDB = require("../../database/controllers/userController");
 const { off, on } = require("../../config/emojis.json");
 
 module.exports = {

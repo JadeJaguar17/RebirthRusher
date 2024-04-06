@@ -1,5 +1,5 @@
-const UserDB = require("../database/userController");
-const TimerDB = require("../database/timerController");
+const UserDB = require("../database/controllers/userController");
+const TimerDB = require("../database/controllers/timerController");
 const MessageCollector = require("./collector/MessageCollector");
 const slashIDS = require("../config/slashIds.json");
 

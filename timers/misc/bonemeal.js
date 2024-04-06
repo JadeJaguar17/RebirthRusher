@@ -1,4 +1,4 @@
-const TimerDB = require("../../database/timerController");
+const TimerDB = require("../../database/controllers/timerController");
 
 module.exports = {
     name: "bonemeal",

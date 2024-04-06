@@ -1,6 +1,6 @@
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
-const UserDB = require("../../database/userController");
+const UserDB = require("../../database/controllers/userController");
 const { backpack, pick, gold, boost, shard } = require("../../config/emojis.json");
 
 const petPrices = {

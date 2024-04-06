@@ -1,6 +1,6 @@
 const Eris = require("eris");
 const fs = require("fs");
-const UserDB = require("../database/userController");
+const UserDB = require("../database/controllers/userController");
 const MessageEmbed = require("../system/MessageEmbed");
 const { ERROR } = require("../config/embedColors.json");
 

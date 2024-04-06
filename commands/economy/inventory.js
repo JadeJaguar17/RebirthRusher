@@ -1,4 +1,4 @@
-const UserDB = require("../../database/userController");
+const UserDB = require("../../database/controllers/userController");
 const { RBR } = require("../../config/embedColors.json");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { token } = require("../../config/emojis.json");

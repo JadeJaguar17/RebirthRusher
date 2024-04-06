@@ -1,4 +1,4 @@
-const UserDB = require("../../database/userController");
+const UserDB = require("../../database/controllers/userController");
 
 const defaults = {
     "rb": "#E67E22",

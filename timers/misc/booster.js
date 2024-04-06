@@ -1,4 +1,4 @@
-const UserDB = require("../../database/userController");
+const UserDB = require("../../database/controllers/userController");
 const MessageCollector = require("../../system/collector/MessageCollector");
 const boosters = require("../../config/boosters.json");
 

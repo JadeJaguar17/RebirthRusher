@@ -1,5 +1,5 @@
 const MessageEmbed = require("../../system/MessageEmbed");
-const { createUser } = require("../../database/userController");
+const { createUser } = require("../../database/controllers/userController");
 const { SUCCESS } = require("../../config/embedColors.json");
 
 module.exports = {

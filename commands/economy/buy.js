@@ -1,4 +1,4 @@
-const UserDB = require("../../database/userController");
+const UserDB = require("../../database/controllers/userController");
 const shop = require("../../config/shop.json");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { customRoleLog } = require("../../config/discordIds.json");

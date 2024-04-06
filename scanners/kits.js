@@ -1,4 +1,4 @@
-const UserDB = require("../database/userController");
+const UserDB = require("../database/controllers/userController");
 const Timer = require("../system/Timer");
 
 module.exports = {

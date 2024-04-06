@@ -1,4 +1,4 @@
-const { getTopTenTokens } = require("../../database/userController");
+const { getTopTenTokens } = require("../../database/controllers/userController");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
 

@@ -1,4 +1,4 @@
-const UserDB = require("../../database/userController");
+const UserDB = require("../../database/controllers/userController");
 const Timer = require("../../system/Timer");
 
 const pKitCooldowns = [86400, 86400, 86400, 72000, 54000, 36000];

@@ -1,4 +1,4 @@
-const timers = require("./models/timerModel.js");
+const timers = require("../models/timerModel.js");
 const UserDB = require("./userController.js");
 
 /**

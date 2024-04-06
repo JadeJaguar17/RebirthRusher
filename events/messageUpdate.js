@@ -1,4 +1,4 @@
-const UserDB = require("../database/userController");
+const UserDB = require("../database/controllers/userController");
 const fs = require("fs");
 
 module.exports = async (bot, message) => {

@@ -1,4 +1,4 @@
-const UserDB = require("../../database/userController");
+const UserDB = require("../../database/controllers/userController");
 const Canvas = require('chartjs-node-canvas');
 const { RBR, DEV } = require("../../config/embedColors.json");
 const { dev } = require("../../config/discordIds.json");

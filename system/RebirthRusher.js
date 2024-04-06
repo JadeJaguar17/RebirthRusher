@@ -7,8 +7,8 @@ const app = require("express")();
 // Database
 const mongoose = require("mongoose");
 const Timer = require("./Timer.js");
-const UserDB = require("../database/userController.js");
-const TimerDB = require("../database/timerController.js");
+const UserDB = require("../database/controllers/userController.js");
+const TimerDB = require("../database/controllers/timerController.js");
 
 // JS libraries
 const fs = require("fs")
