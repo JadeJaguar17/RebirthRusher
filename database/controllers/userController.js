@@ -14,7 +14,7 @@ module.exports.getUserCount = async function () {
  * @returns user object
  */
 module.exports.getUserById = async function (userID) {
-    return await getUserById(userID);
+    return await users.findById(userID);
 }
 
 /**
@@ -65,3 +65,11 @@ module.exports.getAllUsers = async function () {
  * Name of corresponding MongoDB collection
  */
 module.exports.collectionName = users.collection.collectionName;
+
+/**
+ * Deletes user from the database by ID
+ * @param {string} userID user's Discord snowflake ID
+ */
+module.exports.deleteUser = async function (userID) {
+    await users.findByIdAndDelete(userID);
+}
