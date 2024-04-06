@@ -2,73 +2,74 @@ const MessageEmbed = require("../../system/MessageEmbed");
 const UserDB = require("../../database/controllers/userController");
 const { RBR } = require("../../config/embedColors.json");
 
-module.exports = {
-    name: "calculate",
-    description: "Calculates the price of upgrading your pick/bp a certain number of levels",
-    syntax: "`/calculate <bp|pa> [current level] [levels]` (*<> = required, [] = optional, | = either works*)",
-    needsAccount: true,
-    execute: async function (interaction) {
-        const tool = interaction.data.options[0].value;
-        const currentLevel = interaction.data.options[1].value;
-        const amount = interaction.data.options[2].value;
+module.exports.name = "calculate"
+module.exports.description = "Calculates the price of upgrading your pick/bp a certain number of levels"
+module.exports.syntax = "`/calculate <bp|pa> [current level] [levels]` (*<> = required, [] = optional, | = either works*)"
+module.exports.needsAccount = true
 
-        if (currentLevel < 0) {
-            return `:no_entry_sign: Tool level must be greater than 0`;
-        }
+module.exports.execute = async function (interaction) {
+    const tool = interaction.data.options[0].value;
+    const currentLevel = interaction.data.options[1].value;
+    const amount = interaction.data.options[2].value;
 
-        if (amount < 0) {
-            return `:no_entry_sign: Amount must be greater than 0`;
-        }
+    if (currentLevel < 0) {
+        return `:no_entry_sign: Tool level must be greater than 0`;
+    }
 
-        const user = await UserDB.getUserById(interaction.member.user.id);
-        const price = calculatePrice(currentLevel, amount, user);
+    if (amount < 0) {
+        return `:no_entry_sign: Amount must be greater than 0`;
+    }
 
-        const priceEmbed = new MessageEmbed()
-            .setColor(RBR)
-            .setAuthor(
-                interaction.member.user.username,
-                interaction.member.user.avatarURL
-            )
-            // .setThumbnail("")
-            .setTitle("Calculate")
-            .setDescription(
-                `It will cost you **$${numToMoney(price)}** to `
-                + `upgrade your ${tool} **${amount}** level(s)`
-            );
+    const user = await UserDB.getUserById(interaction.member.user.id);
+    const price = calculatePrice(currentLevel, amount, user);
 
-        return { embeds: [priceEmbed] };
-    },
-    options: [
-        {
-            name: "tool",
-            description: "which tool to make upgrade calculations for",
-            type: 3,
-            required: true,
-            choices: [
-                {
-                    name: "Pickaxe",
-                    value: "pickaxe"
-                },
-                {
-                    name: "Backpack",
-                    value: "backpack"
-                }
-            ]
-        },
-        {
-            name: "level",
-            description: "current level of selected tool",
-            type: 4,
-            required: true
-        },
-        {
-            name: "amount",
-            description: "amount of levels to calculate",
-            type: 4,
-            required: true
-        }
-    ]
+    const priceEmbed = new MessageEmbed()
+        .setColor(RBR)
+        .setAuthor(
+            interaction.member.user.username,
+            interaction.member.user.avatarURL
+        )
+        // .setThumbnail("")
+        .setTitle("Calculate")
+        .setDescription(
+            `It will cost you **$${numToMoney(price)}** to `
+            + `upgrade your ${tool} **${amount}** level(s)`
+        );
+
+    return { embeds: [priceEmbed] };
 }
+
+module.exports.options = [
+    {
+        name: "tool",
+        description: "which tool to make upgrade calculations for",
+        type: 3,
+        required: true,
+        choices: [
+            {
+                name: "Pickaxe",
+                value: "pickaxe"
+            },
+            {
+                name: "Backpack",
+                value: "backpack"
+            }
+        ]
+    },
+    {
+        name: "level",
+        description: "current level of selected tool",
+        type: 4,
+        required: true
+    },
+    {
+        name: "amount",
+        description: "amount of levels to calculate",
+        type: 4,
+        required: true
+    }
+]
+
 
 // calculate whole upgrade cost
 function calculatePrice(currentLevel, amount, user) {
