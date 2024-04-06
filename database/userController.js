@@ -1,4 +1,4 @@
-const users = require("../models/userModel.js");
+const users = require("./models/userModel.js");
 
 /**
  * Get user document count
