@@ -18,11 +18,8 @@ const timerSchema = new mongoose.Schema({
 });
 
 // ensure I'm not modifying the actual database
-const collectionName = "testTimers"
-
-if (collectionName !== "testTimers" && process.env.NODE_ENV === "development") {
-    console.error(new mongoose.MongooseError("Collection name needs to be changed"));
-    process.exit()
-}
+const collectionName = process.env.NODE_ENV === "development"
+    ? "timers.test"
+    : "timers"
 
 module.exports = mongoose.models[collectionName] || mongoose.model(collectionName, timerSchema);
