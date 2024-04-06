@@ -1,4 +1,4 @@
-const users = require("../../models/userModel");
+const UserDB = require("../../database/userController");
 const { rbrServer } = require("../../config/discordIds.json");
 const { token } = require("../../config/emojis.json");
 
@@ -8,7 +8,7 @@ module.exports = {
     syntax: "`/claim`",
     needsAccount: true,
     execute: async function (interaction) {
-        const user = await users.findById(interaction.member.user.id);
+        const user = await UserDB.getUserById(interaction.member.user.id);
 
         if (!bot.eventReward) {
             return `There's no event going on right now`;

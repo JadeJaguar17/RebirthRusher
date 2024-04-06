@@ -1,11 +1,11 @@
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/userController");
 const Timer = require("../../system/Timer");
 
 module.exports = {
     name: "rage",
     aliases: ["r", "wither"],
     execute: async function (message, userID) {
-        const user = await users.findById(userID);
+        const user = await UserDB.getUserById(userID);
 
         if (user.timers.abilities.rage === "ready") {
             new Timer().startTimer(

@@ -1,11 +1,11 @@
 const timers = require("../../models/timerModel");
-const users = require("../../models/userModel");
+const UserDB = require("../../database/userController");
 
 module.exports = {
     name: "bonemeal",
     aliases: ["bm", "bone"],
     execute: async function (userID) {
-        const user = await users.findById(userID);
+        const user = await UserDB.getUserById(userID);
 
         const query = { "message.author.id": userID, "timerName": "harvest" };
         let hasHarvestTimer = false;

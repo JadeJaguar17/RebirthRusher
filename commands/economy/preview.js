@@ -1,4 +1,4 @@
-const users = require("../../models/userModel");
+const UserDB = require("../../database/userController");
 const shop = require("../../config/shop.json");
 const Canvas = require('chartjs-node-canvas');
 
@@ -72,7 +72,7 @@ module.exports = {
             return ":no_entry_sign: Color ID can't be previewed";
         }
 
-        const user = await users.findById(interaction.member.user.id);
+        const user = await UserDB.getUserById(interaction.member.user.id);
         const theme = themes[user.settings.theme];
         const graph = theme.canvas.renderToBufferSync({
             type: "bar",

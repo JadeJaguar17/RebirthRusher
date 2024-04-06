@@ -1,4 +1,4 @@
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/userController");
 const { dev } = require("../../config/discordIds.json");
 const { token } = require("../../config/emojis.json");
 
@@ -15,8 +15,8 @@ module.exports = {
             return "You can't give somebody negative tokens!";
         }
 
-        const payer = await users.findById(interaction.member.user.id);
-        const payee = await users.findById(payeeID);
+        const payer = await UserDB.getUserById(interaction.member.user.id);
+        const payee = await UserDB.getUserById(payeeID);
 
         if (!payee) {
             return "I cannot find the person you want to give tokens to. Make "

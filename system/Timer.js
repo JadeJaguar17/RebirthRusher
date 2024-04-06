@@ -1,5 +1,5 @@
 const timers = require("../models/timerModel");
-const users = require("../models/userModel");
+const UserDB = require("../database/userController");
 const MessageCollector = require("./collector/MessageCollector");
 const slashIDS = require("../config/slashIds.json");
 
@@ -7,7 +7,7 @@ class Timer {
     constructor() { }
 
     async startTimer(message, userID, timerName, timerCategory, timerCd, timerID) {
-        const user = await users.findById(userID);
+        const user = await UserDB.getUserById(userID);
         if (timerCd >= 90) {
             const endTime = new Date();
             endTime.setSeconds(endTime.getSeconds() + timerCd);
@@ -35,7 +35,7 @@ class Timer {
 
         const timer = setTimeout(async () => {
             try {
-                const timerUser = await users.findById(user._id);
+                const timerUser = await UserDB.getUserById(user._id);
                 if (timerUser.timers[timerCategory][timerName] === "off") {
                     return;
                 }

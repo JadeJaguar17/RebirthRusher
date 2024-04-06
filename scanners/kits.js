@@ -1,10 +1,10 @@
-const users = require("../models/userModel");
+const UserDB = require("../database/userController");
 const Timer = require("../system/Timer");
 
 module.exports = {
     name: "kits",
     execute: async function (interaction, userID) {
-        const user = await users.findById(userID);
+        const user = await UserDB.getUserById(userID);
 
         for (field of interaction.embeds[0].fields) {
             const category = field.name.split("**")[1].toLowerCase();

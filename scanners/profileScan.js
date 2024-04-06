@@ -1,4 +1,4 @@
-const users = require("../models/userModel");
+const UserDB = require("../database/userController");
 
 module.exports = {
     name: "profileScan",
@@ -7,7 +7,7 @@ module.exports = {
             return await bot.error("profileScan", new TypeError("Invalid embed stats"));
         }
 
-        const user = await users.findById(userID);
+        const user = await UserDB.getUserById(userID);
 
         // Need to flip the signs
         const flipped = user.settings.timezone.startsWith("+")

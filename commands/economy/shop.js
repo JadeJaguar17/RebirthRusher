@@ -1,5 +1,5 @@
 const MessageEmbed = require("../../system/MessageEmbed");
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/userController");
 const { RBR } = require("../../config/embedColors.json");
 const shop = require("../../config/shop.json");
 const { token } = require("../../config/emojis.json");
@@ -41,7 +41,7 @@ module.exports = {
     syntax: "`/shop`",
     needsAccount: true,
     execute: async function (interaction) {
-        const user = await users.findById(interaction.member.user.id);
+        const user = await UserDB.getUserById(interaction.member.user.id);
 
         shopMenuEmbed
             .setAuthor(bot.user.username, bot.user.avatarURL)

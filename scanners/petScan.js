@@ -1,9 +1,9 @@
-const users = require("../models/userModel");
+const UserDB = require("../database/userController");
 
 module.exports = {
     name: "petScan",
     execute: async function (embed, userID) {
-        const user = await users.findById(userID);
+        const user = await UserDB.getUserById(userID);
         user.pets.shards = Number(embed.description.split("\n")[2].split(" ")[2].replace(/,/g, ''));
 
         for (const pet of Object.keys(user.pets)) {

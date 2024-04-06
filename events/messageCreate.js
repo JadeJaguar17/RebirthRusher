@@ -1,4 +1,4 @@
-const users = require("../models/userModel.js");
+// const users = require("../models/userModel.js");
 // const {RBR} = require("../config/embedColors.json");
 // const MessageEmbed = require("../system/MessageEmbed");
 // const fs = require("fs");
@@ -19,7 +19,7 @@ module.exports = require("../events/messageUpdate"); //async (bot, message) => {
     //                 if (embed.title === "Pets") {
     //                     await bot.scanners.get("petScan").execute(embed, userID);
 
-    //                     const user = await users.findById(userID);
+    //                     const user = await UserDB.getUserById(userID);
     //                     if (user.settings.autoPet) {
     //                         const petEmbed = await bot.commands.get("pets").execute({
     //                             member: {user: await bot.users.get(userID)},
@@ -130,7 +130,7 @@ module.exports = require("../events/messageUpdate"); //async (bot, message) => {
     //             return;
     //         }
 
-    //         const user = await users.findById(message.author.id);
+    //         const user = await UserDB.getUserById(message.author.id);
     //         const server = await servers.findById(message.channel.guild.id) || {prefix: "r.", imPrefix: ";"};
 
     //         // If the bot gets pinged

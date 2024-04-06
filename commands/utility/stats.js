@@ -1,5 +1,5 @@
 const MessageEmbed = require("../../system/MessageEmbed");
-const users = require("../../models/userModel");
+const { getAllUsers } = require("../../database/userController");
 const { RBR } = require("../../config/embedColors.json");
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
             .setAuthor(bot.user.username, bot.user.avatarURL)
             .setDescription(
                 `**Servers:** ${bot.guilds.size}\n`
-                + `**Users:** ${await users.countDocuments()}`
+                + `**Users:** ${await getAllUsers()}`
             )
             .setThumbnail("https://i.imgur.com/JUNFqEn.png")
             .setTitle("Stats");

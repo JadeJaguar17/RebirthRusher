@@ -1,14 +1,14 @@
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/userController");
 const MessageCollector = require("../../system/collector/MessageCollector");
 
 module.exports = {
     name: "backpack",
     execute: async function (message, userID, time) {
-        const user = await users.findById(userID);
+        const user = await UserDB.getUserById(userID);
 
         if (user.timers.kits.backpack === "ready" && time >= 10) {
             const timer = setTimeout(async () => {
-                const timerUser = await users.findById(userID);
+                const timerUser = await UserDB.getUserById(userID);
                 if (timerUser.timers.kits.backpack === "off") {
                     return;
                 }

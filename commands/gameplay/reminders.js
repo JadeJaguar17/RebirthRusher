@@ -1,6 +1,6 @@
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/userController");
 const { off, on } = require("../../config/emojis.json");
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
     aliases: ["r"],
     needsAccount: true,
     execute: async function (interaction) {
-        const user = await users.findById(interaction.member.user.id);
+        const user = await UserDB.getUserById(interaction.member.user.id);
 
         // inital embed build for the reminders list
         const setEmbed = new MessageEmbed()

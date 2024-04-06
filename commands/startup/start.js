@@ -1,5 +1,5 @@
 const MessageEmbed = require("../../system/MessageEmbed");
-const users = require("../../models/userModel");
+const { createUser } = require("../../database/userController");
 const { SUCCESS } = require("../../config/embedColors.json");
 
 module.exports = {
@@ -7,12 +7,11 @@ module.exports = {
     description: "Creates a new account for the user",
     syntax: "`/start`",
     execute: async function (interaction) {
-        const user = await users.findById(interaction.member.user.id);
-        if (user) return "You already have an account!";
-
-        await users.create({
-            _id: interaction.member.user.id
-        });
+        try {
+            await createUser(interaction.member.user.id);
+        } catch (error) {
+            return "You already have an account!";
+        }
 
         // log new user
         const newUserEmbed = new MessageEmbed()

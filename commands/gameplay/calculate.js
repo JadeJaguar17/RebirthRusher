@@ -1,5 +1,5 @@
 const MessageEmbed = require("../../system/MessageEmbed");
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/userController");
 const { RBR } = require("../../config/embedColors.json");
 
 module.exports = {
@@ -20,7 +20,7 @@ module.exports = {
             return `:no_entry_sign: Amount must be greater than 0`;
         }
 
-        const user = await users.findById(interaction.member.user.id);
+        const user = await UserDB.getUserById(interaction.member.user.id);
         const price = calculatePrice(currentLevel, amount, user);
 
         const priceEmbed = new MessageEmbed()
