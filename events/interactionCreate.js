@@ -74,7 +74,7 @@ module.exports = async (bot, interaction) => {
                     }
 
                     if (args[0] === "confirm") {
-                        await UserDB.getUserByIdAndDelete(interaction.member.user.id);
+                        await UserDB.deleteUser(interaction.member.user.id);
 
                         interaction.editMessage(interaction.message.id, { content: "Your data has been deleted", components: [] });
 
