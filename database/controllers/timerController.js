@@ -2,6 +2,11 @@ const timers = require("../models/timerModel.js");
 const UserDB = require("./userController.js");
 
 /**
+ * Name of corresponding MongoDB collection
+ */
+module.exports.collectionName = timers.collection.collectionName;
+
+/**
  * Creates a new timer
  * @param {string} name name of timer
  * @param {string} category category of timer
@@ -28,6 +33,14 @@ module.exports.createTimer = async function (name, category, endTime, userID, ch
         timerCategory: category,
         endTime: endTime
     });
+}
+
+/**
+ * Get all timers that exist in database
+ * @returns list of all timers
+ */
+module.exports.getAllTimers = async function () {
+    return await timers.find();
 }
 
 /**
@@ -60,16 +73,3 @@ module.exports.deleteTimerForUser = async function (userID, timerName) {
         await user.save();
     }
 }
-
-/**
- * Get all timers that exist in database
- * @returns list of all timers
- */
-module.exports.getAllTimers = async function () {
-    return await timers.find();
-}
-
-/**
- * Name of corresponding MongoDB collection
- */
-module.exports.collectionName = timers.collection.collectionName;
