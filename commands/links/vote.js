@@ -11,7 +11,7 @@ module.exports = {
             .setTitle("Vote!")
             .setAuthor(bot.user.username, bot.user.avatarURL)
             .setThumbnail("https://i.imgur.com/f0ErbMs.png")
-            .setDescription(`[Vote](${vote}) for me to get extra tokens!`)
+            .setDescription(`Vote for me to get extra tokens!`)
             .setColor(RBR);
 
         return {
