@@ -60,3 +60,8 @@ module.exports.getTopTenTokens = async function () {
 module.exports.getAllUsers = async function () {
     return await users.find();
 }
+
+/**
+ * Name of corresponding MongoDB collection
+ */
+module.exports.collectionName = users.collection.collectionName;

@@ -216,6 +216,8 @@ class RebirthRusher extends Client {
         console.log("Connecting to MongoDB...");
         try {
             await mongoose.connect(process.env.SRV);
+            console.log(` - Users: [${UserDB.collectionName}]`);
+            console.log(` - Timers: [${TimerDB.collectionName}]`)
         } catch (error) {
             console.error(error);
             process.exit();

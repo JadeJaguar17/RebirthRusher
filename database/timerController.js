@@ -68,3 +68,8 @@ module.exports.deleteTimerForUser = async function (userID, timerName) {
 module.exports.getAllTimers = async function () {
     return await timers.find();
 }
+
+/**
+ * Name of corresponding MongoDB collection
+ */
+module.exports.collectionName = timers.collection.collectionName;
