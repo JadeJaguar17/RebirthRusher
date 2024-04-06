@@ -469,7 +469,7 @@ async function handleReminders(args, user) {
 
         case "huntcd":
             if (
-                args.options[0].value >= 20 &&
+                args.options[0].value >= 10 &&
                 args.options[0].value <= 600 &&
                 Number.isInteger(args.options[0].value)
             ) {
@@ -480,7 +480,7 @@ async function handleReminders(args, user) {
             }
 
             return "Please enter a valid setting (`huntcd` must be an integer "
-                + "between 30 and 600)";
+                + "between 10 and 600)";
 
         case "boostercd":
             if (
