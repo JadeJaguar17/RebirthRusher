@@ -4,7 +4,7 @@ const users = require("../models/userModel.js");
  * Get user document count
  * @returns count of all user documents
  */
-module.exports.getAllUsers = async function () {
+module.exports.getUserCount = async function () {
     return await users.countDocuments();
 }
 
