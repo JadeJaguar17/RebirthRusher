@@ -1,21 +1,9 @@
 const users = require("../models/userModel.js");
 
 /**
- * Get user document count
- * @returns count of all user documents
+ * Name of corresponding MongoDB collection
  */
-module.exports.getUserCount = async function () {
-    return await users.countDocuments();
-}
-
-/**
- * Fetch user by ID
- * @param {string} userID user's Discord snowflake ID
- * @returns user object
- */
-module.exports.getUserById = async function (userID) {
-    return await users.findById(userID);
-}
+module.exports.collectionName = users.collection.collectionName;
 
 /**
  * Create new User in database. If user already exists, it throws an error
@@ -31,6 +19,39 @@ module.exports.createUser = async function (userID) {
     } catch (error) {
         throw new Error("User with this ID already exists!");
     }
+}
+
+/**
+ * Fetch user by ID
+ * @param {string} userID user's Discord snowflake ID
+ * @returns user object
+ */
+module.exports.getUserById = async function (userID) {
+    return await users.findById(userID);
+}
+
+/**
+ * Get all users that exist in database
+ * @returns list of all users
+ */
+module.exports.getAllUsers = async function () {
+    return await users.find();
+}
+
+/**
+ * Deletes user from the database by ID
+ * @param {string} userID user's Discord snowflake ID
+ */
+module.exports.deleteUser = async function (userID) {
+    await users.findByIdAndDelete(userID);
+}
+
+/**
+ * Get user document count
+ * @returns count of all user documents
+ */
+module.exports.getUserCount = async function () {
+    return await users.countDocuments();
 }
 
 /**
@@ -51,25 +72,4 @@ module.exports.getTopTenTokens = async function () {
         .find()
         .sort({ "inventory.tokens": -1 })
         .limit(10);
-}
-
-/**
- * Get all users that exist in database
- * @returns list of all users
- */
-module.exports.getAllUsers = async function () {
-    return await users.find();
-}
-
-/**
- * Name of corresponding MongoDB collection
- */
-module.exports.collectionName = users.collection.collectionName;
-
-/**
- * Deletes user from the database by ID
- * @param {string} userID user's Discord snowflake ID
- */
-module.exports.deleteUser = async function (userID) {
-    await users.findByIdAndDelete(userID);
 }
