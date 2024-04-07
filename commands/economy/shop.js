@@ -56,5 +56,3 @@ module.exports.execute = async function (interaction) {
 
     return { embeds: [shopMenuEmbed] };
 }
-
-module.exports.options = []

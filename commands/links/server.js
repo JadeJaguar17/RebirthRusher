@@ -9,5 +9,3 @@ module.exports.execute = async function () {
         + `Whatever the reason, you're always welcome to our support server!\n`
         + `${server}`;
 }
-
-module.exports.options = []

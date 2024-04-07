@@ -129,5 +129,3 @@ module.exports.execute = async function (interaction, pageNum = 1) {
         ]
     };
 }
-
-module.exports.options = []

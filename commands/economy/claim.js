@@ -29,5 +29,3 @@ module.exports.execute = async function (interaction) {
     await user.save();
     return `You claimed your gift of **${bot.eventReward}** ${token}`;
 }
-
-module.exports.options = []

@@ -40,5 +40,3 @@ module.exports.execute = async function (interaction) {
     return welcomeMessage
         + `${interaction.member.user.avatar ? "" : defaultWarning}`;
 }
-
-module.exports.options = []

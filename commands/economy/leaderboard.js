@@ -31,8 +31,6 @@ module.exports.execute = async function () {
     return { embeds: [leaderboardEmbed] };
 }
 
-module.exports.options = []
-
 // add commas to number string
 function addCommas(string) {
     return string.replace(/\B(?=(\d{3})+(?!\d))/g, ",");

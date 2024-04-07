@@ -51,5 +51,3 @@ module.exports.execute = async function (interaction) {
 
     return { embeds: [inventoryEmbed] };
 }
-
-module.exports.options = []

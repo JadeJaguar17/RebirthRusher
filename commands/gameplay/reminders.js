@@ -60,8 +60,6 @@ module.exports.execute = async function (interaction) {
     return { embeds: [setEmbed] };
 }
 
-module.exports.options = []
-
 function isTimer(user, settingName) {
     let timerExists = false;
     ["kits", "games", "abilities", "boosters"].forEach(category => {

@@ -35,5 +35,3 @@ module.exports.execute = async function (interaction) {
         ]
     };
 }
-
-module.exports.options = []

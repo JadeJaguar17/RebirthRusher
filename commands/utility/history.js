@@ -39,5 +39,3 @@ module.exports.execute = async function () {
 
     return { embeds: [historyEmbed] };
 }
-
-module.exports.options = []

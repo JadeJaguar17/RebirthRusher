@@ -22,5 +22,3 @@ module.exports.execute = async function (interaction) {
 
     return { embeds: [votedmEmbed] };
 }
-
-module.exports.options = []
