@@ -167,13 +167,11 @@ class RebirthRusher extends Client {
             if (commandPath.includes("/")) {
                 const command = require(`../commands/${commandPath}.js`);
 
-                if (command.options) {
-                    const category = commandPath.split("/")[0];
-                    await this.createApplicationCommand(
-                        command,
-                        category === "dev"
-                    );
-                }
+                const category = commandPath.split("/")[0];
+                await this.createApplicationCommand(
+                    command,
+                    category === "dev"
+                );
             }
 
             // whole subdirectory
@@ -182,12 +180,10 @@ class RebirthRusher extends Client {
                 for (const file of subfolder) {
                     const command = require(`../commands/${commandPath}/${file}`);
 
-                    if (command.options) {
-                        await this.createApplicationCommand(
-                            command,
-                            commandPath === "dev"
-                        );
-                    }
+                    await this.createApplicationCommand(
+                        command,
+                        commandPath === "dev"
+                    );
                 }
             }
         }
@@ -199,14 +195,14 @@ class RebirthRusher extends Client {
             await this.createGuildCommand(devServer, {
                 name: commandConfig.name,
                 description: commandConfig.description,
-                options: commandConfig.options
+                options: commandConfig.options || []
             }, 1);
         }
         else {
             await this.createCommand({
                 name: commandConfig.name,
                 description: commandConfig.description,
-                options: commandConfig.options
+                options: commandConfig.options || []
             }, 1);
         }
 
