@@ -52,170 +52,170 @@ const defaults = {
     "rbday": "#E74C3C"
 };
 
-module.exports = {
-    name: "graph",
-    description: "Graphs rebirth and prestige count",
-    syntax: "`/graph`",
-    aliases: ["g"],
-    needsAccount: true,
-    execute: async function (interaction) {
-        const identifier = (interaction.data.options?.[0]?.value) || interaction.member.user.id;
+module.exports.name = "graph"
+module.exports.description = "Graphs rebirth and prestige count"
+module.exports.syntax = "`/graph`"
+module.exports.aliases = ["g"]
+module.exports.needsAccount = true
 
-        // try to find the corresponding Discord User
-        let discordUser = undefined;
-        try {
-            discordUser = await bot.users.get(identifier)
-                || bot.users.find(u => identifier === u.username)
-                || bot.users.find(u => identifier === `${u.username}#${u.discriminator}`)
-                || bot.users.find(u => identifier === u.username)
-                || await bot.getRESTUser(identifier);
+module.exports.execute = async function (interaction) {
+    const identifier = (interaction.data.options?.[0]?.value) || interaction.member.user.id;
 
-            // if (discordUser && !bot.users.find(u => discordUser.id === u.id)) {
-            //     bot.users.add(discordUser);
-            // }
-        } catch (error) { }
+    // try to find the corresponding Discord User
+    let discordUser = undefined;
+    try {
+        discordUser = await bot.users.get(identifier)
+            || bot.users.find(u => identifier === u.username)
+            || bot.users.find(u => identifier === `${u.username}#${u.discriminator}`)
+            || bot.users.find(u => identifier === u.username)
+            || await bot.getRESTUser(identifier);
 
-        // validate graph data
-        const user = discordUser && await UserDB.getUserById(discordUser.id);
-        if (!user) {
-            return "Graph was not found for this user";
-        } else if (
-            user.settings.isPrivate
-            && user._id !== interaction.member.user.id
-            && interaction.member.user.id !== dev
-        ) {
-            return "User has set their graph to private";
-        }
+        // if (discordUser && !bot.users.find(u => discordUser.id === u.id)) {
+        //     bot.users.add(discordUser);
+        // }
+    } catch (error) { }
 
-        // calculate some data to build the graph
-        const tag = discordUser.username
-        const maxTick = Math.ceil(Math.max(
-            Math.max(...user.graph.tracker.rebirths),
-            Math.max(...user.graph.tracker.rbDay)) / 5
-        ) * 5;
-        const theme = themes[user.settings.theme];
+    // validate graph data
+    const user = discordUser && await UserDB.getUserById(discordUser.id);
+    if (!user) {
+        return "Graph was not found for this user";
+    } else if (
+        user.settings.isPrivate
+        && user._id !== interaction.member.user.id
+        && interaction.member.user.id !== dev
+    ) {
+        return "User has set their graph to private";
+    }
 
-        const dateLabels = [];
-        for (let i = 0; i < user.graph.tracker.dates.length; i++) {
-            let date = user.graph.tracker.dates[i].split("/");
+    // calculate some data to build the graph
+    const tag = discordUser.username
+    const maxTick = Math.ceil(Math.max(
+        Math.max(...user.graph.tracker.rebirths),
+        Math.max(...user.graph.tracker.rbDay)) / 5
+    ) * 5;
+    const theme = themes[user.settings.theme];
 
-            dateLabels.push(`${date[0]}/${date[1]}`);
-        }
+    const dateLabels = [];
+    for (let i = 0; i < user.graph.tracker.dates.length; i++) {
+        let date = user.graph.tracker.dates[i].split("/");
 
-        // generate the graph
-        const graph = theme.canvas.renderToBufferSync({
-            type: "bar",
-            data: {
-                labels: dateLabels,
-                datasets: [{
-                    type: "line",
-                    label: "Rb/day",
-                    data: user.graph.tracker.rbDay,
-                    borderColor: user.settings.rbDayColor || defaults.rbday,
-                    fill: false,
-                    borderWidth: 2,
-                    lineTension: 0,
-                    pointBackgroundColor: user.settings.rbDayColor || defaults.rbday,
-                    spanGaps: true,
-                    pointRadius: 5
-                },
-                {
-                    label: "Prestiges",
-                    data: user.graph.tracker.prestiges,
-                    backgroundColor: user.settings.prColor || defaults.pr,
-                    barPercentage: 0.85
-                },
-                {
-                    label: "Rebirths",
-                    data: user.graph.tracker.rebirths,
-                    backgroundColor: user.settings.rbColor || defaults.rb,
-                    barPercentage: 0.85
-                }]
-            },
-            options: {
-                pointRadius: 0,
+        dateLabels.push(`${date[0]}/${date[1]}`);
+    }
+
+    // generate the graph
+    const graph = theme.canvas.renderToBufferSync({
+        type: "bar",
+        data: {
+            labels: dateLabels,
+            datasets: [{
+                type: "line",
+                label: "Rb/day",
+                data: user.graph.tracker.rbDay,
+                borderColor: user.settings.rbDayColor || defaults.rbday,
                 fill: false,
-                title: {
-                    display: true,
-                    text: tag,
-                    fontSize: 32,
-                    fontColor: theme.labels
-                },
-                legend: {
-                    labels: {
-                        fontColor: theme.labels,
-                        fontSize: 15
-                    }
-                },
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            stepSize: 5,
-                            min: 0,
-                            max: maxTick,
-                            fontColor: theme.labels
-                        },
-                        gridLines: {
-                            color: theme.gridLines,
-                            zeroLineColor: theme.gridLines
-                        },
-                        stacked: false,
-                        position: "left"
-                    },
-                    {
-                        ticks: {
-                            beginAtZero: true,
-                            stepSize: 5,
-                            min: 0,
-                            max: maxTick,
-                            fontColor: theme.labels
-                        },
-                        gridLines: {
-                            color: theme.gridLines,
-                            zeroLineColor: theme.gridLines
-                        },
-                        stacked: false,
-                        position: "right"
-                    }],
-                    xAxes: [{
-                        stacked: true,
-                        ticks: {
-                            fontColor: theme.labels
-                        },
-                        gridLines: {
-                            color: theme.background,
-                            zeroLineColor: theme.gridLines
-                        }
-                    }],
+                borderWidth: 2,
+                lineTension: 0,
+                pointBackgroundColor: user.settings.rbDayColor || defaults.rbday,
+                spanGaps: true,
+                pointRadius: 5
+            },
+            {
+                label: "Prestiges",
+                data: user.graph.tracker.prestiges,
+                backgroundColor: user.settings.prColor || defaults.pr,
+                barPercentage: 0.85
+            },
+            {
+                label: "Rebirths",
+                data: user.graph.tracker.rebirths,
+                backgroundColor: user.settings.rbColor || defaults.rb,
+                barPercentage: 0.85
+            }]
+        },
+        options: {
+            pointRadius: 0,
+            fill: false,
+            title: {
+                display: true,
+                text: tag,
+                fontSize: 32,
+                fontColor: theme.labels
+            },
+            legend: {
+                labels: {
+                    fontColor: theme.labels,
+                    fontSize: 15
                 }
             },
-        });
-
-        // send personal bests only if the graph belongs to the user
-        const personalBests = `**Highest stats for one day**\n`
-            + `- Rebirths: ${user.graph.personalBests.rb}\n`
-            + `- Prestiges: ${user.graph.personalBests.pr}\n`
-            + `- Rb/day: ${user.graph.personalBests.rbDay}`;
-
-        return {
-            content: interaction.member.user.id == user._id ? personalBests : "",
-            file: {
-                file: graph,
-                name: "graph.png"
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        stepSize: 5,
+                        min: 0,
+                        max: maxTick,
+                        fontColor: theme.labels
+                    },
+                    gridLines: {
+                        color: theme.gridLines,
+                        zeroLineColor: theme.gridLines
+                    },
+                    stacked: false,
+                    position: "left"
+                },
+                {
+                    ticks: {
+                        beginAtZero: true,
+                        stepSize: 5,
+                        min: 0,
+                        max: maxTick,
+                        fontColor: theme.labels
+                    },
+                    gridLines: {
+                        color: theme.gridLines,
+                        zeroLineColor: theme.gridLines
+                    },
+                    stacked: false,
+                    position: "right"
+                }],
+                xAxes: [{
+                    stacked: true,
+                    ticks: {
+                        fontColor: theme.labels
+                    },
+                    gridLines: {
+                        color: theme.background,
+                        zeroLineColor: theme.gridLines
+                    }
+                }],
             }
-        };
-    },
-    options: [
-        {
-            name: "user",
-            description: "user to check graph (via mention or ID)",
-            type: 6,
         },
-        {
-            name: "tag",
-            description: "user to check graph (via tag)",
-            type: 3
+    });
+
+    // send personal bests only if the graph belongs to the user
+    const personalBests = `**Highest stats for one day**\n`
+        + `- Rebirths: ${user.graph.personalBests.rb}\n`
+        + `- Prestiges: ${user.graph.personalBests.pr}\n`
+        + `- Rb/day: ${user.graph.personalBests.rbDay}`;
+
+    return {
+        content: interaction.member.user.id == user._id ? personalBests : "",
+        file: {
+            file: graph,
+            name: "graph.png"
         }
-    ]
+    };
 }
+
+module.exports.options = [
+    {
+        name: "user",
+        description: "user to check graph (via mention or ID)",
+        type: 6,
+    },
+    {
+        name: "tag",
+        description: "user to check graph (via tag)",
+        type: 3
+    }
+]

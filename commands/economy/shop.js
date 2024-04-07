@@ -35,26 +35,24 @@ shopMenuEmbed
         { name: "Server Perks", value: serverPerks }
     );
 
-module.exports = {
-    name: "shop",
-    description: "Displays the shop",
-    syntax: "`/shop`",
-    needsAccount: true,
-    execute: async function (interaction) {
-        const user = await UserDB.getUserById(interaction.member.user.id);
+module.exports.name = "shop"
+module.exports.description = "Displays the shop"
+module.exports.syntax = "`/shop`"
+module.exports.needsAccount = true
 
-        shopMenuEmbed
-            .setAuthor(bot.user.username, bot.user.avatarURL)
-            .setDescription(
-                `You currently have **${user.inventory.tokens}** ${token}\n`
-                + `Want more tokens? \`/donate\` or \`/vote\` to get some more!\n\n`
-                + `Buy an item with \`/buy [item id]\`. You will be asked to `
-                + `confirm the purchase\n`
-                + `Check your \`/inventory\` for all the things you've bought `
-                + `so far`
-            );
+module.exports.execute = async function (interaction) {
+    const user = await UserDB.getUserById(interaction.member.user.id);
 
-        return { embeds: [shopMenuEmbed] };
-    },
-    options: []
+    shopMenuEmbed
+        .setAuthor(bot.user.username, bot.user.avatarURL)
+        .setDescription(
+            `You currently have **${user.inventory.tokens}** ${token}\n`
+            + `Want more tokens? \`/donate\` or \`/vote\` to get some more!\n\n`
+            + `Buy an item with \`/buy [item id]\`. You will be asked to `
+            + `confirm the purchase\n`
+            + `Check your \`/inventory\` for all the things you've bought `
+            + `so far`
+        );
+
+    return { embeds: [shopMenuEmbed] };
 }
