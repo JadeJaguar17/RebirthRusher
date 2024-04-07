@@ -19,5 +19,3 @@ module.exports.execute = async function () {
 
     return { embeds: [statEmbed] };
 }
-
-// module.exports.options = []
