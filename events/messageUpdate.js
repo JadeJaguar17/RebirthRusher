@@ -29,10 +29,16 @@ module.exports = async (bot, message) => {
 
                         return bot.send(message, petEmbed);
                     }
-                } else if (embed.fields?.[2]?.name === "**Stats**") {
-                    const embedPr = Number(embed.fields[2].value.trim().split("\n")[0].replace("**Prestige:**", "").trim().replace(/,/g, ''));
-                    const embedRb = Number(embed.fields[2].value.trim().split("\n")[1].replace("**Rebirth:**", "").trim().replace(/,/g, ''));
-                    const embedRbDay = Number(embed.fields[2].value.trim().split("\n")[2].replace("**AVG rebirths/day**:", "").trim().replace(/,/g, ''));
+                } else if (
+                    message.interaction.name === "play"
+                    && !embed.description.startsWith("**Event**")
+                    && embed.description.includes("Backpack full")
+                ) {
+                    const field = embed.fields?.find(f => f.name === "**Stats**");
+
+                    const embedPr = Number(field.value.trim().split("\n")[0].replace("**Prestige:**", "").trim().replace(/,/g, ''));
+                    const embedRb = Number(field.value.trim().split("\n")[1].replace("**Rebirth:**", "").trim().replace(/,/g, ''));
+                    const embedRbDay = Number(field.value.trim().split("\n")[2].replace("**AVG rebirths/day**:", "").trim().replace(/,/g, ''));
 
                     return await bot.scanners.get("profileScan").execute(userID, embedPr, embedRb, embedRbDay);
                 }
