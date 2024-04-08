@@ -14,9 +14,11 @@ module.exports = async (bot, message) => {
 
                     const embed = message.embeds[0];
 
+                    // pet embed
                     if (embed.title === "Pets") {
                         await bot.scanners.get("petScan").execute(embed, userID);
 
+                        // autopet feature
                         const user = await UserDB.getUserById(userID);
                         if (user.settings.autoPet && await bot.users.get(userID)) {
                             const petEmbed = await bot.commands.get("pets").execute({
@@ -28,7 +30,10 @@ module.exports = async (bot, message) => {
 
                             return bot.send(message, petEmbed);
                         }
-                    } else if (embed.fields?.[0]?.name === "**General**") {
+                    }
+
+                    // profile stats
+                    else if (embed.fields?.[0]?.name === "**General**") {
                         const embedPr = Number(embed.fields[0].value.trim().split("\n")[3].replace("**Prestige:**", "").trim().replace(/,/g, ''));
                         const embedRb = Number(embed.fields[1].value.trim().split("\n")[1].replace("**Rebirth:**", "").trim().replace(/,/g, ''));
                         const embedRbDay = embed.fields[1].value.trim().split("\n")[4]
@@ -36,15 +41,26 @@ module.exports = async (bot, message) => {
                             : Number(embed.fields[1].value.trim().split("\n")[3].replace("**Rebirths/day:** ", "").trim().replace(/,/g, '')) || 0;
 
                         return await bot.scanners.get("profileScan").execute(userID, embedPr, embedRb, embedRbDay);
-                    } else if (embed.title === "Claimall" && embed.description) {
+                    }
+
+                    // claimall resets timers for claimed kits
+                    else if (embed.title === "Claimall" && embed.description) {
                         return await bot.scanners.get("claimall").execute(message, userID);
-                    } else if (embed.title === "Cooldowns") {
+                    }
+
+                    // cooldowns sets any missing timers
+                    else if (embed.title === "Cooldowns") {
                         return await bot.scanners.get("kits").execute(message, userID);
-                    } else if (embed.title === "Fish") {
+                    }
+
+                    // Idle Miner games and abilities
+                    else if (embed.title === "Fish") {
                         return await bot.timers.get("fish").execute(message, userID);
-                    } else if (embed.title === "Hunt") {
+                    }
+                    else if (embed.title === "Hunt") {
                         return await bot.timers.get("hunt").execute(message, userID);
-                    } else if (embed.title === "Farm") {
+                    }
+                    else if (embed.title === "Farm") {
                         let time;
                         message.embeds[0].description.split("\n").forEach(line => {
                             if (line.startsWith("Next crop ready")) {
@@ -62,9 +78,13 @@ module.exports = async (bot, message) => {
                         }
 
                         return await bot.timers.get("harvest").execute(message, userID, time);
-                    } else if (embed.title?.startsWith("Earthquake broke")) {
+                    }
+                    else if (embed.title?.startsWith("Earthquake broke")) {
                         return await bot.timers.get("earthquake").execute(message, userID);
-                    } else if (embed.description?.startsWith("You used the following booster")) {
+                    }
+
+                    // booster timers
+                    else if (embed.description?.startsWith("You used the following booster")) {
                         for (const field of embed.fields) {
                             if (field.name === "**Personal**") {
                                 const activeBoosters = embed.fields[0].value.split("\n");
@@ -83,13 +103,22 @@ module.exports = async (bot, message) => {
                                 return;
                             }
                         }
-                    } else if (embed.fields?.[0]?.name === "**Backpack**") {
+                    }
+
+                    // backpack timer
+                    else if (embed.fields?.[0]?.name === "**Backpack**") {
                         const remainingTime = bot.stringToTime(message.embeds[0].fields[0].value.split("\n")[4].replace("Full in ", ""));
 
                         if (remainingTime) return await bot.timers.get("backpack").execute(message, userID, remainingTime);
-                    } else if (embed.title?.startsWith("You are now prestige")) {
+                    }
+
+                    // prestiging resets timers
+                    else if (embed.title?.startsWith("You are now prestige")) {
                         return await bot.timers.get("prestige").execute(userID);
-                    } else if (embed.fields?.[2]?.name === "**Stats**") {
+                    }
+
+                    // /play for the first time
+                    else if (embed.fields?.[2]?.name === "**Stats**") {
                         const embedPr = Number(embed.fields[2].value.trim().split("\n")[0].replace("**Prestige:**", "").trim().replace(/,/g, ''));
                         const embedRb = Number(embed.fields[2].value.trim().split("\n")[1].replace("**Rebirth:**", "").trim().replace(/,/g, ''));
                         const embedRbDay = Number(embed.fields[2].value.trim().split("\n")[2].replace("**AVG rebirths/day**:", "").trim().replace(/,/g, ''));
@@ -98,6 +127,7 @@ module.exports = async (bot, message) => {
                     }
                 }
 
+                // normal text messages
                 if (message.content?.startsWith("**")) {
                     const username = message.content.split("**")[1];
                     const user = await bot.users.find(u => u.username === username);
@@ -105,20 +135,25 @@ module.exports = async (bot, message) => {
                     if (user && !isBanned(user.id) && await UserDB.checkUserExists(user.id)) {
                         if (message.content.includes("You didn't get any pet")) {
                             return await bot.timers.get("hunt").execute(message, user.id);
-                        } else if (message.content.includes("Activated Wings")) {
+                        }
+                        else if (message.content.includes("Activated Wings")) {
                             return await bot.timers.get("wings").execute(message, user.id);
-                        } else if (message.content.includes("Activated Rage")) {
+                        }
+                        else if (message.content.includes("Activated Rage")) {
                             return await bot.timers.get("rage").execute(message, user.id);
-                        } else if (message.content.includes("You claimed your")) {
+                        }
+                        else if (message.content.includes("You claimed your")) {
                             const kit = await bot.timers.get(message.content.split("**")[3].toLowerCase());
 
                             return kit && await kit.execute(message, user.id);
-                        } else if (message.content.includes("Your next crop will be ready in")) {
+                        }
+                        else if (message.content.includes("Your next crop will be ready in")) {
                             const time = bot.stringToTime(message.content.split("\n")[1].split(" ")[7]);
 
                             return await bot.timers.get("harvest").execute(message, user.id, time);
                         }
 
+                        // backpack timer based on the 'BP' stat in messages
                         const lines = message.content.split("\n");
                         if (lines[lines.length - 1].startsWith("BP:")) {
                             const time = bot.stringToTime(lines[lines.length - 1].replace("BP:", ""));

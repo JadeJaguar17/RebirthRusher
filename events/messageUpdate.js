@@ -4,7 +4,6 @@ const fs = require("fs");
 module.exports = async (bot, message) => {
     try {
         if (message.author?.id === "518759221098053634") {
-            // embed responses
             if (message.embeds[0]?.author) {
                 const userID = message.embeds[0].author?.icon_url?.replace("https://cdn.discordapp.com/avatars/", "")
                     .split("/")[0].trim();
@@ -13,6 +12,7 @@ module.exports = async (bot, message) => {
 
                 const embed = message.embeds[0];
 
+                // pets embed
                 if (embed.title === "Pets") {
                     await bot.scanners.get("petScan").execute(embed, userID);
 
@@ -29,7 +29,10 @@ module.exports = async (bot, message) => {
 
                         return bot.send(message, petEmbed);
                     }
-                } else if (
+                }
+
+                // normal /play embed
+                else if (
                     message.interaction.name === "play"
                     && !embed.description.startsWith("**Event**")
                     && embed.description.includes("Backpack full")
