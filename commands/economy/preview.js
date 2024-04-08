@@ -2,47 +2,6 @@ const UserDB = require("../../database/controllers/userController");
 const shop = require("../../config/shop.json");
 const Canvas = require('chartjs-node-canvas');
 
-const themes = [
-    {
-        background: "#36393F",
-        labels: "#FFFFFF",
-        gridLines: "#72767D",
-        canvas: new Canvas.ChartJSNodeCanvas({
-            width: 800, height: 600, chartCallback: (ChartJS) => {
-                ChartJS.plugins.register({
-                    beforeDraw: (chartInstance) => {
-                        chartInstance.chart.ctx.fillStyle = "#36393F";
-                        chartInstance.chart.ctx.fillRect(
-                            0, 0,
-                            chartInstance.chart.width,
-                            chartInstance.chart.height
-                        );
-                    },
-                })
-            }
-        })
-    },
-    {
-        background: "#FFFFFF",
-        labels: "#060607",
-        gridLines: "#81868F",
-        canvas: new Canvas.ChartJSNodeCanvas({
-            width: 800, height: 600, chartCallback: (ChartJS) => {
-                ChartJS.plugins.register({
-                    beforeDraw: (chartInstance) => {
-                        chartInstance.chart.ctx.fillStyle = "#FFFFFF";
-                        chartInstance.chart.ctx.fillRect(
-                            0, 0,
-                            chartInstance.chart.width,
-                            chartInstance.chart.height
-                        );
-                    },
-                })
-            }
-        })
-    }
-];
-
 module.exports.name = "preview"
 module.exports.description = "Previews a graph color"
 module.exports.syntax = "`/preview [graph color] [category]`"
@@ -211,6 +170,46 @@ module.exports.options = [
     }
 ]
 
+const themes = [
+    {
+        background: "#36393F",
+        labels: "#FFFFFF",
+        gridLines: "#72767D",
+        canvas: new Canvas.ChartJSNodeCanvas({
+            width: 800, height: 600, chartCallback: (ChartJS) => {
+                ChartJS.plugins.register({
+                    beforeDraw: (chartInstance) => {
+                        chartInstance.chart.ctx.fillStyle = "#36393F";
+                        chartInstance.chart.ctx.fillRect(
+                            0, 0,
+                            chartInstance.chart.width,
+                            chartInstance.chart.height
+                        );
+                    },
+                })
+            }
+        })
+    },
+    {
+        background: "#FFFFFF",
+        labels: "#060607",
+        gridLines: "#81868F",
+        canvas: new Canvas.ChartJSNodeCanvas({
+            width: 800, height: 600, chartCallback: (ChartJS) => {
+                ChartJS.plugins.register({
+                    beforeDraw: (chartInstance) => {
+                        chartInstance.chart.ctx.fillStyle = "#FFFFFF";
+                        chartInstance.chart.ctx.fillRect(
+                            0, 0,
+                            chartInstance.chart.width,
+                            chartInstance.chart.height
+                        );
+                    },
+                })
+            }
+        })
+    }
+];
 
 function isHex(hex) {
     return /^#?([0-9A-F]{3}){1,2}$/i.test(hex);

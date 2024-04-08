@@ -4,6 +4,28 @@ const { RBR } = require("../../config/embedColors.json");
 const shop = require("../../config/shop.json");
 const { token } = require("../../config/emojis.json");
 
+module.exports.name = "shop"
+module.exports.description = "Displays the shop"
+module.exports.syntax = "`/shop`"
+module.exports.needsAccount = true
+
+module.exports.execute = async function (interaction) {
+    const user = await UserDB.getUserById(interaction.member.user.id);
+
+    shopMenuEmbed
+        .setAuthor(bot.user.username, bot.user.avatarURL)
+        .setDescription(
+            `You currently have **${user.inventory.tokens}** ${token}\n`
+            + `Want more tokens? \`/donate\` or \`/vote\` to get some more!\n\n`
+            + `Buy an item with \`/buy [item id]\`. You will be asked to `
+            + `confirm the purchase\n`
+            + `Check your \`/inventory\` for all the things you've bought `
+            + `so far`
+        );
+
+    return { embeds: [shopMenuEmbed] };
+}
+
 const shopMenuEmbed = new MessageEmbed()
     .setTitle("Shop")
     .setColor(RBR)
@@ -34,25 +56,3 @@ shopMenuEmbed
         { name: "Graph Specials", value: graphSpecials },
         { name: "Server Perks", value: serverPerks }
     );
-
-module.exports.name = "shop"
-module.exports.description = "Displays the shop"
-module.exports.syntax = "`/shop`"
-module.exports.needsAccount = true
-
-module.exports.execute = async function (interaction) {
-    const user = await UserDB.getUserById(interaction.member.user.id);
-
-    shopMenuEmbed
-        .setAuthor(bot.user.username, bot.user.avatarURL)
-        .setDescription(
-            `You currently have **${user.inventory.tokens}** ${token}\n`
-            + `Want more tokens? \`/donate\` or \`/vote\` to get some more!\n\n`
-            + `Buy an item with \`/buy [item id]\`. You will be asked to `
-            + `confirm the purchase\n`
-            + `Check your \`/inventory\` for all the things you've bought `
-            + `so far`
-        );
-
-    return { embeds: [shopMenuEmbed] };
-}
