@@ -37,12 +37,23 @@ module.exports = async (bot, message) => {
     }
 }
 
+/**
+ * Checks if a user is banned
+ * @param {string} userID user's Discord snowflake ID
+ * @returns Boolean whether user is banned
+ */
 function isBanned(userID) {
     const bannedUsers = JSON.parse(fs.readFileSync("./config/bannedUsers.json"));
 
     return bannedUsers.indexOf(userID) !== -1;
 }
 
+/**
+ * Handles message embeds from Idle Miner
+ * @param {Eris.Client} bot base class of RbR
+ * @param {Eris.Message} message message containing the embed to process
+ * @returns an awaitable RbR action
+ */
 async function handleEmbedMessage(bot, message) {
     const userID = message.embeds[0].author?.icon_url
         ?.replace("https://cdn.discordapp.com/avatars/", "")
@@ -221,6 +232,12 @@ async function handleEmbedMessage(bot, message) {
     }
 }
 
+/**
+ * Handles text messages from Idle Miner
+ * @param {Eris.Client} bot base class of RbR
+ * @param {Eris.Message} message text message to process
+ * @returns an awaitable RbR action
+ */
 async function handleTextMessage(bot, message) {
     const username = message.content.split("**")[1];
     const user = await bot.users.find(u => u.username === username);

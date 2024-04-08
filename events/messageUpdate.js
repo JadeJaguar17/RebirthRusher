@@ -88,6 +88,11 @@ module.exports = async (bot, message) => {
     }
 }
 
+/**
+ * Checks if a user is banned
+ * @param {string} userID user's Discord snowflake ID
+ * @returns Boolean whether user is banned
+ */
 function isBanned(userID) {
     const bannedUsers = JSON.parse(fs.readFileSync("./config/bannedUsers.json"));
 
