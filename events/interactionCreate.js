@@ -4,6 +4,10 @@ const UserDB = require("../database/controllers/userController");
 const MessageEmbed = require("../system/MessageEmbed");
 const { ERROR } = require("../config/embedColors.json");
 
+/**
+ * @param {Eris.Client} bot base class of RbR
+ * @param {Eris.Interaction} interaction Interaction object
+ */
 module.exports = async (bot, interaction) => {
     // slash commands
     if (interaction instanceof Eris.CommandInteraction) {
