@@ -22,10 +22,11 @@ module.exports = async (bot, message) => {
                     // autopet feature
                     const user = await UserDB.getUserById(userID);
                     if (user.settings.autoPet && await bot.users.get(userID)) {
-                        const petEmbed = await bot.commands.get("pets").execute({
+                        const msgData = {
                             member: { user: await bot.users.get(userID) },
                             data: { options: null }
-                        }, userID);
+                        };
+                        const petEmbed = await bot.commands.get("pets").execute(msgData, userID);
 
                         petEmbed.messageReference = { messageID: message.id };
 
