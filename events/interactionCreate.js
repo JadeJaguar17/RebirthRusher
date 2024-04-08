@@ -1,11 +1,12 @@
 const Eris = require("eris");
+const RebirthRusher = require("../system/RebirthRusher");
 const fs = require("fs");
 const UserDB = require("../database/controllers/userController");
 const MessageEmbed = require("../system/MessageEmbed");
 const { ERROR } = require("../config/embedColors.json");
 
 /**
- * @param {Eris.Client} bot base class of RbR
+ * @param {RebirthRusher} bot base class of RbR
  * @param {Eris.Interaction} interaction Interaction object
  */
 module.exports = async (bot, interaction) => {

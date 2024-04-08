@@ -1,9 +1,10 @@
 const Eris = require("eris");
+const RebirthRusher = require("../system/RebirthRusher");
 const UserDB = require("../database/controllers/userController");
 const fs = require("fs");
 
 /**
- * @param {Eris.Client} bot base class of RbR
+ * @param {RebirthRusher} bot base class of RbR
  * @param {Eris.Message} message Message that got updated
  */
 module.exports = async (bot, message) => {

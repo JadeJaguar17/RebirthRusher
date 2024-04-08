@@ -1,9 +1,10 @@
 const Eris = require("eris");
+const RebirthRusher = require("../system/RebirthRusher");
 const MessageEmbed = require("../system/MessageEmbed");
 const { ERROR2 } = require("../config/embedColors.json");
 
 /**
- * @param {Eris.Client} bot base class of RbR
+ * @param {RebirthRusher} bot base class of RbR
  * @param {Eris.Guild} guild guild that got deleted
  */
 module.exports = async (bot, guild) => {
