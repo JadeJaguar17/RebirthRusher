@@ -75,10 +75,10 @@ module.exports = async (bot, message) => {
         }
 
         return;
-    }
+
     } catch (error) {
-    await bot.error("MessageUpdate", error, message);
-}
+        await bot.error("MessageUpdate", error, message);
+    }
 }
 
 function isBanned(userID) {
