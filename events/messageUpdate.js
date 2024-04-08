@@ -5,8 +5,10 @@ module.exports = async (bot, message) => {
     try {
         if (message.author?.id === "518759221098053634") {
             if (message.embeds[0]?.author) {
-                const userID = message.embeds[0].author?.icon_url?.replace("https://cdn.discordapp.com/avatars/", "")
-                    .split("/")[0].trim();
+                const userID = message.embeds[0].author?.icon_url
+                    ?.replace("https://cdn.discordapp.com/avatars/", "")
+                    .split("/")[0]
+                    .trim();
 
                 if (isBanned(userID) || !(await UserDB.checkUserExists(userID))) return;
 
@@ -23,7 +25,11 @@ module.exports = async (bot, message) => {
                             data: { options: null }
                         }, userID);
 
-                        petEmbed.embeds[0].setTitle(null).setDescription(null).setThumbnail(null).setAuthor(null, null);
+                        petEmbed.embeds[0]
+                            .setTitle(null)
+                            .setDescription(null)
+                            .setThumbnail(null)
+                            .setAuthor(null, null);
                         petEmbed.embeds[0].fields = [petEmbed.embeds[0].fields[5]];
                         petEmbed.messageReference = { messageID: message.id };
 
@@ -39,19 +45,40 @@ module.exports = async (bot, message) => {
                 ) {
                     const field = embed.fields?.find(f => f.name === "**Stats**");
 
-                    const embedPr = Number(field.value.trim().split("\n")[0].replace("**Prestige:**", "").trim().replace(/,/g, ''));
-                    const embedRb = Number(field.value.trim().split("\n")[1].replace("**Rebirth:**", "").trim().replace(/,/g, ''));
-                    const embedRbDay = Number(field.value.trim().split("\n")[2].replace("**AVG rebirths/day**:", "").trim().replace(/,/g, ''));
+                    const embedPr = field.value
+                        .trim()
+                        .split("\n")[0]
+                        .replace("**Prestige:**", "")
+                        .trim()
+                        .replace(/,/g, '');
+                    const embedRb = field.value
+                        .trim()
+                        .split("\n")[1]
+                        .replace("**Rebirth:**", "")
+                        .trim()
+                        .replace(/,/g, '');
+                    const embedRbDay = field.value
+                        .trim()
+                        .split("\n")[2]
+                        .replace("**AVG rebirths/day**:", "")
+                        .trim()
+                        .replace(/,/g, '');
 
-                    return await bot.scanners.get("profileScan").execute(userID, embedPr, embedRb, embedRbDay);
+                    return await bot.scanners.get("profileScan").execute(
+                        userID,
+                        Number(embedPr),
+                        Number(embedRb),
+                        Number(embedRbDay)
+                    );
                 }
             }
-
-            return;
         }
-    } catch (error) {
-        await bot.error("MessageUpdate", error, message);
+
+        return;
     }
+    } catch (error) {
+    await bot.error("MessageUpdate", error, message);
+}
 }
 
 function isBanned(userID) {

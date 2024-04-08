@@ -7,8 +7,10 @@ module.exports = async (bot, message) => {
             if (message.author.id === "518759221098053634") {
                 // embed responses
                 if (message.embeds[0]?.author) {
-                    const userID = message.embeds[0].author?.icon_url?.replace("https://cdn.discordapp.com/avatars/", "")
-                        .split("/")[0].trim();
+                    const userID = message.embeds[0].author?.icon_url
+                        ?.replace("https://cdn.discordapp.com/avatars/", "")
+                        .split("/")[0]
+                        .trim();
 
                     if (isBanned(userID) || !(await UserDB.checkUserExists(userID))) return;
 
@@ -34,13 +36,38 @@ module.exports = async (bot, message) => {
 
                     // profile stats
                     else if (embed.fields?.[0]?.name === "**General**") {
-                        const embedPr = Number(embed.fields[0].value.trim().split("\n")[3].replace("**Prestige:**", "").trim().replace(/,/g, ''));
-                        const embedRb = Number(embed.fields[1].value.trim().split("\n")[1].replace("**Rebirth:**", "").trim().replace(/,/g, ''));
+                        const embedPr = embed.fields[0].value
+                            .trim()
+                            .split("\n")[3]
+                            .replace("**Prestige:**", "")
+                            .trim()
+                            .replace(/,/g, '');
+                        const embedRb = embed.fields[1].value
+                            .trim()
+                            .split("\n")[1]
+                            .replace("**Rebirth:**", "")
+                            .trim()
+                            .replace(/,/g, '');
                         const embedRbDay = embed.fields[1].value.trim().split("\n")[4]
-                            ? Number(embed.fields[1].value.trim().split("\n")[4].replace("**Rebirths/day:** ", "").trim().replace(/,/g, ''))
-                            : Number(embed.fields[1].value.trim().split("\n")[3].replace("**Rebirths/day:** ", "").trim().replace(/,/g, '')) || 0;
+                            ? embed.fields[1].value
+                                .trim()
+                                .split("\n")[4]
+                                .replace("**Rebirths/day:** ", "")
+                                .trim()
+                                .replace(/,/g, '')
+                            : embed.fields[1].value
+                                .trim()
+                                .split("\n")[3]
+                                .replace("**Rebirths/day:** ", "")
+                                .trim()
+                                .replace(/,/g, '') || 0;
 
-                        return await bot.scanners.get("profileScan").execute(userID, embedPr, embedRb, embedRbDay);
+                        return await bot.scanners.get("profileScan").execute(
+                            userID,
+                            Number(embedPr),
+                            Number(embedRb),
+                            Number(embedRbDay)
+                        );
                     }
 
                     // claimall resets timers for claimed kits
@@ -92,10 +119,19 @@ module.exports = async (bot, message) => {
                                 for (const activeBooster of activeBoosters) {
                                     if (activeBooster.startsWith("<:")) {
                                         const boosterID = activeBooster.split(" ")[0].trim();
-                                        const boosterTime = bot.stringToTime(activeBooster.split(" ")[3].trim());
+                                        const boosterTime = bot.stringToTime(
+                                            activeBooster
+                                                .split(" ")[3]
+                                                .trim()
+                                        );
 
                                         if (boosterTime < 86400) { // 24 hours
-                                            await bot.timers.get("booster").execute(message, userID, boosterID, boosterTime);
+                                            await bot.timers.get("booster").execute(
+                                                message,
+                                                userID,
+                                                boosterID,
+                                                boosterTime
+                                            );
                                         }
                                     }
                                 }
@@ -119,11 +155,31 @@ module.exports = async (bot, message) => {
 
                     // /play for the first time
                     else if (embed.fields?.[2]?.name === "**Stats**") {
-                        const embedPr = Number(embed.fields[2].value.trim().split("\n")[0].replace("**Prestige:**", "").trim().replace(/,/g, ''));
-                        const embedRb = Number(embed.fields[2].value.trim().split("\n")[1].replace("**Rebirth:**", "").trim().replace(/,/g, ''));
-                        const embedRbDay = Number(embed.fields[2].value.trim().split("\n")[2].replace("**AVG rebirths/day**:", "").trim().replace(/,/g, ''));
+                        const embedPr = embed.fields[2].value
+                            .trim()
+                            .split("\n")[0]
+                            .replace("**Prestige:**", "")
+                            .trim()
+                            .replace(/,/g, '');
+                        const embedRb = embed.fields[2].value
+                            .trim()
+                            .split("\n")[1]
+                            .replace("**Rebirth:**", "")
+                            .trim()
+                            .replace(/,/g, '');
+                        const embedRbDay = embed.fields[2].value
+                            .trim()
+                            .split("\n")[2]
+                            .replace("**AVG rebirths/day**:", "")
+                            .trim()
+                            .replace(/,/g, '');
 
-                        return await bot.scanners.get("profileScan").execute(userID, embedPr, embedRb, embedRbDay);
+                        return await bot.scanners.get("profileScan").execute(
+                            userID,
+                            Number(embedPr),
+                            Number(embedRb),
+                            Number(embedRbDay)
+                        );
                     }
                 }
 
