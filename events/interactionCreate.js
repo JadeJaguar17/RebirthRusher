@@ -12,16 +12,19 @@ const { ERROR } = require("../config/embedColors.json");
 module.exports = async (bot, interaction) => {
     // slash commands
     if (interaction instanceof Eris.CommandInteraction) {
+        // no commands in DM's
         if (!interaction.guildID) {
             return interaction.createMessage("Sorry, my commands aren't available in DM's");
         }
 
+        // ignore banned users
         const bannedUsers = JSON.parse(fs.readFileSync("./config/bannedUsers.json"));
         if (bannedUsers.indexOf(interaction.member.user.id) !== -1) {
             interaction.acknowledge();
             return;
         }
 
+        // handle commands
         const command = bot.commands.get(interaction.data.name);
 
         if (!(UserDB.checkUserExists(interaction.member.user.id)) && command?.needsAccount) {
@@ -31,6 +34,7 @@ module.exports = async (bot, interaction) => {
         if (command) {
             const result = await bot.commands.get(interaction.data.name).execute(interaction);
 
+            // 'delete' and 'resetstats' have a 15s expiry time
             if (command.name === "delete") {
                 setTimeout(() => {
                     interaction.editOriginalMessage({ content: "Time's up, your data deletion was cancelled", components: [] })
@@ -45,18 +49,20 @@ module.exports = async (bot, interaction) => {
             return interaction.createMessage(result, result.file);
         }
 
+        // context menu graph
         else if (interaction.data.name === "Fetch Graph") {
             interaction.data.options = [{ value: interaction.data.target_id }];
             const graph = await bot.commands.get("graph").execute(interaction);
             return interaction.createMessage(graph, graph.file);
         }
 
+        // unhandled interaction at this point
         else {
             bot.error("interactionCreate.js", new TypeError(`Invalid command: ${interaction.data.name}`));
         }
     }
 
-    // buttons
+    // handle buttons
     else if (interaction instanceof Eris.ComponentInteraction) {
         const args = interaction.data.custom_id.split("-");
         const userID = args[0];
