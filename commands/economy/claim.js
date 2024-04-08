@@ -1,5 +1,5 @@
 const UserDB = require("../../database/controllers/userController");
-const { rbrServer } = require("../../config/discordIds.json");
+const { RBR_SERVER_ID } = require("../../config/discordIds.json");
 const { token } = require("../../config/emojis.json");
 
 module.exports.name = "claim"
@@ -14,7 +14,7 @@ module.exports.execute = async function (interaction) {
         return `There's no event going on right now`;
     }
 
-    if (interaction.channel.guild.id !== rbrServer) {
+    if (interaction.channel.guild.id !== RBR_SERVER_ID) {
         return `Gifts can only be claimed in the support server!\n`
             + `https://discord.gg/QmrEbsyKYB`;
     }

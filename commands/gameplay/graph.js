@@ -1,7 +1,7 @@
 const UserDB = require("../../database/controllers/userController");
 const Canvas = require('chartjs-node-canvas');
 const { RBR, DEV } = require("../../config/embedColors.json");
-const { dev } = require("../../config/discordIds.json");
+const { DEV_ID } = require("../../config/discordIds.json");
 
 module.exports.name = "graph"
 module.exports.description = "Graphs rebirth and prestige count"
@@ -33,7 +33,7 @@ module.exports.execute = async function (interaction) {
     } else if (
         user.settings.isPrivate
         && user._id !== interaction.member.user.id
-        && interaction.member.user.id !== dev
+        && interaction.member.user.id !== DEV_ID
     ) {
         return "User has set their graph to private";
     }

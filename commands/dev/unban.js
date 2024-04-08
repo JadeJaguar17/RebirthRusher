@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { dev } = require("../../config/discordIds.json");
+const { DEV_ID } = require("../../config/discordIds.json");
 
 module.exports.name = "unban"
 module.exports.description = "Unbans user from the bot"
@@ -7,7 +7,7 @@ module.exports.syntax = "`/unban`"
 module.exports.hidden = true
 
 module.exports.execute = async function (interaction) {
-    if (interaction.member.user.id === dev) return;
+    if (interaction.member.user.id === DEV_ID) return;
 
     const userID = interaction.data.options[0].value;
     const bannedUsers = JSON.parse(fs.readFileSync("./config/bannedUsers.json"));

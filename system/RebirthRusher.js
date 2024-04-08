@@ -20,7 +20,7 @@ const dotenv = require("dotenv");
 dotenv.config()
 
 const { ERROR, RBR, SUCCESS } = require("../config/embedColors.json");
-const { devServer } = require("../config/discordIds.json");
+const { DEV_SERVER_ID } = require("../config/discordIds.json");
 const { token } = require("../config/emojis.json");
 
 class RebirthRusher extends Client {
@@ -192,7 +192,7 @@ class RebirthRusher extends Client {
 
     async createApplicationCommand(commandConfig, isDev) {
         if (isDev) {
-            await this.createGuildCommand(devServer, {
+            await this.createGuildCommand(DEV_SERVER_ID, {
                 name: commandConfig.name,
                 description: commandConfig.description,
                 options: commandConfig.options || []

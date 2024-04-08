@@ -1,7 +1,7 @@
 const MessageEmbed = require("../../system/MessageEmbed");
 const UserDB = require("../../database/controllers/userController");
 const { RBR } = require("../../config/embedColors.json");
-const { dev } = require("../../config/discordIds.json");
+const { DEV_ID } = require("../../config/discordIds.json");
 
 module.exports.name = "identify"
 module.exports.description = "Retrieves and displays data associated with a Discord ID\n*(operator only)*"
@@ -9,7 +9,7 @@ module.exports.syntax = "`/identify [id]`"
 module.exports.hidden = true
 
 module.exports.execute = async function (interaction) {
-    if (interaction.member.user.id !== dev) return;
+    if (interaction.member.user.id !== DEV_ID) return;
 
     const id = interaction.data.options[0].value;
     if (!id) return "Please enter an id";
