@@ -1,3 +1,5 @@
+const UserDB = require("../../database/controllers/userController");
+
 module.exports.name = "prestige"
 module.exports.aliases = ["pr"]
 
