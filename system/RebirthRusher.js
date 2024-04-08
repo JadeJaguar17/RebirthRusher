@@ -1,5 +1,5 @@
 // Discord
-const { Client, Collection } = require("eris");
+const Eris = require("eris");
 const MessageEmbed = require("./MessageEmbed.js");
 const { Webhook } = require("@top-gg/sdk");
 const app = require("express")();
@@ -23,15 +23,18 @@ const { ERROR, RBR, SUCCESS } = require("../config/embedColors.json");
 const { DEV_SERVER_ID } = require("../config/discordIds.json");
 const { token } = require("../config/emojis.json");
 
-class RebirthRusher extends Client {
+class RebirthRusher extends Eris.Client {
     constructor(token) {
         super(token, { restMode: true });
-        this.commands = new Collection();
-        this.timers = new Collection();
-        this.scanners = new Collection();
+        this.commands = new Eris.Collection();
+        this.timers = new Eris.Collection();
+        this.scanners = new Eris.Collection();
         this.errorCase = 0;
     }
 
+    /**
+     * Fires up the bot
+     */
     async init() {
         try {
             console.log("Connecting to API...");
@@ -77,6 +80,9 @@ class RebirthRusher extends Client {
         });
     }
 
+    /**
+     * Creates daily timers for users that have it enabled
+     */
     initDailies() {
         console.log("Starting up dailies schedule...");
 
@@ -104,6 +110,9 @@ class RebirthRusher extends Client {
         });
     }
 
+    /**
+     * Load event files and start up listeners
+     */
     async loadEvents() {
         console.log("Loading events...")
         this.removeAllListeners();
@@ -116,6 +125,9 @@ class RebirthRusher extends Client {
         }
     }
 
+    /**
+     * Load command, timer, and scanner files
+     */
     loadAllFiles() {
         console.log("Loading files...");
 
@@ -139,7 +151,11 @@ class RebirthRusher extends Client {
         this.loadFolder("scanners", "../scanners")
     }
 
-    // folderPath is relative
+    /**
+     * Loads a folder of files into a bot collection
+     * @param {*} collectionName bot collection name
+     * @param {*} folderPath relative directory path
+     */
     loadFolder(collectionName, folderPath) {
         const folder = fs
             .readdirSync(path.resolve(__dirname, folderPath))
@@ -158,6 +174,13 @@ class RebirthRusher extends Client {
         }
     }
 
+    /**
+     * Loads slash commands when applicable. Slash commands only need to be
+     * created if they're new or their command structure (command.options) has
+     * changed. Otherwise, it's a waste of API calls to create slash commands
+     * that haven't changed. Therefore we use a config file to indicate which
+     * slash commands have changed and need to be reloaded in the API.
+     */
     async loadApplicationCommands() {
         console.log("Loading application commands...");
         const updatedCommands = require("../config/updatedCommands.json");
@@ -190,6 +213,12 @@ class RebirthRusher extends Client {
         console.log("Loading application commands done");
     }
 
+    /**
+     * 
+     * @param {any} commandConfig command config to load in (determined by each
+     * property in module.exports)
+     * @param {boolean} isDev whether or not to create command only in dev server
+     */
     async createApplicationCommand(commandConfig, isDev) {
         if (isDev) {
             await this.createGuildCommand(DEV_SERVER_ID, {
@@ -209,6 +238,9 @@ class RebirthRusher extends Client {
         console.log(`  Updated command '${commandConfig.name}'`);
     }
 
+    /**
+     * Connects to MongoDB
+     */
     async initDB() {
         console.log("Connecting to MongoDB...");
         try {
@@ -221,6 +253,9 @@ class RebirthRusher extends Client {
         }
     }
 
+    /**
+     * Resets timer states to "ready" to prevent locking
+     */
     async resetTimers() {
         console.log("Resetting timers...");
         const allUsers = await UserDB.getAllUsers();
@@ -239,6 +274,9 @@ class RebirthRusher extends Client {
         }
     }
 
+    /**
+     * Starts up timers in the timer database
+     */
     async loadTimers() {
         const allTimers = await TimerDB.getAllTimers();
         for (const timer of allTimers) {
@@ -269,6 +307,9 @@ class RebirthRusher extends Client {
         }
     }
 
+    /**
+     * Connects to Top.gg
+     */
     initTopGG() {
         console.log("Connecting to TopGG...");
         const webhook = new Webhook(process.env.TOPGG_SECRET);
@@ -283,6 +324,10 @@ class RebirthRusher extends Client {
         console.log(`Connected to TopGG (port ${PORT})`);
     }
 
+    /**
+     * Rewards a user when they vote
+     * @param {string} userID user's Discord snowflake ID
+     */
     async rewardVote(userID) {
         try {
             const user = await UserDB.getUserById(userID);
@@ -321,6 +366,14 @@ class RebirthRusher extends Client {
         }
     }
 
+    /**
+     * Sends a message
+     * @param {Eris.Interaction} interaction interaction storing necessary info
+     * like guild and channel IDs
+     * @param {Eris.MessageContent} content content of message to send
+     * @param {Eris.FileContent} file (optional) files to attach to message
+     * @returns Eris awaitable action or error
+     */
     async send(interaction, content, file) {
         if (!interaction || (!content && !file)) {
             return this.error(
@@ -349,6 +402,12 @@ class RebirthRusher extends Client {
         }
     }
 
+    /**
+     * DM's a user letting them know a particular channel is missing permissions
+     * @param {string} authorID Discord ID of user to DM
+     * @param {string} channelID channel where permissions are missing
+     * @param {string} guildID guild where permissions are missing
+     */
     async missingPermissions(authorID, channelID, guildID) {
         try {
             if (this.guilds.has(guildID)) {
@@ -369,6 +428,12 @@ class RebirthRusher extends Client {
         } catch (error) { }
     }
 
+    /**
+     * Handles errors in the bot and logs it in a webhook channel
+     * @param {string} source string to indicate file source of error
+     * @param {Error} error error to handle
+     * @param {Eris.Message} trigger Idle Miner message that triggered the error
+     */
     async error(source, error, trigger) {
         try {
             this.errorCase++;
@@ -404,6 +469,11 @@ class RebirthRusher extends Client {
         }
     }
 
+    /**
+     * Sends a log entry to a webhook channel
+     * @param {string} type type of log
+     * @param {Eris.Embed} embed embed to send in log channel
+     */
     async log(type, embed) {
         await this.executeWebhook(
             process.env[`WEBHOOK_${type.toUpperCase()}_ID`],
@@ -415,6 +485,11 @@ class RebirthRusher extends Client {
         );
     }
 
+    /**
+     * Converts a time's string representation to seconds
+     * @param {string} timeString time in string format
+     * @returns time in seconds
+     */
     stringToTime(timeString) {
         if (!timeString || timeString === "**FULL**" || timeString === "<1s") {
             return undefined;
