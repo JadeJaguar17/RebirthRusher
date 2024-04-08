@@ -3,145 +3,81 @@ const fs = require("fs");
 
 module.exports = async (bot, message) => {
     try {
-        if (message.author?.bot) {
-            if (message.author.id === "518759221098053634") {
-                // embed responses
-                if (message.embeds[0]?.author) {
-                    const userID = message.embeds[0].author?.icon_url?.replace("https://cdn.discordapp.com/avatars/", "")
-                        .split("/")[0].trim();
+        // ignore if message is not from Idle Miner or message is not an embed
+        if (message.author?.id !== "518759221098053634") return;
+        if (!message.embeds[0]?.author) return;
 
-                    if (isBanned(userID) || !(await UserDB.checkUserExists(userID))) return;
+        // parse user ID from the embed author's avatar
+        const userID = message.embeds[0].author?.icon_url
+            ?.replace("https://cdn.discordapp.com/avatars/", "")
+            .split("/")[0]
+            .trim();
 
-                    const embed = message.embeds[0];
+        // ignore if user is banned or isn't an RbR user
+        if (isBanned(userID) || !(await UserDB.checkUserExists(userID))) return;
 
-                    if (embed.title === "Pets") {
-                        await bot.scanners.get("petScan").execute(embed, userID);
+        const embed = message.embeds[0];
 
-                        const user = await UserDB.getUserById(userID);
-                        if (user.settings.autoPet && await bot.users.get(userID)) {
-                            const petEmbed = await bot.commands.get("pets").execute({
-                                member: { user: await bot.users.get(userID) },
-                                data: { options: null }
-                            }, userID);
+        // pets embed
+        if (embed.title === "Pets") {
+            await bot.scanners.get("petScan").execute(embed, userID);
 
-                            petEmbed.embeds[0].setTitle(null).setDescription(null).setThumbnail(null).setAuthor(null, null);
-                            petEmbed.embeds[0].fields = [petEmbed.embeds[0].fields[5]];
-                            petEmbed.messageReference = { messageID: message.id };
+            const user = await UserDB.getUserById(userID);
+            if (user.settings.autoPet && await bot.users.get(userID)) {
+                const msgData = {
+                    member: { user: await bot.users.get(userID) },
+                    data: { options: null }
+                };
+                const petEmbed = await bot.commands.get("pets").execute(msgData, userID);
 
-                            return bot.send(message, petEmbed);
-                        }
-                    } else if (embed.fields?.[0]?.name === "**General**") {
-                        const embedPr = Number(embed.fields[0].value.trim().split("\n")[3].replace("**Prestige:**", "").trim().replace(/,/g, ''));
-                        const embedRb = Number(embed.fields[1].value.trim().split("\n")[1].replace("**Rebirth:**", "").trim().replace(/,/g, ''));
-                        const embedRbDay = embed.fields[1].value.trim().split("\n")[4]
-                            ? Number(embed.fields[1].value.trim().split("\n")[4].replace("**Rebirths/day:** ", "").trim().replace(/,/g, ''))
-                            : Number(embed.fields[1].value.trim().split("\n")[3].replace("**Rebirths/day:** ", "").trim().replace(/,/g, '')) || 0;
+                petEmbed.embeds[0]
+                    .setTitle(null)
+                    .setDescription(null)
+                    .setThumbnail(null)
+                    .setAuthor(null, null);
+                petEmbed.embeds[0].fields = [petEmbed.embeds[0].fields[5]];
+                petEmbed.messageReference = { messageID: message.id };
 
-                        return await bot.scanners.get("profileScan").execute(userID, embedPr, embedRb, embedRbDay);
-                    } else if (embed.title === "Claimall" && embed.description) {
-                        return await bot.scanners.get("claimall").execute(message, userID);
-                    } else if (embed.title === "Cooldowns") {
-                        return await bot.scanners.get("kits").execute(message, userID);
-                    } else if (embed.title === "Fish") {
-                        return await bot.timers.get("fish").execute(message, userID);
-                    } else if (embed.title === "Hunt") {
-                        return await bot.timers.get("hunt").execute(message, userID);
-                    } else if (embed.title === "Farm") {
-                        let time;
-                        message.embeds[0].description.split("\n").forEach(line => {
-                            if (line.startsWith("Next crop ready")) {
-                                time = bot.stringToTime(line.split(" ")[4]);
-                            }
-                        });
-
-                        if (!time) {
-                            return;
-                        }
-
-                        // Add an extra minute since times > 1hr don't show seconds
-                        if (time >= 3600) {
-                            time += 60
-                        }
-
-                        return await bot.timers.get("harvest").execute(message, userID, time);
-                    } else if (embed.title?.startsWith("Earthquake broke")) {
-                        return await bot.timers.get("earthquake").execute(message, userID);
-                    } else if (embed.description?.startsWith("You used the following booster")) {
-                        for (const field of embed.fields) {
-                            if (field.name === "**Personal**") {
-                                const activeBoosters = embed.fields[0].value.split("\n");
-
-                                for (const activeBooster of activeBoosters) {
-                                    if (activeBooster.startsWith("<:")) {
-                                        const boosterID = activeBooster.split(" ")[0].trim();
-                                        const boosterTime = bot.stringToTime(activeBooster.split(" ")[3].trim());
-
-                                        if (boosterTime < 86400) { // 24 hours
-                                            await bot.timers.get("booster").execute(message, userID, boosterID, boosterTime);
-                                        }
-                                    }
-                                }
-
-                                return;
-                            }
-                        }
-                    } else if (embed.fields?.[0]?.name === "**Backpack**") {
-                        const remainingTime = bot.stringToTime(message.embeds[0].fields[0].value.split("\n")[4].replace("Full in ", ""));
-
-                        if (remainingTime) return await bot.timers.get("backpack").execute(message, userID, remainingTime);
-                    } else if (embed.title?.startsWith("You are now prestige")) {
-                        return await bot.timers.get("prestige").execute(userID);
-                    } else if (embed.fields?.[2]?.name === "**Stats**") {
-                        const embedPr = Number(embed.fields[2].value.trim().split("\n")[0].replace("**Prestige:**", "").trim().replace(/,/g, ''));
-                        const embedRb = Number(embed.fields[2].value.trim().split("\n")[1].replace("**Rebirth:**", "").trim().replace(/,/g, ''));
-                        const embedRbDay = Number(embed.fields[2].value.trim().split("\n")[2].replace("**AVG rebirths/day**:", "").trim().replace(/,/g, ''));
-
-                        return await bot.scanners.get("profileScan").execute(userID, embedPr, embedRb, embedRbDay);
-                    }
-                }
-
-                if (message.content?.startsWith("**")) {
-                    const username = message.content.split("**")[1];
-                    const user = await bot.users.find(u => u.username === username);
-
-                    if (user && !isBanned(user.id) && await UserDB.checkUserExists(user.id)) {
-                        if (message.content.includes("You didn't get any pet")) {
-                            return await bot.timers.get("hunt").execute(message, user.id);
-                        } else if (message.content.includes("Activated Wings")) {
-                            return await bot.timers.get("wings").execute(message, user.id);
-                        } else if (message.content.includes("Activated Rage")) {
-                            return await bot.timers.get("rage").execute(message, user.id);
-                        } else if (message.content.includes("You claimed your")) {
-                            const kit = await bot.timers.get(message.content.split("**")[3].toLowerCase());
-
-                            return kit && await kit.execute(message, user.id);
-                        } else if (message.content.includes("Your next crop will be ready in")) {
-                            const time = bot.stringToTime(message.content.split("\n")[1].split(" ")[7]);
-
-                            return await bot.timers.get("harvest").execute(message, user.id, time);
-                        }
-
-                        const lines = message.content.split("\n");
-                        if (lines[lines.length - 1].startsWith("BP:")) {
-                            const time = bot.stringToTime(lines[lines.length - 1].replace("BP:", ""));
-
-                            if (time) return await bot.timers.get("backpack").execute(message, user.id, time);
-                        }
-                    }
-                }
-
-                // clear command
-                if (message.interaction && ["clear", "bonemeal"].includes(message.interaction.name)
-                    && (await UserDB.checkUserExists(message.interaction.member.user.id))) {
-                    const imCommand = await bot.timers.get(message.interaction.name);
-
-                    if (imCommand) {
-                        return await imCommand.execute(message.interaction.member.user.id);
-                    }
-                }
+                return bot.send(message, petEmbed);
             }
-            return;
         }
+
+        // normal /play embed
+        else if (
+            message.interaction.name === "play"
+            && !embed.description.startsWith("**Event**")
+            && embed.description.includes("Backpack full")
+        ) {
+            const field = embed.fields?.find(f => f.name === "**Stats**");
+
+            const embedPr = field.value
+                .trim()
+                .split("\n")[0]
+                .replace("**Prestige:**", "")
+                .trim()
+                .replace(/,/g, '');
+            const embedRb = field.value
+                .trim()
+                .split("\n")[1]
+                .replace("**Rebirth:**", "")
+                .trim()
+                .replace(/,/g, '');
+            const embedRbDay = field.value
+                .trim()
+                .split("\n")[2]
+                .replace("**AVG rebirths/day**:", "")
+                .trim()
+                .replace(/,/g, '');
+
+            return await bot.scanners.get("profileScan").execute(
+                userID,
+                Number(embedPr),
+                Number(embedRb),
+                Number(embedRbDay)
+            );
+        }
+
+        return;
     } catch (error) {
         await bot.error("MessageUpdate", error, message);
     }

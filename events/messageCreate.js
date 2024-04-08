@@ -1,172 +1,252 @@
-// const users = require("../models/userModel.js");
-// const {RBR} = require("../config/embedColors.json");
-// const MessageEmbed = require("../system/MessageEmbed");
-// const fs = require("fs");
+const UserDB = require("../database/controllers/userController");
+const fs = require("fs");
 
-module.exports = require("../events/messageUpdate"); //async (bot, message) => {
-    // try {
-    //     if (message.author.bot) {
-    //         if (message.author.id === "518759221098053634") {
-    //             // embed responses
-    //             if (message.embeds[0]?.author) {
-    //                 const userID = message.embeds[0].author?.icon_url?.replace("https://cdn.discordapp.com/avatars/", "")
-    //                               .split("/")[0].trim();
+module.exports = async (bot, message) => {
+    try {
+        // ignore if message is not from Idle Miner
+        if (message.author?.id !== "518759221098053634") return;
 
-    //                 if (isBanned(userID) || !(await users.exists({_id: userID}))) return;
+        // embed responses
+        if (message.embeds[0]?.author) {
+            return await handleEmbedMessage(bot, message);
+        }
 
-    //                 const embed = message.embeds[0];
+        // normal text messages
+        if (message.content?.startsWith("**")) {
+            return await handleTextMessage(bot, message);
+        }
 
-    //                 if (embed.title === "Pets") {
-    //                     await bot.scanners.get("petScan").execute(embed, userID);
+        // 'clear' and 'bonemeal' slash commands reset harvest timer
+        if (message.interaction && ["clear", "bonemeal"].includes(message.interaction.name)
+            && (await UserDB.checkUserExists(message.interaction.member.user.id))) {
+            const imCommand = await bot.timers.get(message.interaction.name);
 
-    //                     const user = await UserDB.getUserById(userID);
-    //                     if (user.settings.autoPet) {
-    //                         const petEmbed = await bot.commands.get("pets").execute({
-    //                             member: {user: await bot.users.get(userID)},
-    //                             data: {options: null}
-    //                         }, userID);
-    //                         petEmbed.messageReference = {messageID: message.id};
-                            
-    //                         return bot.send(message, petEmbed);
-    //                     }
-    //                 } else if (embed.fields?.[0]?.name === "**General**") {
-    //                     return await bot.scanners.get("profileScan").execute(message.embeds[0], userID);
-    //                 } else if (embed.title === "Claimall" && embed.description) {
-    //                     return await bot.scanners.get("claimall").execute(message, userID);
-    //                 } else if (embed.title === "Cooldowns") {
-    //                     return await bot.scanners.get("kits").execute(message, userID);
-    //                 } else if (embed.title === "Fish") {
-    //                     return await bot.timers.get("fish").execute(message, userID);
-    //                 } else if (embed.title === "Hunt") {
-    //                     return await bot.timers.get("hunt").execute(message, userID);
-    //                 } else if (embed.title === "Farm") {
-    //                     let time;
-    //                     message.embeds[0].description.split("\n").forEach(line => {
-    //                         if (line.startsWith("Next crop ready")) {
-    //                             time = bot.stringToTime(line.split(" ")[4]);
-    //                         }
-    //                     });
+            if (imCommand) {
+                return await imCommand.execute(message.interaction.member.user.id);
+            }
+        }
 
-    //                     if (!time) {
-    //                         return;
-    //                     }
+        return;
+    } catch (error) {
+        await bot.error("MessageUpdate", error, message);
+    }
+}
 
-    //                     // Add an extra minute since times > 1hr don't show seconds
-    //                     if (time >= 3600) {
-    //                         time += 60
-    //                     }
+function isBanned(userID) {
+    const bannedUsers = JSON.parse(fs.readFileSync("./config/bannedUsers.json"));
 
-    //                     return await bot.timers.get("harvest").execute(message, userID, time);
-    //                 } else if (embed.title?.startsWith("Earthquake broke")) {
-    //                     return await bot.timers.get("earthquake").execute(message, userID);
-    //                 } else if (embed.description?.startsWith("You used the following booster")) {
-    //                     for (const field of embed.fields) {
-    //                         if (field.name === "**Personal**") {
-    //                             const activeBoosters = embed.fields[0].value.split("\n");
+    return bannedUsers.indexOf(userID) !== -1;
+}
 
-    //                             for (const activeBooster of activeBoosters) {
-    //                                 if (activeBooster.startsWith("<:")) {
-    //                                     const boosterID = activeBooster.split(" ")[0].trim();
-    //                                     const boosterTime = bot.stringToTime(activeBooster.split(" ")[3].trim());
+async function handleEmbedMessage(bot, message) {
+    const userID = message.embeds[0].author?.icon_url
+        ?.replace("https://cdn.discordapp.com/avatars/", "")
+        .split("/")[0]
+        .trim();
 
-    //                                     if (boosterTime < 86400) { // 24 hours
-    //                                         await bot.timers.get("booster").execute(message, userID, boosterID, boosterTime);
-    //                                     }
-    //                                 }
-    //                             }
+    if (isBanned(userID) || !(await UserDB.checkUserExists(userID))) return;
 
-    //                             return;
-    //                         }
-    //                     }
-    //                 } else if (embed.fields?.[0]?.name === "**Backpack**") {
-    //                     return await bot.timers.get("backpack").execute(message, userID);
-    //                 } else if (embed.title?.startsWith("You are now prestige")) {
-    //                     return await bot.timers.get("prestige").execute(message, userID);
-    //                 }
-    //             }
+    const embed = message.embeds[0];
 
-    //             if (message.content?.startsWith("**")) {
-    //                 const tag = message.content.split("**")[1];
-    //                 const user = await bot.users.find(u => `${u.username}#${u.discriminator}` === tag);
+    // pet embed
+    if (embed.title === "Pets") {
+        await bot.scanners.get("petScan").execute(embed, userID);
 
-    //                 if (user) {
-    //                     if (isBanned(user.id) || !(await users.exists({_id: user.id}))) return;
+        // autopet feature
+        const user = await UserDB.getUserById(userID);
+        if (user.settings.autoPet && await bot.users.get(userID)) {
+            const msgData = {
+                member: { user: await bot.users.get(userID) },
+                data: { options: null }
+            };
+            const petEmbed = await bot.commands.get("pets").execute(msgData, userID);
 
-    //                     if (message.content.includes("You didn't get any pet")) {
-    //                         return await bot.timers.get("hunt").execute(message, user.id);
-    //                     } else if (message.content.includes("Activated Wings")) {
-    //                         return await bot.timers.get("wings").execute(message, user.id);
-    //                     } else if (message.content.includes("Activated Rage")) {
-    //                         return await bot.timers.get("rage").execute(message, user.id);
-    //                     } else if (message.content.includes("You claimed your")) {
-    //                         const kit = await bot.timers.get(message.content.split("**")[3].toLowerCase());
+            petEmbed.messageReference = { messageID: message.id };
 
-    //                         return kit && await kit.execute(message, user.id);
-    //                     } else if (message.content.includes("Your next crop will be ready in")) {
-    //                         const time = bot.stringToTime(message.content.split("\n")[1].split(" ")[7]);
+            return bot.send(message, petEmbed);
+        }
+    }
 
-    //                         return await bot.timers.get("harvest").execute(message, user.id, time);
-    //                     } else if (message.content.includes("Used bonemeal on:")) {
-    //                         return await bot.timers.get("bonemeal").execute(message, user.id);
-    //                     }
-    //                 }
-    //             }
+    // profile stats
+    else if (embed.fields?.[0]?.name === "**General**") {
+        const embedPr = embed.fields[0].value
+            .trim()
+            .split("\n")[3]
+            .replace("**Prestige:**", "")
+            .trim()
+            .replace(/,/g, '');
+        const embedRb = embed.fields[1].value
+            .trim()
+            .split("\n")[1]
+            .replace("**Rebirth:**", "")
+            .trim()
+            .replace(/,/g, '');
+        const embedRbDay = embed.fields[1].value.trim().split("\n")[4]
+            ? embed.fields[1].value
+                .trim()
+                .split("\n")[4]
+                .replace("**Rebirths/day:** ", "")
+                .trim()
+                .replace(/,/g, '')
+            : embed.fields[1].value
+                .trim()
+                .split("\n")[3]
+                .replace("**Rebirths/day:** ", "")
+                .trim()
+                .replace(/,/g, '') || 0;
 
-    //             // slash commands
-    //             if (message.interaction && ["clear"].includes(message.interaction.name)
-    //                 && (await users.exists({_id: message.interaction.member.user.id}))) {
-    //                 const imCommand = await bot.timers.get(message.interaction.name);
+        return await bot.scanners.get("profileScan").execute(
+            userID,
+            Number(embedPr),
+            Number(embedRb),
+            Number(embedRbDay)
+        );
+    }
 
-    //                 if (imCommand) {
-    //                     return await imCommand.execute(message, message.interaction.member.user.id);
-    //                 }
-    //             }
-    //         }
-    //         return;
+    // claimall resets timers for claimed kits
+    else if (embed.title === "Claimall" && embed.description) {
+        return await bot.scanners.get("claimall").execute(message, userID);
+    }
 
-    //     // User messages
-    //     } else {
-    //         if (isBanned(message.author.id) || !message.channel.guild) {
-    //             return;
-    //         }
+    // cooldowns sets any missing timers
+    else if (embed.title === "Cooldowns") {
+        return await bot.scanners.get("kits").execute(message, userID);
+    }
 
-    //         const user = await UserDB.getUserById(message.author.id);
-    //         const server = await servers.findById(message.channel.guild.id) || {prefix: "r.", imPrefix: ";"};
+    // Idle Miner games and abilities
+    else if (embed.title === "Fish") {
+        return await bot.timers.get("fish").execute(message, userID);
+    }
+    else if (embed.title === "Hunt") {
+        return await bot.timers.get("hunt").execute(message, userID);
+    }
+    else if (embed.title === "Farm") {
+        let time;
+        message.embeds[0].description.split("\n").forEach(line => {
+            if (line.startsWith("Next crop ready")) {
+                time = bot.stringToTime(line.split(" ")[4]);
+            }
+        });
 
-    //         // If the bot gets pinged
-    //         if (message.content.trim() === `<@${bot.user.id}>` || message.content.trim() === `<@!${bot.user.id}>`) {
-    //             const mentionEmbed = new MessageEmbed()
-    //             .setColor(RBR)
-    //             .setAuthor(bot.user.username, bot.user.avatarURL)
-    //             .setThumbnail(bot.user.avatarURL)
-    //             .setDescription(`Hello there! I'm Rebirth Rusher, but you can just call me RbR. My purpose is to help players be better at IM, regardless of their prestige level. You can use \`/help\` for a list of all my commands and \`/guide\` will give you a detailed guide on how to use me. If this is your first time using me, you will have to use \`/start\` to make an account. Enjoy!`);
-                
-    //             return bot.send(message, {embed: mentionEmbed});
-                
-    //         // Attempting to use RbR commands
-    //         } else if (message.content.toLowerCase().startsWith(server.prefix.toLowerCase())) {
-    //             const args = message.content.slice(server.prefix.length).trim().split(/ +/);
-    //             const commandName = args.shift().toLowerCase();
+        if (!time) {
+            return;
+        }
 
-    //             const command = bot.commands.get(commandName) || bot.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+        // Add an extra minute since times > 1hr don't show seconds
+        if (time >= 3600) {
+            time += 60
+        }
 
-    //             if (command) {
-    //                 return bot.send(message, `Please use \`/${command.name}\` instead. All commands are now only `
-    //                                         +`available as slash commands. If slash commands aren't showing up, re-invite`
-    //                                         +` me using the big blue "Add to Server" button under my profile.`
-    //                                         +`\n\n*Bots can no longer see message content due to changes in Discord's `
-    //                                         +`privacy policy. As a result, prefix commands no longer work, so slash `
-    //                                         +`commands are the only way*).`);
-    //             }
-    //         }
-    //     }
-    // } catch (error) {
-    //     await bot.error("MessageCreate", error, message);
-    // }
-// }
+        return await bot.timers.get("harvest").execute(message, userID, time);
+    }
+    else if (embed.title?.startsWith("Earthquake broke")) {
+        return await bot.timers.get("earthquake").execute(message, userID);
+    }
 
-// function isBanned(userID) {
-//     const bannedUsers = JSON.parse(fs.readFileSync("./config/bannedUsers.json"));
+    // booster timers
+    else if (embed.description?.startsWith("You used the following booster")) {
+        for (const field of embed.fields) {
+            if (field.name === "**Personal**") {
+                const activeBoosters = embed.fields[0].value.split("\n");
 
-//     return bannedUsers.indexOf(userID) !== -1;
-// }
+                for (const activeBooster of activeBoosters) {
+                    if (activeBooster.startsWith("<:")) {
+                        const boosterID = activeBooster.split(" ")[0].trim();
+                        const boosterTime = bot.stringToTime(
+                            activeBooster
+                                .split(" ")[3]
+                                .trim()
+                        );
+
+                        if (boosterTime < 86400) { // 24 hours
+                            await bot.timers.get("booster").execute(
+                                message,
+                                userID,
+                                boosterID,
+                                boosterTime
+                            );
+                        }
+                    }
+                }
+
+                return;
+            }
+        }
+    }
+
+    // backpack timer
+    else if (embed.fields?.[0]?.name === "**Backpack**") {
+        const remainingTime = bot.stringToTime(message.embeds[0].fields[0].value.split("\n")[4].replace("Full in ", ""));
+
+        if (remainingTime) return await bot.timers.get("backpack").execute(message, userID, remainingTime);
+    }
+
+    // prestiging resets timers
+    else if (embed.title?.startsWith("You are now prestige")) {
+        return await bot.timers.get("prestige").execute(userID);
+    }
+
+    // /play for the first time
+    else if (embed.fields?.[2]?.name === "**Stats**") {
+        const embedPr = embed.fields[2].value
+            .trim()
+            .split("\n")[0]
+            .replace("**Prestige:**", "")
+            .trim()
+            .replace(/,/g, '');
+        const embedRb = embed.fields[2].value
+            .trim()
+            .split("\n")[1]
+            .replace("**Rebirth:**", "")
+            .trim()
+            .replace(/,/g, '');
+        const embedRbDay = embed.fields[2].value
+            .trim()
+            .split("\n")[2]
+            .replace("**AVG rebirths/day**:", "")
+            .trim()
+            .replace(/,/g, '');
+
+        return await bot.scanners.get("profileScan").execute(
+            userID,
+            Number(embedPr),
+            Number(embedRb),
+            Number(embedRbDay)
+        );
+    }
+}
+
+async function handleTextMessage(bot, message) {
+    const username = message.content.split("**")[1];
+    const user = await bot.users.find(u => u.username === username);
+
+    if (user && !isBanned(user.id) && await UserDB.checkUserExists(user.id)) {
+        if (message.content.includes("You didn't get any pet")) {
+            return await bot.timers.get("hunt").execute(message, user.id);
+        }
+        else if (message.content.includes("Activated Wings")) {
+            return await bot.timers.get("wings").execute(message, user.id);
+        }
+        else if (message.content.includes("Activated Rage")) {
+            return await bot.timers.get("rage").execute(message, user.id);
+        }
+        else if (message.content.includes("You claimed your")) {
+            const kit = await bot.timers.get(message.content.split("**")[3].toLowerCase());
+
+            return kit && await kit.execute(message, user.id);
+        }
+        else if (message.content.includes("Your next crop will be ready in")) {
+            const time = bot.stringToTime(message.content.split("\n")[1].split(" ")[7]);
+
+            return await bot.timers.get("harvest").execute(message, user.id, time);
+        }
+
+        // backpack timer based on the 'BP' stat in messages
+        const lines = message.content.split("\n");
+        if (lines[lines.length - 1].startsWith("BP:")) {
+            const time = bot.stringToTime(lines[lines.length - 1].replace("BP:", ""));
+
+            if (time) return await bot.timers.get("backpack").execute(message, user.id, time);
+        }
+    }
+}
