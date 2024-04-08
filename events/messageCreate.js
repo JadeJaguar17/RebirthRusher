@@ -51,18 +51,16 @@ function isBanned(userID) {
 /**
  * Handles message embeds from Idle Miner
  * @param {Eris.Client} bot base class of RbR
- * @param {Eris.Message} message message containing the embed to process
+ * @param {Eris.Embed} embed message containing the embed to process
  * @returns an awaitable RbR action
  */
-async function handleEmbedMessage(bot, message) {
-    const userID = message.embeds[0].author?.icon_url
+async function handleEmbedMessage(bot, embed) {
+    const userID = embed.author?.icon_url
         ?.replace("https://cdn.discordapp.com/avatars/", "")
         .split("/")[0]
         .trim();
 
     if (isBanned(userID) || !(await UserDB.checkUserExists(userID))) return;
-
-    const embed = message.embeds[0];
 
     // pet embed
     if (embed.title === "Pets") {
