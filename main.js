@@ -17,14 +17,14 @@ process.on("uncaughtException", (error) => {
 })
 
 // Top.gg
-// const {AutoPoster} = require("topgg-autoposter");
-// const poster = AutoPoster(process.env.TOPGG_TOKEN, new Eris.Client(process.env.TOKEN));
+const { AutoPoster } = require("topgg-autoposter");
+const poster = AutoPoster(process.env.TOPGG_TOKEN, new Eris.Client(process.env.TOKEN));
 
-// poster.on('posted', () => {
-//     console.info('Posted stats to Top.gg!')
-//   })
+poster.on('posted', () => {
+    console.info('Posted stats to Top.gg!');
+});
 
 // Deals with any rejected Promises that haven't been handled
-// process.on('unhandledRejection', error => {
-//     rbr.error("Unhandled Promise Rejection", error);
-// });
+process.on('unhandledRejection', error => {
+    rbr.error("Unhandled Promise Rejection", error);
+});
