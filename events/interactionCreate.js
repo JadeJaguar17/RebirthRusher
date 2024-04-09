@@ -10,7 +10,6 @@ const { ERROR } = require("../config/embedColors.json");
  * @param {Eris.Interaction} interaction Interaction object
  */
 module.exports = async (bot, interaction) => {
-    console.log("slash command")
     // slash commands
     if (interaction instanceof Eris.CommandInteraction) {
         return await handleSlashCommand(bot, interaction);
