@@ -2,8 +2,19 @@ const RebirthRusher = require("./system/RebirthRusher");
 require("dotenv").config();
 
 const AUTH_TOKEN = process.env.NODE_ENV === "development"
-    ? process.env.DEVTOKEN
-    : TOKEN;
+? process.env.DEVTOKEN
+: TOKEN;
+
+if (AUTH_TOKEN === process.env.DEVTOKEN) {
+    console.info("Starting up dev bot");
+}
+else if (AUTH_TOKEN === process.env.TOKEN) {
+    console.info("Starting up main bot");
+}
+else {
+    console.info("Unknown auth token, terminating...");
+    exit();
+}
 
 const rbr = new RebirthRusher(AUTH_TOKEN);
 rbr.init();
