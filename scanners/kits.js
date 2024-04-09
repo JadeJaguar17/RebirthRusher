@@ -5,6 +5,7 @@ module.exports.name = "kits"
 
 module.exports.execute = async function (interaction, userID) {
     const user = await UserDB.getUserById(userID);
+    console.log("scanned")
 
     for (field of interaction.embeds[0].fields) {
         const category = field.name.split("**")[1].toLowerCase();

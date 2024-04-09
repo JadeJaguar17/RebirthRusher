@@ -416,8 +416,8 @@ async function handleGraph(args, user) {
 async function handleReminders(args, user) {
     switch (args.name) {
         case "all":
-            for (const category of Object.keys(user.timers)) {
-                for (const timer of Object.keys(user.timers[category])) {
+            Object.keys(user.timers).forEach(category => {
+                Object.keys(user.timers[category]).forEach(timer => {
                     if (args.options[0].value === "on") {
                         if (user.timers[category][timer] !== "ready") {
                             user.timers[category][timer] = "ready";
@@ -425,14 +425,14 @@ async function handleReminders(args, user) {
                     } else {
                         user.timers[category][timer] = "off"
                     }
-                }
-            }
+                });
+            });
 
             await user.save();
             return `All timers turned \`${args.options[0].value}\``;
 
         case "category":
-            for (const timer of Object.keys(user.timers[args.options[0].value])) {
+            Object.keys(user.timers[args.options[0].value]).forEach(timer => {
                 if (args.options[1].value === "on") {
                     if (user.timers[args.options[0].value][timer] !== "ready") {
                         user.timers[args.options[0].value][timer] = "ready";
@@ -440,7 +440,7 @@ async function handleReminders(args, user) {
                 } else {
                     user.timers[args.options[0].value][timer] = "off"
                 }
-            }
+            });
 
             await user.save();
             return `\`${args.options[0].value}\` turned \`${args.options[1].value}\``;

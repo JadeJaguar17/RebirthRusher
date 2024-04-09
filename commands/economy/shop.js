@@ -32,23 +32,28 @@ const shopMenuEmbed = new MessageEmbed()
     .setThumbnail("https://i.imgur.com/x7GRidJ.png");
 
 let graphStandards = "";
-for (const color of shop.filter(i => i.id <= 12)) {
-    const id = color.id < 10 ? ` ${color.id}` : color.id;
-    graphStandards += `\`${id}\` ${color.name}\n`;
-}
+shop
+    .filter(i => i.id <= 12)
+    .forEach(color => {
+        const id = color.id < 10 ? ` ${color.id}` : color.id;
+        graphStandards += `\`${id}\` ${color.name}\n`;
+    });
 
 let graphSpecials = "";
-for (const color of shop.filter(i => i.id > 12 && i.id <= 15)) {
-    graphSpecials += `\`${color.id}\` ${color.name} | ${color.price} ${token}\n`
-        + `${color.description}\n`;
-}
+shop
+    .filter(i => i.id > 12 && i.id <= 15)
+    .forEach(color => {
+        graphSpecials += `\`${color.id}\` ${color.name} | ${color.price} ${token}\n`
+            + `${color.description}\n`;
+    });
 
 let serverPerks = "";
-const perks = shop.filter(i => i.category == "server");
-for (const perk of perks) {
-    serverPerks += `\`${perk.id}\` ${perk.name} | ${perk.price} ${token}\n`
-        + `${perk.description}\n`;
-}
+shop
+    .filter(i => i.category == "server")
+    .forEach(perk => {
+        serverPerks += `\`${perk.id}\` ${perk.name} | ${perk.price} ${token}\n`
+            + `${perk.description}\n`;
+    });
 
 shopMenuEmbed
     .addFields(

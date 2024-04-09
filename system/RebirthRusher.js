@@ -93,7 +93,7 @@ class RebirthRusher extends Eris.Client {
 
         schedule.scheduleJob(rule, async function () {
             const allUsers = await UserDB.getAllUsers();
-            for (const user of allUsers) {
+            allUsers.forEach(async (user) => {
                 if (user.timers.kits.daily === "ready" && user.settings.daily) {
                     await bot.send(
                         {
@@ -106,7 +106,7 @@ class RebirthRusher extends Eris.Client {
                         `<@${user._id}> </daily:968186102622077019> ready`
                     );
                 }
-            }
+            });
         });
     }
 
@@ -117,12 +117,12 @@ class RebirthRusher extends Eris.Client {
         console.log("Loading events...")
         this.removeAllListeners();
         const eventFiles = fs.readdirSync(`./events`).filter(file => file.endsWith(".js"));
-        for (const file of eventFiles) {
+        eventFiles.forEach(async (file) => {
             const resolve = require.resolve(`../events/${file}`);
             delete require.cache[resolve];
             const event = require(`../events/${file}`);
             this.on(file.split(".")[0], await event.bind(null, this));
-        }
+        });
     }
 
     /**
@@ -161,7 +161,7 @@ class RebirthRusher extends Eris.Client {
             .readdirSync(path.resolve(__dirname, folderPath))
             .filter(file => file.endsWith(".js"));
 
-        for (const fileName of folder) {
+        folder.forEach(fileName => {
             try {
                 const filePath = `${folderPath}/${fileName}`;
                 delete require.cache[require.resolve(filePath)];
@@ -171,7 +171,7 @@ class RebirthRusher extends Eris.Client {
                 console.error(error);
                 process.exit();
             }
-        }
+        });
     }
 
     /**
@@ -185,7 +185,7 @@ class RebirthRusher extends Eris.Client {
         console.log("Loading application commands...");
         const updatedCommands = require("../config/updatedCommands.json");
 
-        for (const commandPath of updatedCommands) {
+        await Promise.all(updatedCommands.map(async (commandPath) => {
             // specific command file
             if (commandPath.includes("/")) {
                 const command = require(`../commands/${commandPath}.js`);
@@ -200,16 +200,16 @@ class RebirthRusher extends Eris.Client {
             // whole subdirectory
             else {
                 const subfolder = fs.readdirSync(`./commands/${commandPath}`);
-                for (const file of subfolder) {
+                subfolder.forEach(async (file) => {
                     const command = require(`../commands/${commandPath}/${file}`);
 
                     await this.createApplicationCommand(
                         command,
                         commandPath === "dev"
                     );
-                }
+                });
             }
-        }
+        }));
         console.log("Loading application commands done");
     }
 
@@ -259,19 +259,19 @@ class RebirthRusher extends Eris.Client {
     async resetTimers() {
         console.log("Resetting timers...");
         const allUsers = await UserDB.getAllUsers();
-        for (const user of allUsers) {
+        await Promise.all(allUsers.map(async (user) => {
             let hasChanged = false;
-            for (const category of Object.keys(user.timers)) {
-                for (const timer of Object.keys(user.timers[category])) {
+            Object.keys(user.timers).forEach(category => {
+                Object.keys(user.timers[category]).forEach(timer => {
                     if (user.timers[category][timer] === "running") {
                         user.timers[category][timer] = "ready";
                         hasChanged = true;
                     }
-                }
-            }
+                });
+            });
 
             if (hasChanged) await user.save();
-        }
+        }));
     }
 
     /**
@@ -279,7 +279,8 @@ class RebirthRusher extends Eris.Client {
      */
     async loadTimers() {
         const allTimers = await TimerDB.getAllTimers();
-        for (const timer of allTimers) {
+        const usersToSave = [];
+        await Promise.all(allTimers.map(async (timer) => {
             const user = await UserDB.getUserById(timer.message.author.id)
 
             const now = new Date();
@@ -302,9 +303,11 @@ class RebirthRusher extends Eris.Client {
                 await TimerDB.deleteTimer(timer._id);
             } else if (user.timers[timer.timerCategory][timer.timerName] === "ready") {
                 user.timers[timer.timerCategory][timer.timerName] = "running";
-                await user.save();
+                if (!usersToSave.includes(user)) usersToSave.push(user);
             }
-        }
+        }));
+
+        await Promise.all(usersToSave.map(async (user) => await user.save()));
     }
 
     /**

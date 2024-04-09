@@ -6,11 +6,11 @@ module.exports.execute = async function (embed, userID) {
     const user = await UserDB.getUserById(userID);
     user.pets.shards = Number(embed.description.split("\n")[2].split(" ")[2].replace(/,/g, ''));
 
-    for (const pet of Object.keys(user.pets)) {
+    Object.keys(user.pets).forEach(pet => {
         if (pet !== "shards") {
             user.pets[pet] = 0;
         }
-    }
+    });
 
     embed.fields && embed.fields.forEach(field => {
         const rarity = field.name.trim().split("**")[1].toLowerCase();

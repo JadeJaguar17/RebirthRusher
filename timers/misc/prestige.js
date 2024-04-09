@@ -9,12 +9,12 @@ module.exports.execute = async function (userID) {
 
     const query = { "message.author.id": userID };
     await timers.find(query, function (_, docs) {
-        for (const timer of docs) {
-            if (timer.timerName === "harvest") continue;
+        docs.forEach(timer => {
+            if (timer.timerName === "harvest") return;
 
             deletedTimers.push(timers.findByIdAndDelete(timer._id));
             user.timers[timer.timerCategory][timer.timerName] = "ready";
-        }
+        });
     });
 
     if (deletedTimers.length > 0) {

@@ -14,21 +14,21 @@ module.exports.execute = async function (interaction) {
     // create list of colors
     let colorString = "";
     const colors = user.inventory.graphColors.sort((a, b) => a.id - b.id);
-    for (const color of colors) {
+    colors.forEach(color => {
         const id = color.id < 10 ? ` ${color.id}` : color.id;
         const customHex = Math.floor(id) === 14
             ? (" **(" + color.hex + ")**")
             : "";
         colorString += `\`${id}\` ${color.name}${customHex}\n`;
-    }
+    })
 
     // let subscriptions = "";
-    // for (const subscription of user.inventory.subscriptions) {
+    // user.inventory.subscriptions.forEach(subscription => {
     //     const today = new Date();
     //     subscriptions += `\`${subscription.id}\` ${subscription.name} - `
     //         + `${Math.round((subscription.expiration - today) / 86400000)}`
     //         + `days left\n`;
-    // }
+    // });
 
     const inventoryEmbed = new MessageEmbed()
         .setTitle("Inventory")

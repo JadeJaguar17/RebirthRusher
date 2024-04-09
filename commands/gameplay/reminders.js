@@ -21,15 +21,15 @@ module.exports.execute = async function (interaction) {
         .setDescription(`To change your reminder settings, use \`/set reminders\``);
 
     // go through each timer category and display accordingly
-    for (const category of Object.keys(user.timers)) {
+    Object.keys(user.timers).forEach(category => {
         if (category == "$init") {
-            continue;
+            return;
         }
 
         let settings = "";
-        for (const timer of Object.keys(user.timers[category])) {
+        Object.keys(user.timers[category]).forEach(timer => {
             if (timer == "$init") {
-                continue;
+                return;
             }
 
             if (user.timers[category][timer] === "off") {
@@ -37,13 +37,13 @@ module.exports.execute = async function (interaction) {
             } else {
                 settings += `${on} ${timer}\n`;
             }
-        }
+        });
 
         setEmbed.addFields({
             name: `**${capitalize(category)}**`,
             value: settings
         });
-    }
+    });
 
     // add final settings
     const settings = `huntcd: \`${user.settings.huntcd}\` *set your hunt `

@@ -8,6 +8,7 @@ const fs = require("fs");
  * @param {Eris.Message} message Message that got updated
  */
 module.exports = async (bot, message) => {
+    console.log("messageUpdate:", message.content);
     try {
         // ignore if message is not from Idle Miner or message is not an embed
         if (message.author?.id !== "518759221098053634") return;

@@ -141,15 +141,9 @@ module.exports.options = [
     }
 ]
 
-
 function hasItem(user, item) {
     if (["graphColors", "subscriptions"].includes(item.category) && item.id !== 14) {
-        for (const i of user.inventory[item.category]) {
-            if (i.id === item.id) {
-                return true;
-            }
-        }
-        return false;
+        return user.inventory[item.category].some(i => i.id === item.id);
     } else if (item.category === "theme") {
         return user.inventory.hasDarkMode;
     }
