@@ -1,9 +1,12 @@
-const dotenv = require("dotenv");
-dotenv.config()
-
 const RebirthRusher = require("./system/RebirthRusher");
-const rbr = new RebirthRusher(process.env.DEVTOKEN);
-rbr.init()
+require("dotenv").config();
+
+const AUTH_TOKEN = process.env.NODE_ENV === "development"
+    ? process.env.DEVTOKEN
+    : TOKEN;
+
+const rbr = new RebirthRusher(AUTH_TOKEN);
+rbr.init();
 
 rbr.on("error", error => {
     rbr.error("Error event", error);
