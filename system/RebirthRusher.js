@@ -235,7 +235,7 @@ class RebirthRusher extends Eris.Client {
             }, 1);
         }
 
-        console.info(`  Updated command '${commandConfig.name}'`);
+        console.info(` - Updated command [${commandConfig.name}]`);
     }
 
     /**
