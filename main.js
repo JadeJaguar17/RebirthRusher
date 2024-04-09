@@ -21,7 +21,7 @@ process.on("uncaughtException", (error) => {
 
 // Top.gg
 const { AutoPoster } = require("topgg-autoposter");
-const poster = AutoPoster(process.env.TOPGG_TOKEN, new Eris.Client(process.env.TOKEN));
+const poster = AutoPoster(process.env.TOPGG_TOKEN, rbr);
 
 poster.on('posted', () => {
     console.info('Posted stats to Top.gg!');
