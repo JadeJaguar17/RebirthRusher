@@ -50,7 +50,7 @@ module.exports = async (bot, message) => {
 
         // normal /play embed
         if (
-            message.interaction.name === "play"
+            message.interaction?.name === "play"
             && !embed.description.startsWith("**Event**")
             && embed.description.includes("Backpack full")
         ) {
