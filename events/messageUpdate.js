@@ -25,31 +25,31 @@ module.exports = async (bot, message) => {
         const embed = message.embeds[0];
 
         // pets embed
-        if (embed.title === "Pets") {
-            await bot.scanners.get("petScan").execute(embed, userID);
+        // if (embed.title === "Pets") {
+        //     await bot.scanners.get("petScan").execute(embed, userID);
 
-            const user = await UserDB.getUserById(userID);
-            if (user.settings.autoPet && await bot.users.get(userID)) {
-                const msgData = {
-                    member: { user: await bot.users.get(userID) },
-                    data: { options: null }
-                };
-                const petEmbed = await bot.commands.get("pets").execute(msgData, userID);
+        //     const user = await UserDB.getUserById(userID);
+        //     if (user.settings.autoPet && await bot.users.get(userID)) {
+        //         const msgData = {
+        //             member: { user: await bot.users.get(userID) },
+        //             data: { options: null }
+        //         };
+        //         const petEmbed = await bot.commands.get("pets").execute(msgData, userID);
 
-                petEmbed.embeds[0]
-                    .setTitle(null)
-                    .setDescription(null)
-                    .setThumbnail(null)
-                    .setAuthor(null, null);
-                petEmbed.embeds[0].fields = [petEmbed.embeds[0].fields[5]];
-                petEmbed.messageReference = { messageID: message.id };
+        //         petEmbed.embeds[0]
+        //             .setTitle(null)
+        //             .setDescription(null)
+        //             .setThumbnail(null)
+        //             .setAuthor(null, null);
+        //         petEmbed.embeds[0].fields = [petEmbed.embeds[0].fields[5]];
+        //         petEmbed.messageReference = { messageID: message.id };
 
-                return bot.send(message, petEmbed);
-            }
-        }
+        //         return bot.send(message, petEmbed);
+        //     }
+        // }
 
         // normal /play embed
-        else if (
+        if (
             message.interaction.name === "play"
             && !embed.description.startsWith("**Event**")
             && embed.description.includes("Backpack full")
