@@ -54,8 +54,7 @@ class RebirthRusher extends Eris.Client {
 
                 await this.initDB();
                 await this.resetTimers();
-                console.info("Loading timers...")
-                await this.loadTimers();
+                await this.loadTimers(true);
                 await this.loadEvents();
 
                 this.initDailies();
@@ -276,8 +275,11 @@ class RebirthRusher extends Eris.Client {
 
     /**
      * Starts up timers in the timer database
+     * @param sendLog whether to send a log
      */
-    async loadTimers() {
+    async loadTimers(sendLog = false) {
+        sendLog && console.info("Loading timers...");
+
         const allTimers = await TimerDB.getAllTimers();
         const usersToSave = [];
         await Promise.all(allTimers.map(async (timer) => {
