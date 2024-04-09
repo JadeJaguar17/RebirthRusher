@@ -1,39 +1,34 @@
-const users = require("../../models/userModel");
+const { getTopTenTokens } = require("../../database/controllers/userController");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
 
-module.exports = {
-    name: "leaderboard",
-    description: "A leaderboard for the top 10 with the most tokens",
-    syntax: "`/leaderboard`",
-    execute: async function () {
-        // only get the top 10 users
-        const places = await users
-            .find()
-            .sort({ "inventory.tokens": -1 })
-            .limit(10);
+module.exports.name = "leaderboard"
+module.exports.description = "A leaderboard for the top 10 with the most tokens"
+module.exports.syntax = "`/leaderboard`"
 
-        // create string representation of the leaderboard
-        let leaderboard = ""
-        for (const place in places) {
-            const user = places[place];
-            const discordUser = await bot.users.get(user._id)
-                || await bot.getRESTUser(user._id);
+module.exports.execute = async function () {
+    // only get the top 10 users
+    const places = await getTopTenTokens();
 
-            leaderboard += `**#${Number(place) + 1} ${discordUser.username}**\n`
-                + `${addCommas(user.inventory.tokens.toString())}\n`;
-        }
+    // create string representation of the leaderboard
+    let leaderboard = ""
+    for (const place in places) {
+        const user = places[place];
+        const discordUser = await bot.users.get(user._id)
+            || await bot.getRESTUser(user._id);
 
-        // add to embed
-        const leaderboardEmbed = new MessageEmbed()
-            .setTitle("Token Leaderboard")
-            .setDescription(leaderboard)
-            .setThumbnail("https://i.imgur.com/QGeVBwy.png")
-            .setColor(RBR);
+        leaderboard += `**#${Number(place) + 1} ${discordUser.username}**\n`
+            + `${addCommas(user.inventory.tokens.toString())}\n`;
+    }
 
-        return { embeds: [leaderboardEmbed] };
-    },
-    options: []
+    // add to embed
+    const leaderboardEmbed = new MessageEmbed()
+        .setTitle("Token Leaderboard")
+        .setDescription(leaderboard)
+        .setThumbnail("https://i.imgur.com/QGeVBwy.png")
+        .setColor(RBR);
+
+    return { embeds: [leaderboardEmbed] };
 }
 
 // add commas to number string

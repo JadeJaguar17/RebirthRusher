@@ -1,47 +1,42 @@
 const MessageEmbed = require("../../system/MessageEmbed");
-const users = require("../../models/userModel");
+const { createUser } = require("../../database/controllers/userController");
 const { SUCCESS } = require("../../config/embedColors.json");
 
-module.exports = {
-    name: "start",
-    description: "Creates a new account for the user",
-    syntax: "`/start`",
-    execute: async function (interaction) {
-        const user = await users.findById(interaction.member.user.id);
-        if (user) return "You already have an account!";
+module.exports.name = "start"
+module.exports.description = "Creates a new account for the user"
+module.exports.syntax = "`/start`"
 
-        await users.create({
-            _id: interaction.member.user.id
-        });
+module.exports.execute = async function (interaction) {
+    try {
+        await createUser(interaction.member.user.id);
+    } catch (error) {
+        return "You already have an account!";
+    }
 
-        // log new user
-        const newUserEmbed = new MessageEmbed()
-            .setColor(SUCCESS)
-            .setThumbnail(interaction.member.user.avatarURL)
-            .setTitle("New user")
-            .setDescription(
-                `**Name:** ${interaction.member.user.username}`
-                + `#${interaction.member.user.discriminator}\n`
-                + `**ID:** \`${interaction.member.user.id}\``)
-            .setTimestamp();
+    // log new user
+    const newUserEmbed = new MessageEmbed()
+        .setColor(SUCCESS)
+        .setThumbnail(interaction.member.user.avatarURL)
+        .setTitle("New user")
+        .setDescription(
+            `**Name:** ${interaction.member.user.username}\n`
+            + `**ID:** \`${interaction.member.user.id}\``)
+        .setTimestamp();
 
-        await bot.log("account", newUserEmbed);
+    await bot.log("account", newUserEmbed);
 
-        // return the welcome message with a warning if the user has a default
-        // avatar (since it'll screw with their experience)
-        const welcomeMessage = `Your account has been created! To set up your `
-            + `graph, run the Idle Miner \`/profile\` command. To learn more on`
-            + ` how to use the bot, read \`/help\` and \`/guide\`!`;
+    // return the welcome message with a warning if the user has a default
+    // avatar (since it'll screw with their experience)
+    const welcomeMessage = `Your account has been created! To set up your `
+        + `graph, run the Idle Miner \`/profile\` command. To learn more on`
+        + ` how to use the bot, read \`/help\` and \`/guide\`!`;
 
-        const defaultWarning = "\n\n:warning: You have a default avatar! "
-            + "Due to how RbR works, certain features will not function "
-            + "properly until you get a personalized avatar. I am very sorry "
-            + "for this inconvinience, but unfortunately, there is currently "
-            + "no workaround.";
+    const defaultWarning = "\n\n:warning: You have a default avatar! "
+        + "Due to how RbR works, certain features will not function "
+        + "properly until you get a personalized avatar. I am very sorry "
+        + "for this inconvinience, but unfortunately, there is currently "
+        + "no workaround.";
 
-        return welcomeMessage
-            + `${interaction.member.user.avatar ? "" : defaultWarning}`;
-
-    },
-    options: []
+    return welcomeMessage
+        + `${interaction.member.user.avatar ? "" : defaultWarning}`;
 }

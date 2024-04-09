@@ -1,33 +1,31 @@
-const users = require("../../models/userModel");
-const { rbrServer } = require("../../config/discordIds.json");
+const UserDB = require("../../database/controllers/userController");
+const { RBR_SERVER_ID } = require("../../config/discordIds.json");
 const { token } = require("../../config/emojis.json");
 
-module.exports = {
-    name: "claim",
-    description: "Claims token gifts during special events",
-    syntax: "`/claim`",
-    needsAccount: true,
-    execute: async function (interaction) {
-        const user = await users.findById(interaction.member.user.id);
+module.exports.name = "claim"
+module.exports.description = "Claims token gifts during special events"
+module.exports.syntax = "`/claim`"
+module.exports.needsAccount = true
 
-        if (!bot.eventReward) {
-            return `There's no event going on right now`;
-        }
+module.exports.execute = async function (interaction) {
+    const user = await UserDB.getUserById(interaction.member.user.id);
 
-        if (interaction.channel.guild.id !== rbrServer) {
-            return `Gifts can only be claimed in the support server!\n`
-                + `https://discord.gg/QmrEbsyKYB`;
-        }
+    if (!bot.eventReward) {
+        return `There's no event going on right now`;
+    }
 
-        if (bot.eventClaimed.includes(user._id)) {
-            return `You already claimed your gift!`;
-        }
+    if (interaction.channel.guild.id !== RBR_SERVER_ID) {
+        return `Gifts can only be claimed in the support server!\n`
+            + `https://discord.gg/QmrEbsyKYB`;
+    }
 
-        user.inventory.tokens += bot.eventReward;
-        bot.eventClaimed.push(user._id);
+    if (bot.eventClaimed.includes(user._id)) {
+        return `You already claimed your gift!`;
+    }
 
-        await user.save();
-        return `You claimed your gift of **${bot.eventReward}** ${token}`;
-    },
-    options: []
+    user.inventory.tokens += bot.eventReward;
+    bot.eventClaimed.push(user._id);
+
+    await user.save();
+    return `You claimed your gift of **${bot.eventReward}** ${token}`;
 }

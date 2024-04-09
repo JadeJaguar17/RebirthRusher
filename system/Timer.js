@@ -1,5 +1,5 @@
-const timers = require("../models/timerModel");
-const users = require("../models/userModel");
+const UserDB = require("../database/controllers/userController");
+const TimerDB = require("../database/controllers/timerController");
 const MessageCollector = require("./collector/MessageCollector");
 const slashIDS = require("../config/slashIds.json");
 
@@ -7,27 +7,19 @@ class Timer {
     constructor() { }
 
     async startTimer(message, userID, timerName, timerCategory, timerCd, timerID) {
-        const user = await users.findById(userID);
+        const user = await UserDB.getUserById(userID);
         if (timerCd >= 90) {
             const endTime = new Date();
             endTime.setSeconds(endTime.getSeconds() + timerCd);
 
-            await timers.create({
-                message: {
-                    author: {
-                        id: user._id
-                    },
-                    channel: {
-                        id: message.channel.id,
-                        guild: {
-                            id: message.channel.guild.id
-                        }
-                    }
-                },
-                timerName: timerName,
-                timerCategory: timerCategory,
-                endTime: endTime
-            });
+            await TimerDB.createTimer(
+                timerName,
+                timerCategory,
+                endTime,
+                user._id,
+                message.channel.id,
+                message.channel.guild.id
+            )
 
             user.timers[timerCategory][timerName] = "running";
             return await user.save();
@@ -35,7 +27,7 @@ class Timer {
 
         const timer = setTimeout(async () => {
             try {
-                const timerUser = await users.findById(user._id);
+                const timerUser = await UserDB.getUserById(user._id);
                 if (timerUser.timers[timerCategory][timerName] === "off") {
                     return;
                 }
@@ -48,7 +40,7 @@ class Timer {
 
                 timerUser.timers[timerCategory][timerName] = "ready";
                 await timerUser.save();
-                await timers.findByIdAndDelete(timerID);
+                await TimerDB.deleteTimer(timerID);
             } catch (error) {
                 bot.error("Timer", error, message);
             }
@@ -84,7 +76,7 @@ class Timer {
         );
         resetCollector.on("collect", async () => {
             clearTimeout(timer);
-            await timers.findByIdAndDelete(timerID);
+            await TimerDB.deleteTimer(timerID);
 
             user.timers[timerCategory][timerName] = "ready";
             user.save();

@@ -99,11 +99,8 @@ const userSchema = new mongoose.Schema({
 });
 
 // ensure I'm not modifying the actual database
-const collectionName = "tests"
-
-if (collectionName !== "tests" && process.env.NODE_ENV === "development") {
-    console.error(new mongoose.MongooseError("Collection name needs to be changed"));
-    process.exit()
-}
+const collectionName = process.env.NODE_ENV === "development"
+    ? "users.test"
+    : "users"
 
 module.exports = mongoose.models[collectionName] || mongoose.model(collectionName, userSchema);

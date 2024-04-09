@@ -1,58 +1,58 @@
-const users = require("../../models/userModel.js");
-const { dev } = require("../../config/discordIds.json");
+const UserDB = require("../../database/controllers/userController");
+const { DEV_ID } = require("../../config/discordIds.json");
 const { token } = require("../../config/emojis.json");
 
-module.exports = {
-    name: "pay",
-    description: "Pays users tokens\n*(operator only)*",
-    syntax: "`/pay [@user] [tokens]`",
-    needsAccount: true,
-    execute: async function (interaction) {
-        const payeeID = interaction.data.options[0].value;
-        const tokens = interaction.data.options[1].value;
+module.exports.name = "pay"
+module.exports.description = "Pays users tokens\n*(operator only)*"
+module.exports.syntax = "`/pay [@user] [tokens]`"
+module.exports.needsAccount = true
 
-        if (tokens < 0 && interaction.member.user.id !== dev) {
-            return "You can't give somebody negative tokens!";
-        }
+module.exports.execute = async function (interaction) {
+    const payeeID = interaction.data.options[0].value;
+    const tokens = interaction.data.options[1].value;
 
-        const payer = await users.findById(interaction.member.user.id);
-        const payee = await users.findById(payeeID);
+    if (tokens < 0 && interaction.member.user.id !== DEV_ID) {
+        return "You can't give somebody negative tokens!";
+    }
 
-        if (!payee) {
-            return "I cannot find the person you want to give tokens to. Make "
-                + "sure they have an account first!";
-        }
+    const payer = await UserDB.getUserById(interaction.member.user.id);
+    const payee = await UserDB.getUserById(payeeID);
 
-        if (payer._id === dev) {
-            payer.inventory.tokens += tokens;
-        } else if (payer._id === payee._id) {
-            return "You can't pay yourself!";
-        }
+    if (!payee) {
+        return "I cannot find the person you want to give tokens to. Make "
+            + "sure they have an account first!";
+    }
 
-        if (payer.inventory.tokens < tokens) {
-            return "You don't have enough tokens to give";
-        }
+    if (payer._id === DEV_ID) {
+        payer.inventory.tokens += tokens;
+    } else if (payer._id === payee._id) {
+        return "You can't pay yourself!";
+    }
 
-        payer.inventory.tokens -= tokens;
-        payee.inventory.tokens += tokens;
+    if (payer.inventory.tokens < tokens) {
+        return "You don't have enough tokens to give";
+    }
 
-        await payer.save();
-        await payee.save();
+    payer.inventory.tokens -= tokens;
+    payee.inventory.tokens += tokens;
 
-        return `You succesfully gave ${tokens} ${token} to <@${payee._id}>`;
-    },
-    options: [
-        {
-            name: "user",
-            description: "user to give your tokens to",
-            type: 6,
-            required: true
-        },
-        {
-            name: "tokens",
-            description: "amount of tokens to pay",
-            type: 4,
-            required: true
-        }
-    ]
+    await payer.save();
+    await payee.save();
+
+    return `You succesfully gave ${tokens} ${token} to <@${payee._id}>`;
 }
+
+module.exports.options = [
+    {
+        name: "user",
+        description: "user to give your tokens to",
+        type: 6,
+        required: true
+    },
+    {
+        name: "tokens",
+        description: "amount of tokens to pay",
+        type: 4,
+        required: true
+    }
+]

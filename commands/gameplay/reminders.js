@@ -1,65 +1,63 @@
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
-const users = require("../../models/userModel.js");
+const UserDB = require("../../database/controllers/userController");
 const { off, on } = require("../../config/emojis.json");
 
-module.exports = {
-    name: "reminders",
-    description: "Displays settings for cooldown reminders",
-    syntax: "`/reminders`",
-    aliases: ["r"],
-    needsAccount: true,
-    execute: async function (interaction) {
-        const user = await users.findById(interaction.member.user.id);
+module.exports.name = "reminders"
+module.exports.description = "Displays settings for cooldown reminders"
+module.exports.syntax = "`/reminders`"
+module.exports.aliases = ["r"]
+module.exports.needsAccount = true
 
-        // inital embed build for the reminders list
-        const setEmbed = new MessageEmbed()
-            .setColor(RBR)
-            .setAuthor(interaction.member.user.username, interaction.member.user.avatarURL)
-            .setThumbnail("https://i.imgur.com/Lmc0Jzo.png")
-            .setTitle("Reminders")
-            .setDescription(`To change your reminder settings, use \`/set reminders\``);
+module.exports.execute = async function (interaction) {
+    const user = await UserDB.getUserById(interaction.member.user.id);
 
-        // go through each timer category and display accordingly
-        for (const category of Object.keys(user.timers)) {
-            if (category == "$init") {
-                continue;
-            }
+    // inital embed build for the reminders list
+    const setEmbed = new MessageEmbed()
+        .setColor(RBR)
+        .setAuthor(interaction.member.user.username, interaction.member.user.avatarURL)
+        .setThumbnail("https://i.imgur.com/Lmc0Jzo.png")
+        .setTitle("Reminders")
+        .setDescription(`To change your reminder settings, use \`/set reminders\``);
 
-            let settings = "";
-            for (const timer of Object.keys(user.timers[category])) {
-                if (timer == "$init") {
-                    continue;
-                }
-
-                if (user.timers[category][timer] === "off") {
-                    settings += `${off} ${timer}\n`;
-                } else {
-                    settings += `${on} ${timer}\n`;
-                }
-            }
-
-            setEmbed.addFields({
-                name: `**${capitalize(category)}**`,
-                value: settings
-            });
+    // go through each timer category and display accordingly
+    Object.keys(user.timers).forEach(category => {
+        if (category == "$init") {
+            return;
         }
 
-        // add final settings
-        const settings = `huntcd: \`${user.settings.huntcd}\` *set your hunt `
-            + `cooldown here*\n`
-            + `boostercd: \`${user.settings.boostercd}s\` *get pinged when there's`
-            + ` ${user.settings.boostercd}s left for a booster*\n`
-            + `pKit: \`${user.settings.pkit}\` set your prestige kit level here`
+        let settings = "";
+        Object.keys(user.timers[category]).forEach(timer => {
+            if (timer == "$init") {
+                return;
+            }
 
-        setEmbed.addFields({
-            name: "**Settings**",
-            value: settings
+            if (user.timers[category][timer] === "off") {
+                settings += `${off} ${timer}\n`;
+            } else {
+                settings += `${on} ${timer}\n`;
+            }
         });
 
-        return { embeds: [setEmbed] };
-    },
-    options: []
+        setEmbed.addFields({
+            name: `**${capitalize(category)}**`,
+            value: settings
+        });
+    });
+
+    // add final settings
+    const settings = `huntcd: \`${user.settings.huntcd}\` *set your hunt `
+        + `cooldown here*\n`
+        + `boostercd: \`${user.settings.boostercd}s\` *get pinged when there's`
+        + ` ${user.settings.boostercd}s left for a booster*\n`
+        + `pKit: \`${user.settings.pkit}\` set your prestige kit level here`
+
+    setEmbed.addFields({
+        name: "**Settings**",
+        value: settings
+    });
+
+    return { embeds: [setEmbed] };
 }
 
 function isTimer(user, settingName) {

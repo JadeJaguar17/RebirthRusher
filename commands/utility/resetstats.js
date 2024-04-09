@@ -1,12 +1,13 @@
-module.exports.name = "delete"
-module.exports.description = "Deletes your user data"
-module.exports.syntax = "`/delete`"
+module.exports.name = "resetstats"
+module.exports.description = "Reset your personal best stats"
+module.exports.syntax = "`/resetstats`"
 module.exports.needsAccount = true
 
 module.exports.execute = async function (interaction) {
     const confirm = `<@${interaction.member.user.id}> are you sure you want`
-        + ` to **permamemtly** delete all your data? If so, please confirm `
-        + `within the next 15s`;
+        + ` to reset your personal best stats? These are the 3 stats listed`
+        + ` under the "Highest stats for one day" section in your graph. If`
+        + ` so, please confirm within the next 15s`;
 
     return {
         content: confirm,
@@ -17,8 +18,8 @@ module.exports.execute = async function (interaction) {
                     {
                         type: 2,
                         style: 4,
-                        custom_id: `${interaction.member.user.id}-delete-confirm`,
-                        label: "Yes, delete ALL my data",
+                        custom_id: `${interaction.member.user.id}-reset-confirm`,
+                        label: "Yes, reset my stats",
                         emoji: {
                             name: "⚠️",
                             id: null,
@@ -27,7 +28,7 @@ module.exports.execute = async function (interaction) {
                     {
                         type: 2,
                         style: 2,
-                        custom_id: `${interaction.member.user.id}-delete-cancel`,
+                        custom_id: `${interaction.member.user.id}-reset-cancel`,
                         label: "Cancel"
                     },
                 ]
