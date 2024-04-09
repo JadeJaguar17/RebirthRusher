@@ -316,7 +316,7 @@ class RebirthRusher extends Eris.Client {
     initTopGG() {
         console.info("Connecting to TopGG...");
         const webhook = new Webhook(process.env.TOPGG_SECRET);
-        const PORT = 80;
+        const PORT = 1717;
 
         app.post("/dblwebhook", webhook.listener(vote => {
             this.rewardVote(vote.user);
