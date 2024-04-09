@@ -9,8 +9,6 @@ module.exports.syntax = "`/identify [id]`"
 module.exports.hidden = true
 
 module.exports.execute = async function (interaction) {
-    if (interaction.member.user.id !== DEV_ID) return;
-
     const id = interaction.data.options[0].value;
     if (!id) return "Please enter an id";
 

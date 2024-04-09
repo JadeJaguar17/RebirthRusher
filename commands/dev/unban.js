@@ -7,8 +7,6 @@ module.exports.syntax = "`/unban`"
 module.exports.hidden = true
 
 module.exports.execute = async function (interaction) {
-    if (interaction.member.user.id === DEV_ID) return;
-
     const userID = interaction.data.options[0].value;
     const bannedUsers = JSON.parse(fs.readFileSync("./config/bannedUsers.json"));
 

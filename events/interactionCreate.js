@@ -4,6 +4,7 @@ const fs = require("fs");
 const UserDB = require("../database/controllers/userController");
 const MessageEmbed = require("../system/MessageEmbed");
 const { ERROR } = require("../config/embedColors.json");
+const { DEV_ID } = require("../config/discordIds.json");
 
 /**
  * @param {RebirthRusher} bot base class of RbR
@@ -48,6 +49,7 @@ async function handleSlashCommand(bot, interaction) {
     }
 
     if (command) {
+        if (command.hidden && interaction.member.user.id !== DEV_ID) return;
         const result = await bot.commands.get(interaction.data.name).execute(interaction);
 
         // 'delete' and 'resetstats' have a 15s expiry time
@@ -62,7 +64,7 @@ async function handleSlashCommand(bot, interaction) {
             }, 15000);
         }
 
-        return interaction.createMessage(result, result.file);
+        return interaction.createMessage(result, result?.file);
     }
 
     // context menu graph

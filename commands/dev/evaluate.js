@@ -7,15 +7,19 @@ module.exports.syntax = "`/evaluate [code]`"
 module.exports.hidden = true
 
 module.exports.execute = async function (interaction) {
-    if (interaction.member.user.id === DEV_ID) {
-        try {
-            const user = await UserDB.getUserById(interaction.member.user.id);
-            const result = eval(interaction.data.options[0].value);
+    // extra protection in case future changes to interactionCreate exposes this
+    if (interaction.member.user.id !== DEV_ID) {
+        await bot.error("eval", new Error("EVAL HAS BEEN ACCESSED"));
+        return;
+    }
 
-            return `\`\`\`js\n${result}\n\`\`\``;
-        } catch (err) {
-            return `**ERROR** \`\`\`xl\n${err}\n\`\`\``;
-        }
+    try {
+        const user = await UserDB.getUserById(interaction.member.user.id);
+        const result = eval(interaction.data.options[0].value);
+
+        return `\`\`\`js\n${result}\n\`\`\``;
+    } catch (err) {
+        return `**ERROR** \`\`\`xl\n${err}\n\`\`\``;
     }
 }
 
