@@ -59,17 +59,16 @@ module.exports.deleteTimer = async function (timerID) {
 module.exports.deleteTimerForUser = async function (userID, timerName) {
     const user = await UserDB.getUserById(userID);
     const query = { "message.author.id": userID, "timerName": timerName };
+    const userTimers = await timers.find(query).exec();
 
-    let hasHarvestTimer = false;
-    timers.find(query, async function (_, docs) {
-        await Promise.all(docs.map(async (timer) => {
-            await timers.findByIdAndDelete(timer._id);
-            user.timers[timer.timerCategory][timer.timerName] = "ready";
-            hasHarvestTimer = true;
-        }))
-    });
+    let hasChanges = false;
+    await Promise.all(userTimers.map(async (timer) => {
+        await timers.findByIdAndDelete(timer._id);
+        user.timers[timer.timerCategory][timer.timerName] = "ready";
+        hasChanges = true;
+    }));
 
-    if (hasHarvestTimer) {
+    if (hasChanges) {
         await user.save();
     }
 }
