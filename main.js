@@ -3,7 +3,7 @@ require("dotenv").config();
 
 const AUTH_TOKEN = process.env.NODE_ENV === "development"
     ? process.env.DEVTOKEN
-    : TOKEN;
+    : process.env.TOKEN;
 
 // log which version of bot is being run
 if (AUTH_TOKEN === process.env.DEVTOKEN) {
