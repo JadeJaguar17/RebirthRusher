@@ -54,8 +54,7 @@ class RebirthRusher extends Eris.Client {
 
                 await this.initDB();
                 await this.resetTimers();
-                console.info("Loading timers...")
-                await this.loadTimers();
+                await this.loadTimers(true);
                 await this.loadEvents();
 
                 this.initDailies();
@@ -235,7 +234,7 @@ class RebirthRusher extends Eris.Client {
             }, 1);
         }
 
-        console.info(`  Updated command '${commandConfig.name}'`);
+        console.info(` - Updated command [${commandConfig.name}]`);
     }
 
     /**
@@ -276,8 +275,11 @@ class RebirthRusher extends Eris.Client {
 
     /**
      * Starts up timers in the timer database
+     * @param sendLog whether to send a log
      */
-    async loadTimers() {
+    async loadTimers(sendLog = false) {
+        sendLog && console.info("Loading timers...");
+
         const allTimers = await TimerDB.getAllTimers();
         const usersToSave = [];
         await Promise.all(allTimers.map(async (timer) => {
@@ -316,7 +318,7 @@ class RebirthRusher extends Eris.Client {
     initTopGG() {
         console.info("Connecting to TopGG...");
         const webhook = new Webhook(process.env.TOPGG_SECRET);
-        const PORT = 80;
+        const PORT = 1717;
 
         app.post("/dblwebhook", webhook.listener(vote => {
             this.rewardVote(vote.user);

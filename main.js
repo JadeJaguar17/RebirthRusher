@@ -1,30 +1,40 @@
-const dotenv = require("dotenv");
-dotenv.config()
-
 const RebirthRusher = require("./system/RebirthRusher");
-const rbr = new RebirthRusher(process.env.DEVTOKEN);
-rbr.init()
+require("dotenv").config();
 
+const AUTH_TOKEN = process.env.NODE_ENV === "development"
+    ? process.env.DEVTOKEN
+    : TOKEN;
+
+// log which version of bot is being run
+if (AUTH_TOKEN === process.env.DEVTOKEN) {
+    console.info("Starting up dev bot");
+}
+else if (AUTH_TOKEN === process.env.TOKEN) {
+    console.info("Starting up main bot");
+}
+else {
+    console.info("Unknown auth token, terminating...");
+    exit();
+}
+
+// create RebirthRusher bot and start it up
+const rbr = new RebirthRusher(AUTH_TOKEN);
+rbr.init();
+
+global.bot = rbr;
+
+// handle errors
 rbr.on("error", error => {
     rbr.error("Error event", error);
     console.error(error)
 });
 
-global.bot = rbr;
-
+// handle any uncaught exceptions
 process.on("uncaughtException", (error) => {
     rbr.error("Uncaught Exception", error);
-})
+});
 
-// Top.gg
-// const {AutoPoster} = require("topgg-autoposter");
-// const poster = AutoPoster(process.env.TOPGG_TOKEN, new Eris.Client(process.env.TOKEN));
-
-// poster.on('posted', () => {
-//     console.info('Posted stats to Top.gg!')
-//   })
-
-// Deals with any rejected Promises that haven't been handled
-// process.on('unhandledRejection', error => {
-//     rbr.error("Unhandled Promise Rejection", error);
-// });
+// deals with any undhandled rejected Promises
+process.on('unhandledRejection', error => {
+    rbr.error("Unhandled Promise Rejection", error);
+});
