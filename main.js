@@ -21,7 +21,7 @@ process.on("uncaughtException", (error) => {
 // const poster = AutoPoster(process.env.TOPGG_TOKEN, new Eris.Client(process.env.TOKEN));
 
 // poster.on('posted', () => {
-//     console.log('Posted stats to Top.gg!')
+//     console.info('Posted stats to Top.gg!')
 //   })
 
 // Deals with any rejected Promises that haven't been handled

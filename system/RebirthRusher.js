@@ -37,7 +37,7 @@ class RebirthRusher extends Eris.Client {
      */
     async init() {
         try {
-            console.log("Connecting to API...");
+            console.info("Connecting to API...");
             await this.connect();
         } catch (error) {
             console.error(error);
@@ -54,7 +54,7 @@ class RebirthRusher extends Eris.Client {
 
                 await this.initDB();
                 await this.resetTimers();
-                console.log("Loading timers...")
+                console.info("Loading timers...")
                 await this.loadTimers();
                 await this.loadEvents();
 
@@ -71,8 +71,8 @@ class RebirthRusher extends Eris.Client {
 
                     this.log("startup", startEmbed);
                 }
-                console.log("Bot launch succesful");
-                console.log("=========================");
+                console.info("Bot launch succesful");
+                console.info("=========================");
             } catch (error) {
                 console.error(error);
                 process.exit();
@@ -84,7 +84,7 @@ class RebirthRusher extends Eris.Client {
      * Creates daily timers for users that have it enabled
      */
     initDailies() {
-        console.log("Starting up dailies schedule...");
+        console.info("Starting up dailies schedule...");
 
         const rule = new schedule.RecurrenceRule();
         rule.hour = 0;
@@ -114,7 +114,7 @@ class RebirthRusher extends Eris.Client {
      * Load event files and start up listeners
      */
     async loadEvents() {
-        console.log("Loading events...")
+        console.info("Loading events...")
         this.removeAllListeners();
         const eventFiles = fs.readdirSync(`./events`).filter(file => file.endsWith(".js"));
         eventFiles.forEach(async (file) => {
@@ -129,7 +129,7 @@ class RebirthRusher extends Eris.Client {
      * Load command, timer, and scanner files
      */
     loadAllFiles() {
-        console.log("Loading files...");
+        console.info("Loading files...");
 
         // load commands
         const commands = fs.readdirSync("./commands");
@@ -182,7 +182,7 @@ class RebirthRusher extends Eris.Client {
      * slash commands have changed and need to be reloaded in the API.
      */
     async loadApplicationCommands() {
-        console.log("Loading application commands...");
+        console.info("Loading application commands...");
         const updatedCommands = require("../config/updatedCommands.json");
 
         await Promise.all(updatedCommands.map(async (commandPath) => {
@@ -210,7 +210,7 @@ class RebirthRusher extends Eris.Client {
                 });
             }
         }));
-        console.log("Loading application commands done");
+        console.info("Loading application commands done");
     }
 
     /**
@@ -235,18 +235,18 @@ class RebirthRusher extends Eris.Client {
             }, 1);
         }
 
-        console.log(`  Updated command '${commandConfig.name}'`);
+        console.info(`  Updated command '${commandConfig.name}'`);
     }
 
     /**
      * Connects to MongoDB
      */
     async initDB() {
-        console.log("Connecting to MongoDB...");
+        console.info("Connecting to MongoDB...");
         try {
             await mongoose.connect(process.env.SRV);
-            console.log(` - Users: [${UserDB.collectionName}]`);
-            console.log(` - Timers: [${TimerDB.collectionName}]`)
+            console.info(` - Users: [${UserDB.collectionName}]`);
+            console.info(` - Timers: [${TimerDB.collectionName}]`)
         } catch (error) {
             console.error(error);
             process.exit();
@@ -257,7 +257,7 @@ class RebirthRusher extends Eris.Client {
      * Resets timer states to "ready" to prevent locking
      */
     async resetTimers() {
-        console.log("Resetting timers...");
+        console.info("Resetting timers...");
         const allUsers = await UserDB.getAllUsers();
         await Promise.all(allUsers.map(async (user) => {
             let hasChanged = false;
@@ -314,7 +314,7 @@ class RebirthRusher extends Eris.Client {
      * Connects to Top.gg
      */
     initTopGG() {
-        console.log("Connecting to TopGG...");
+        console.info("Connecting to TopGG...");
         const webhook = new Webhook(process.env.TOPGG_SECRET);
         const PORT = 80;
 
@@ -324,7 +324,7 @@ class RebirthRusher extends Eris.Client {
 
         app.listen(PORT);
 
-        console.log(`Connected to TopGG (port ${PORT})`);
+        console.info(`Connected to TopGG (port ${PORT})`);
     }
 
     /**
