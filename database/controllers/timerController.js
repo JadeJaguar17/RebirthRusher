@@ -62,11 +62,11 @@ module.exports.deleteTimerForUser = async function (userID, timerName) {
 
     let hasHarvestTimer = false;
     timers.find(query, async function (_, docs) {
-        for (const timer of docs) {
+        await Promise.all(docs.map(async (timer) => {
             await timers.findByIdAndDelete(timer._id);
             user.timers[timer.timerCategory][timer.timerName] = "ready";
             hasHarvestTimer = true;
-        }
+        }))
     });
 
     if (hasHarvestTimer) {

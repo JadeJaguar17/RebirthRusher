@@ -1,5 +1,5 @@
 // Discord
-const { Client, Collection } = require("eris");
+const Eris = require("eris");
 const MessageEmbed = require("./MessageEmbed.js");
 const { Webhook } = require("@top-gg/sdk");
 const app = require("express")();
@@ -20,21 +20,24 @@ const dotenv = require("dotenv");
 dotenv.config()
 
 const { ERROR, RBR, SUCCESS } = require("../config/embedColors.json");
-const { devServer } = require("../config/discordIds.json");
+const { DEV_SERVER_ID } = require("../config/discordIds.json");
 const { token } = require("../config/emojis.json");
 
-class RebirthRusher extends Client {
+class RebirthRusher extends Eris.Client {
     constructor(token) {
         super(token, { restMode: true });
-        this.commands = new Collection();
-        this.timers = new Collection();
-        this.scanners = new Collection();
+        this.commands = new Eris.Collection();
+        this.timers = new Eris.Collection();
+        this.scanners = new Eris.Collection();
         this.errorCase = 0;
     }
 
+    /**
+     * Fires up the bot
+     */
     async init() {
         try {
-            console.log("Connecting to API...");
+            console.info("Connecting to API...");
             await this.connect();
         } catch (error) {
             console.error(error);
@@ -51,7 +54,7 @@ class RebirthRusher extends Client {
 
                 await this.initDB();
                 await this.resetTimers();
-                console.log("Loading timers...")
+                console.info("Loading timers...")
                 await this.loadTimers();
                 await this.loadEvents();
 
@@ -68,8 +71,8 @@ class RebirthRusher extends Client {
 
                     this.log("startup", startEmbed);
                 }
-                console.log("Bot launch succesful");
-                console.log("=========================");
+                console.info("Bot launch succesful");
+                console.info("=========================");
             } catch (error) {
                 console.error(error);
                 process.exit();
@@ -77,8 +80,11 @@ class RebirthRusher extends Client {
         });
     }
 
+    /**
+     * Creates daily timers for users that have it enabled
+     */
     initDailies() {
-        console.log("Starting up dailies schedule...");
+        console.info("Starting up dailies schedule...");
 
         const rule = new schedule.RecurrenceRule();
         rule.hour = 0;
@@ -87,7 +93,7 @@ class RebirthRusher extends Client {
 
         schedule.scheduleJob(rule, async function () {
             const allUsers = await UserDB.getAllUsers();
-            for (const user of allUsers) {
+            allUsers.forEach(async (user) => {
                 if (user.timers.kits.daily === "ready" && user.settings.daily) {
                     await bot.send(
                         {
@@ -100,24 +106,30 @@ class RebirthRusher extends Client {
                         `<@${user._id}> </daily:968186102622077019> ready`
                     );
                 }
-            }
+            });
         });
     }
 
+    /**
+     * Load event files and start up listeners
+     */
     async loadEvents() {
-        console.log("Loading events...")
+        console.info("Loading events...")
         this.removeAllListeners();
         const eventFiles = fs.readdirSync(`./events`).filter(file => file.endsWith(".js"));
-        for (const file of eventFiles) {
+        eventFiles.forEach(async (file) => {
             const resolve = require.resolve(`../events/${file}`);
             delete require.cache[resolve];
             const event = require(`../events/${file}`);
             this.on(file.split(".")[0], await event.bind(null, this));
-        }
+        });
     }
 
+    /**
+     * Load command, timer, and scanner files
+     */
     loadAllFiles() {
-        console.log("Loading files...");
+        console.info("Loading files...");
 
         // load commands
         const commands = fs.readdirSync("./commands");
@@ -139,13 +151,17 @@ class RebirthRusher extends Client {
         this.loadFolder("scanners", "../scanners")
     }
 
-    // folderPath is relative
+    /**
+     * Loads a folder of files into a bot collection
+     * @param {*} collectionName bot collection name
+     * @param {*} folderPath relative directory path
+     */
     loadFolder(collectionName, folderPath) {
         const folder = fs
             .readdirSync(path.resolve(__dirname, folderPath))
             .filter(file => file.endsWith(".js"));
 
-        for (const fileName of folder) {
+        folder.forEach(fileName => {
             try {
                 const filePath = `${folderPath}/${fileName}`;
                 delete require.cache[require.resolve(filePath)];
@@ -155,14 +171,21 @@ class RebirthRusher extends Client {
                 console.error(error);
                 process.exit();
             }
-        }
+        });
     }
 
+    /**
+     * Loads slash commands when applicable. Slash commands only need to be
+     * created if they're new or their command structure (command.options) has
+     * changed. Otherwise, it's a waste of API calls to create slash commands
+     * that haven't changed. Therefore we use a config file to indicate which
+     * slash commands have changed and need to be reloaded in the API.
+     */
     async loadApplicationCommands() {
-        console.log("Loading application commands...");
+        console.info("Loading application commands...");
         const updatedCommands = require("../config/updatedCommands.json");
 
-        for (const commandPath of updatedCommands) {
+        await Promise.all(updatedCommands.map(async (commandPath) => {
             // specific command file
             if (commandPath.includes("/")) {
                 const command = require(`../commands/${commandPath}.js`);
@@ -177,22 +200,28 @@ class RebirthRusher extends Client {
             // whole subdirectory
             else {
                 const subfolder = fs.readdirSync(`./commands/${commandPath}`);
-                for (const file of subfolder) {
+                subfolder.forEach(async (file) => {
                     const command = require(`../commands/${commandPath}/${file}`);
 
                     await this.createApplicationCommand(
                         command,
                         commandPath === "dev"
                     );
-                }
+                });
             }
-        }
-        console.log("Loading application commands done");
+        }));
+        console.info("Loading application commands done");
     }
 
+    /**
+     * 
+     * @param {any} commandConfig command config to load in (determined by each
+     * property in module.exports)
+     * @param {boolean} isDev whether or not to create command only in dev server
+     */
     async createApplicationCommand(commandConfig, isDev) {
         if (isDev) {
-            await this.createGuildCommand(devServer, {
+            await this.createGuildCommand(DEV_SERVER_ID, {
                 name: commandConfig.name,
                 description: commandConfig.description,
                 options: commandConfig.options || []
@@ -206,42 +235,52 @@ class RebirthRusher extends Client {
             }, 1);
         }
 
-        console.log(`  Updated command '${commandConfig.name}'`);
+        console.info(`  Updated command '${commandConfig.name}'`);
     }
 
+    /**
+     * Connects to MongoDB
+     */
     async initDB() {
-        console.log("Connecting to MongoDB...");
+        console.info("Connecting to MongoDB...");
         try {
             await mongoose.connect(process.env.SRV);
-            console.log(` - Users: [${UserDB.collectionName}]`);
-            console.log(` - Timers: [${TimerDB.collectionName}]`)
+            console.info(` - Users: [${UserDB.collectionName}]`);
+            console.info(` - Timers: [${TimerDB.collectionName}]`)
         } catch (error) {
             console.error(error);
             process.exit();
         }
     }
 
+    /**
+     * Resets timer states to "ready" to prevent locking
+     */
     async resetTimers() {
-        console.log("Resetting timers...");
+        console.info("Resetting timers...");
         const allUsers = await UserDB.getAllUsers();
-        for (const user of allUsers) {
+        await Promise.all(allUsers.map(async (user) => {
             let hasChanged = false;
-            for (const category of Object.keys(user.timers)) {
-                for (const timer of Object.keys(user.timers[category])) {
+            Object.keys(user.timers).forEach(category => {
+                Object.keys(user.timers[category]).forEach(timer => {
                     if (user.timers[category][timer] === "running") {
                         user.timers[category][timer] = "ready";
                         hasChanged = true;
                     }
-                }
-            }
+                });
+            });
 
             if (hasChanged) await user.save();
-        }
+        }));
     }
 
+    /**
+     * Starts up timers in the timer database
+     */
     async loadTimers() {
         const allTimers = await TimerDB.getAllTimers();
-        for (const timer of allTimers) {
+        const usersToSave = [];
+        await Promise.all(allTimers.map(async (timer) => {
             const user = await UserDB.getUserById(timer.message.author.id)
 
             const now = new Date();
@@ -264,13 +303,18 @@ class RebirthRusher extends Client {
                 await TimerDB.deleteTimer(timer._id);
             } else if (user.timers[timer.timerCategory][timer.timerName] === "ready") {
                 user.timers[timer.timerCategory][timer.timerName] = "running";
-                await user.save();
+                if (!usersToSave.includes(user)) usersToSave.push(user);
             }
-        }
+        }));
+
+        await Promise.all(usersToSave.map(async (user) => await user.save()));
     }
 
+    /**
+     * Connects to Top.gg
+     */
     initTopGG() {
-        console.log("Connecting to TopGG...");
+        console.info("Connecting to TopGG...");
         const webhook = new Webhook(process.env.TOPGG_SECRET);
         const PORT = 80;
 
@@ -280,9 +324,13 @@ class RebirthRusher extends Client {
 
         app.listen(PORT);
 
-        console.log(`Connected to TopGG (port ${PORT})`);
+        console.info(`Connected to TopGG (port ${PORT})`);
     }
 
+    /**
+     * Rewards a user when they vote
+     * @param {string} userID user's Discord snowflake ID
+     */
     async rewardVote(userID) {
         try {
             const user = await UserDB.getUserById(userID);
@@ -321,6 +369,14 @@ class RebirthRusher extends Client {
         }
     }
 
+    /**
+     * Sends a message
+     * @param {Eris.Interaction} interaction interaction storing necessary info
+     * like guild and channel IDs
+     * @param {Eris.MessageContent} content content of message to send
+     * @param {Eris.FileContent} file (optional) files to attach to message
+     * @returns Eris awaitable action or error
+     */
     async send(interaction, content, file) {
         if (!interaction || (!content && !file)) {
             return this.error(
@@ -349,6 +405,12 @@ class RebirthRusher extends Client {
         }
     }
 
+    /**
+     * DM's a user letting them know a particular channel is missing permissions
+     * @param {string} authorID Discord ID of user to DM
+     * @param {string} channelID channel where permissions are missing
+     * @param {string} guildID guild where permissions are missing
+     */
     async missingPermissions(authorID, channelID, guildID) {
         try {
             if (this.guilds.has(guildID)) {
@@ -369,6 +431,12 @@ class RebirthRusher extends Client {
         } catch (error) { }
     }
 
+    /**
+     * Handles errors in the bot and logs it in a webhook channel
+     * @param {string} source string to indicate file source of error
+     * @param {Error} error error to handle
+     * @param {Eris.Message} trigger Idle Miner message that triggered the error
+     */
     async error(source, error, trigger) {
         try {
             this.errorCase++;
@@ -404,6 +472,11 @@ class RebirthRusher extends Client {
         }
     }
 
+    /**
+     * Sends a log entry to a webhook channel
+     * @param {string} type type of log
+     * @param {Eris.Embed} embed embed to send in log channel
+     */
     async log(type, embed) {
         await this.executeWebhook(
             process.env[`WEBHOOK_${type.toUpperCase()}_ID`],
@@ -415,6 +488,11 @@ class RebirthRusher extends Client {
         );
     }
 
+    /**
+     * Converts a time's string representation to seconds
+     * @param {string} timeString time in string format
+     * @returns time in seconds
+     */
     stringToTime(timeString) {
         if (!timeString || timeString === "**FULL**" || timeString === "<1s") {
             return undefined;

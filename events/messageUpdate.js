@@ -1,6 +1,12 @@
+const Eris = require("eris");
+const RebirthRusher = require("../system/RebirthRusher");
 const UserDB = require("../database/controllers/userController");
 const fs = require("fs");
 
+/**
+ * @param {RebirthRusher} bot base class of RbR
+ * @param {Eris.Message} message Message that got updated
+ */
 module.exports = async (bot, message) => {
     try {
         // ignore if message is not from Idle Miner or message is not an embed
@@ -83,6 +89,11 @@ module.exports = async (bot, message) => {
     }
 }
 
+/**
+ * Checks if a user is banned
+ * @param {string} userID user's Discord snowflake ID
+ * @returns Boolean whether user is banned
+ */
 function isBanned(userID) {
     const bannedUsers = JSON.parse(fs.readFileSync("./config/bannedUsers.json"));
 

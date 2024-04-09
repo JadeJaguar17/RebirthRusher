@@ -1,56 +1,7 @@
 const UserDB = require("../../database/controllers/userController");
 const Canvas = require('chartjs-node-canvas');
 const { RBR, DEV } = require("../../config/embedColors.json");
-const { dev } = require("../../config/discordIds.json");
-
-// bring out the Canvas's since they take a lot of memory to generate
-// 0 = dark, 1 = light
-const themes = [
-    {
-        background: "#36393F",
-        labels: "#FFFFFF",
-        gridLines: "#72767D",
-        canvas: new Canvas.ChartJSNodeCanvas({
-            width: 800, height: 600, chartCallback: (ChartJS) => {
-                ChartJS.plugins.register({
-                    beforeDraw: (chartInstance) => {
-                        chartInstance.chart.ctx.fillStyle = "#36393F";
-                        chartInstance.chart.ctx.fillRect(
-                            0, 0,
-                            chartInstance.chart.width,
-                            chartInstance.chart.height
-                        );
-                    },
-                })
-            }
-        })
-    },
-    {
-        background: "#FFFFFF",
-        labels: "#060607",
-        gridLines: "#81868F",
-        canvas: new Canvas.ChartJSNodeCanvas({
-            width: 800, height: 600, chartCallback: (ChartJS) => {
-                ChartJS.plugins.register({
-                    beforeDraw: (chartInstance) => {
-                        chartInstance.chart.ctx.fillStyle = "#FFFFFF";
-                        chartInstance.chart.ctx.fillRect(
-                            0, 0,
-                            chartInstance.chart.width,
-                            chartInstance.chart.height
-                        );
-                    },
-                })
-            }
-        })
-    }
-];
-
-const defaults = {
-    "rb": RBR,
-    "pr": DEV,
-    "rbday": "#E74C3C"
-};
+const { DEV_ID } = require("../../config/discordIds.json");
 
 module.exports.name = "graph"
 module.exports.description = "Graphs rebirth and prestige count"
@@ -82,7 +33,7 @@ module.exports.execute = async function (interaction) {
     } else if (
         user.settings.isPrivate
         && user._id !== interaction.member.user.id
-        && interaction.member.user.id !== dev
+        && interaction.member.user.id !== DEV_ID
     ) {
         return "User has set their graph to private";
     }
@@ -219,3 +170,52 @@ module.exports.options = [
         type: 3
     }
 ]
+
+// bring out the Canvas's since they take a lot of memory to generate
+// 0 = dark, 1 = light
+const themes = [
+    {
+        background: "#36393F",
+        labels: "#FFFFFF",
+        gridLines: "#72767D",
+        canvas: new Canvas.ChartJSNodeCanvas({
+            width: 800, height: 600, chartCallback: (ChartJS) => {
+                ChartJS.plugins.register({
+                    beforeDraw: (chartInstance) => {
+                        chartInstance.chart.ctx.fillStyle = "#36393F";
+                        chartInstance.chart.ctx.fillRect(
+                            0, 0,
+                            chartInstance.chart.width,
+                            chartInstance.chart.height
+                        );
+                    },
+                })
+            }
+        })
+    },
+    {
+        background: "#FFFFFF",
+        labels: "#060607",
+        gridLines: "#81868F",
+        canvas: new Canvas.ChartJSNodeCanvas({
+            width: 800, height: 600, chartCallback: (ChartJS) => {
+                ChartJS.plugins.register({
+                    beforeDraw: (chartInstance) => {
+                        chartInstance.chart.ctx.fillStyle = "#FFFFFF";
+                        chartInstance.chart.ctx.fillRect(
+                            0, 0,
+                            chartInstance.chart.width,
+                            chartInstance.chart.height
+                        );
+                    },
+                })
+            }
+        })
+    }
+];
+
+const defaults = {
+    "rb": RBR,
+    "pr": DEV,
+    "rbday": "#E74C3C"
+};

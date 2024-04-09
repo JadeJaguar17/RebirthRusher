@@ -3,12 +3,12 @@ const { RBR } = require("../../config/embedColors.json");
 const tipsData = require("../../config/tips.json");
 
 const choices = [];
-for (const tip of tipsData) {
+tipsData.forEach(tip => {
     choices.push({
         name: tip.name,
         value: tip.name
     });
-}
+});
 
 module.exports.name = "tips"
 module.exports.description = "Community-provided tips and tricks for Idle Miner"
@@ -25,9 +25,7 @@ module.exports.execute = async function (interaction) {
 
     if (!tipName) {
         let tipsMenu = "";
-        for (const tip of tipsData) {
-            tipsMenu += `- ${tip.name}\n`;
-        }
+        tipsData.forEach(tip => tipsMenu += `- ${tip.name}\n`);
         tipsMenu += `\nHave a tip you want to share? Send it to [#feedback]`
             + `(https://discord.gg/tEHs8Tbw9p) in our support server and it`
             + ` might get added to the list!`;

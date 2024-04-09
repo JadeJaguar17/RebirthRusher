@@ -4,37 +4,6 @@ const { RBR } = require("../../config/embedColors.json");
 const shop = require("../../config/shop.json");
 const { token } = require("../../config/emojis.json");
 
-const shopMenuEmbed = new MessageEmbed()
-    .setTitle("Shop")
-    .setColor(RBR)
-    .setThumbnail("https://i.imgur.com/x7GRidJ.png");
-
-let graphStandards = "";
-for (const color of shop.filter(i => i.id <= 12)) {
-    const id = color.id < 10 ? ` ${color.id}` : color.id;
-    graphStandards += `\`${id}\` ${color.name}\n`;
-}
-
-let graphSpecials = "";
-for (const color of shop.filter(i => i.id > 12 && i.id <= 15)) {
-    graphSpecials += `\`${color.id}\` ${color.name} | ${color.price} ${token}\n`
-        + `${color.description}\n`;
-}
-
-let serverPerks = "";
-const perks = shop.filter(i => i.category == "server");
-for (const perk of perks) {
-    serverPerks += `\`${perk.id}\` ${perk.name} | ${perk.price} ${token}\n`
-        + `${perk.description}\n`;
-}
-
-shopMenuEmbed
-    .addFields(
-        { name: "Standard Colors (20 ${token} each)", value: graphStandards },
-        { name: "Graph Specials", value: graphSpecials },
-        { name: "Server Perks", value: serverPerks }
-    );
-
 module.exports.name = "shop"
 module.exports.description = "Displays the shop"
 module.exports.syntax = "`/shop`"
@@ -56,3 +25,39 @@ module.exports.execute = async function (interaction) {
 
     return { embeds: [shopMenuEmbed] };
 }
+
+const shopMenuEmbed = new MessageEmbed()
+    .setTitle("Shop")
+    .setColor(RBR)
+    .setThumbnail("https://i.imgur.com/x7GRidJ.png");
+
+let graphStandards = "";
+shop
+    .filter(i => i.id <= 12)
+    .forEach(color => {
+        const id = color.id < 10 ? ` ${color.id}` : color.id;
+        graphStandards += `\`${id}\` ${color.name}\n`;
+    });
+
+let graphSpecials = "";
+shop
+    .filter(i => i.id > 12 && i.id <= 15)
+    .forEach(color => {
+        graphSpecials += `\`${color.id}\` ${color.name} | ${color.price} ${token}\n`
+            + `${color.description}\n`;
+    });
+
+let serverPerks = "";
+shop
+    .filter(i => i.category == "server")
+    .forEach(perk => {
+        serverPerks += `\`${perk.id}\` ${perk.name} | ${perk.price} ${token}\n`
+            + `${perk.description}\n`;
+    });
+
+shopMenuEmbed
+    .addFields(
+        { name: "Standard Colors (20 ${token} each)", value: graphStandards },
+        { name: "Graph Specials", value: graphSpecials },
+        { name: "Server Perks", value: serverPerks }
+    );

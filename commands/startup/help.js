@@ -2,7 +2,7 @@ const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
 const links = require("../../config/links.json");
 const fs = require("fs");
-const { dev } = require("../../config/discordIds.json");
+const { DEV_ID } = require("../../config/discordIds.json");
 
 module.exports.name = "help"
 module.exports.description = "Displays either a list of commands or gives more info on a specific command"
@@ -84,7 +84,7 @@ module.exports.execute = async function (interaction) {
     else {
         const command = bot.commands.get(inputCommand);
 
-        if (!command || (command.hidden && interaction.member.user.id !== dev)) {
+        if (!command || (command.hidden && interaction.member.user.id !== DEV_ID)) {
             return `That's not a valid command!`;
         }
 

@@ -20,9 +20,7 @@ class MessageEmbed {
     }
 
     addFields(...fields) {
-        for (const field of fields) {
-            this.fields.push(field);
-        }
+        fields.forEach(field => this.fields.push(field));
         return this;
     }
 

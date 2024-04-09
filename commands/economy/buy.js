@@ -1,7 +1,7 @@
 const UserDB = require("../../database/controllers/userController");
 const shop = require("../../config/shop.json");
 const MessageEmbed = require("../../system/MessageEmbed");
-const { customRoleLog } = require("../../config/discordIds.json");
+const { ROLE_PURCHASE_CHANNEL_ID } = require("../../config/discordIds.json");
 
 module.exports.name = "buy"
 module.exports.description = "Purchases and item from the shop"
@@ -113,7 +113,7 @@ module.exports.purchaseItem = async function (interaction, itemID, hex) {
                 + `please react with a :white_check_mark:`);
 
         const purchaseLog = await bot.send(
-            { channel: { id: customRoleLog } },
+            { channel: { id: ROLE_PURCHASE_CHANNEL_ID } },
             { embeds: [roleEmbed] });
         await purchaseLog.addReaction("✅");
     }
@@ -141,15 +141,9 @@ module.exports.options = [
     }
 ]
 
-
 function hasItem(user, item) {
     if (["graphColors", "subscriptions"].includes(item.category) && item.id !== 14) {
-        for (const i of user.inventory[item.category]) {
-            if (i.id === item.id) {
-                return true;
-            }
-        }
-        return false;
+        return user.inventory[item.category].some(i => i.id === item.id);
     } else if (item.category === "theme") {
         return user.inventory.hasDarkMode;
     }

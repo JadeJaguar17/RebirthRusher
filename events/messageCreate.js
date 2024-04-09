@@ -1,6 +1,12 @@
+const Eris = require("eris");
+const RebirthRusher = require("../system/RebirthRusher");
 const UserDB = require("../database/controllers/userController");
 const fs = require("fs");
 
+/**
+ * @param {RebirthRusher} bot base class of RbR
+ * @param {Eris.Message} message Message that got updated
+ */
 module.exports = async (bot, message) => {
     try {
         // ignore if message is not from Idle Miner
@@ -32,21 +38,31 @@ module.exports = async (bot, message) => {
     }
 }
 
+/**
+ * Checks if a user is banned
+ * @param {string} userID user's Discord snowflake ID
+ * @returns Boolean whether user is banned
+ */
 function isBanned(userID) {
     const bannedUsers = JSON.parse(fs.readFileSync("./config/bannedUsers.json"));
 
     return bannedUsers.indexOf(userID) !== -1;
 }
 
+/**
+ * Handles message embeds from Idle Miner
+ * @param {RebirthRusher} bot base class of RbR
+ * @param {Eris.Message} message message containing the embed to process
+ * @returns an awaitable RbR action
+ */
 async function handleEmbedMessage(bot, message) {
-    const userID = message.embeds[0].author?.icon_url
+    const embed = message.embeds[0];
+    const userID = embed.author?.icon_url
         ?.replace("https://cdn.discordapp.com/avatars/", "")
         .split("/")[0]
         .trim();
 
     if (isBanned(userID) || !(await UserDB.checkUserExists(userID))) return;
-
-    const embed = message.embeds[0];
 
     // pet embed
     if (embed.title === "Pets") {
@@ -216,6 +232,12 @@ async function handleEmbedMessage(bot, message) {
     }
 }
 
+/**
+ * Handles text messages from Idle Miner
+ * @param {RebirthRusher} bot base class of RbR
+ * @param {Eris.Message} message text message to process
+ * @returns an awaitable RbR action
+ */
 async function handleTextMessage(bot, message) {
     const username = message.content.split("**")[1];
     const user = await bot.users.find(u => u.username === username);

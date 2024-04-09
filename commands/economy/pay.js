@@ -1,5 +1,5 @@
 const UserDB = require("../../database/controllers/userController");
-const { dev } = require("../../config/discordIds.json");
+const { DEV_ID } = require("../../config/discordIds.json");
 const { token } = require("../../config/emojis.json");
 
 module.exports.name = "pay"
@@ -11,7 +11,7 @@ module.exports.execute = async function (interaction) {
     const payeeID = interaction.data.options[0].value;
     const tokens = interaction.data.options[1].value;
 
-    if (tokens < 0 && interaction.member.user.id !== dev) {
+    if (tokens < 0 && interaction.member.user.id !== DEV_ID) {
         return "You can't give somebody negative tokens!";
     }
 
@@ -23,7 +23,7 @@ module.exports.execute = async function (interaction) {
             + "sure they have an account first!";
     }
 
-    if (payer._id === dev) {
+    if (payer._id === DEV_ID) {
         payer.inventory.tokens += tokens;
     } else if (payer._id === payee._id) {
         return "You can't pay yourself!";
