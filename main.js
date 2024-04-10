@@ -23,11 +23,6 @@ rbr.init();
 
 global.bot = rbr;
 
-// handle any uncaught exceptions
-process.on("uncaughtException", (error) => {
-    rbr.error("Uncaught Exception", error);
-});
-
 // deals with any undhandled rejected Promises
 process.on('unhandledRejection', error => {
     rbr.error("Unhandled Promise Rejection", error);
