@@ -23,12 +23,6 @@ rbr.init();
 
 global.bot = rbr;
 
-// handle errors
-// rbr.on("error", error => {
-//     rbr.error("Error event", error);
-//     console.error(error)
-// });
-
 // handle any uncaught exceptions
 process.on("uncaughtException", (error) => {
     rbr.error("Uncaught Exception", error);
