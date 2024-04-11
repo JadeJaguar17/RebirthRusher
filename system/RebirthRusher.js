@@ -469,8 +469,8 @@ class RebirthRusher extends Eris.Client {
 
                 await this.log("errors", triggerEmbed);
             }
-        } catch (error) {
-            console.error(error);
+        } catch (e) {
+            console.error(e);
         }
     }
 
