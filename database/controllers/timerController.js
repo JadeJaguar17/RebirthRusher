@@ -59,17 +59,41 @@ module.exports.deleteTimer = async function (timerID) {
 module.exports.deleteTimerForUser = async function (userID, timerName) {
     const user = await UserDB.getUserById(userID);
     const query = { "message.author.id": userID, "timerName": timerName };
+    const userTimers = await timers.find(query).exec();
 
-    let hasHarvestTimer = false;
-    timers.find(query, async function (_, docs) {
-        await Promise.all(docs.map(async (timer) => {
-            await timers.findByIdAndDelete(timer._id);
-            user.timers[timer.timerCategory][timer.timerName] = "ready";
-            hasHarvestTimer = true;
-        }))
-    });
+    let hasChanges = false;
+    await Promise.all(userTimers.map(async (timer) => {
+        await timers.findByIdAndDelete(timer._id);
+        user.timers[timer.timerCategory][timer.timerName] = "ready";
+        hasChanges = true;
+    }));
 
-    if (hasHarvestTimer) {
+    if (hasChanges) {
+        await user.save();
+    }
+}
+
+/**
+ * Opposite of `deleteTimerForUser`, deletes every timer of a user except
+ * provided timer names
+ * @param {string} userID timer owner's Discord snowflake ID
+ * @param {string[]} timerNames list of timer names to avoid
+ */
+module.exports.deleteTimerForUserExcept = async function (userID, timerNames) {
+    const user = await UserDB.getUserById(userID);
+    const query = { "message.author.id": userID };
+    const userTimers = await timers.find(query).exec();
+
+    let hasChanges = false;
+    await Promise.all(userTimers.map(async (timer) => {
+        if (timerNames.includes(timer.timerName)) return;
+
+        await timers.findByIdAndDelete(timer._id);
+        user.timers[timer.timerCategory][timer.timerName] = "ready";
+        hasChanges = true;
+    }));
+
+    if (hasChanges) {
         await user.save();
     }
 }

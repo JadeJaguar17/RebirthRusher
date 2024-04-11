@@ -25,8 +25,8 @@ module.exports = async (bot, message) => {
         const embed = message.embeds[0];
 
         // pets embed
-        // if (embed.title === "Pets") {
-        //     await bot.scanners.get("petScan").execute(embed, userID);
+        if (embed.title === "Pets") {
+            await bot.scanners.get("petScan").execute(embed, userID);
 
         //     const user = await UserDB.getUserById(userID);
         //     if (user.settings.autoPet && await bot.users.get(userID)) {
@@ -46,11 +46,11 @@ module.exports = async (bot, message) => {
 
         //         return bot.send(message, petEmbed);
         //     }
-        // }
+        }
 
         // normal /play embed
         if (
-            message.interaction.name === "play"
+            message.interaction?.name === "play"
             && !embed.description.startsWith("**Event**")
             && embed.description.includes("Backpack full")
         ) {
