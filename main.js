@@ -23,7 +23,7 @@ rbr.init();
 
 global.bot = rbr;
 
-// deals with any undhandled rejected Promises
+// deals with any unhandled rejected Promises
 process.on('unhandledRejection', error => {
     rbr.error("Unhandled Promise Rejection", error);
 });

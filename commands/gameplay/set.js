@@ -6,7 +6,7 @@ const defaults = {
     "rbday": "#E74C3C"
 };
 
-const errorMesssage = ":banana: Here's an empathy banana or whatever. "
+const errorMessage = ":banana: Here's an empathy banana or whatever. "
     + "Anyways, something went wrong, please report it "
     + "in #feedback of the support server (`/server`)";
 
@@ -42,7 +42,7 @@ module.exports.execute = async function (interaction) {
                 + ` automatically send \`/pets\` when you check your Idle `
                 + `Miner pets`;
         default:
-            return errorMesssage;
+            return errorMessage;
     }
 }
 
@@ -438,7 +438,7 @@ async function handleGraph(args, user) {
 
             return `Your graph now displays dates as \`${user.settings.dateformat}\``;
         default:
-            return errorMesssage;
+            return errorMessage;
     }
 }
 
@@ -544,6 +544,6 @@ async function handleReminders(args, user) {
                 + "cooldowns are the same)";
 
         default:
-            return errorMesssage;
+            return errorMessage;
     }
 }
