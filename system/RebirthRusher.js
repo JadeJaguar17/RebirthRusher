@@ -70,7 +70,7 @@ class RebirthRusher extends Eris.Client {
 
                     this.log("startup", startEmbed);
                 }
-                console.info("Bot launch succesful");
+                console.info("Bot launch successful");
                 console.info("=========================");
             } catch (error) {
                 console.error(error);
