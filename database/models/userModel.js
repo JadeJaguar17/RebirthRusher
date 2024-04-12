@@ -94,7 +94,8 @@ const userSchema = new mongoose.Schema({
         voteDisabled: { type: Boolean, default: false },
         daily: { type: String },
         timezone: { type: String, default: "-0" },
-        autoPet: { type: Boolean, default: false }
+        autoPet: { type: Boolean, default: false },
+        dateFormat: { type: String, default: "mm/dd" }
     }
 });
 

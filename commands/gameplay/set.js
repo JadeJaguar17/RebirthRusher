@@ -143,7 +143,30 @@ module.exports.options = [
                         required: true
                     }
                 ]
-            }
+            },
+            {
+                name: "dateformat",
+                description: "Changes how dates on your graph are displayed",
+                type: 1,
+                options: [
+                    {
+                        name: "format",
+                        description: "your desired date format",
+                        type: 3,
+                        required: true,
+                        choices: [
+                            {
+                                name: "mm/dd",
+                                value: "mm/dd"
+                            },
+                            {
+                                name: "dd/mm",
+                                value: "dd/mm"
+                            }
+                        ]
+                    }
+                ]
+            },
         ]
     },
     {
@@ -406,7 +429,14 @@ async function handleGraph(args, user) {
             await user.save();
 
             return `Your graph timezone has been set to \`UTC${tz}\``;
+        case "dateformat":
+            console.log("args:", args.options[0].value);
+            if (user.settings.dateformat !== args.options[0].value) {
+                user.settings.dateformat = args.options[0].value;
+                await user.save()
+            }
 
+            return `Your graph now displays dates as \`${user.settings.dateformat}\``;
         default:
             return errorMesssage;
     }
