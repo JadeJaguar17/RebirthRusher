@@ -143,7 +143,30 @@ module.exports.options = [
                         required: true
                     }
                 ]
-            }
+            },
+            {
+                name: "dateformat",
+                description: "Changes how dates on your graph are displayed",
+                type: 1,
+                options: [
+                    {
+                        name: "format",
+                        description: "your desired date format",
+                        type: 3,
+                        required: true,
+                        choices: [
+                            {
+                                name: "mm/dd",
+                                value: "mm/dd"
+                            },
+                            {
+                                name: "dd/mm",
+                                value: "dd/mm"
+                            }
+                        ]
+                    }
+                ]
+            },
         ]
     },
     {
