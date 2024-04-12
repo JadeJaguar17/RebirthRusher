@@ -49,7 +49,7 @@ module.exports.execute = async function (interaction) {
     const dateLabels = [];
     for (let i = 0; i < user.graph.tracker.dates.length; i++) {
         const date = user.graph.tracker.dates[i].split("/");
-        const dateString = user.settings.dateformat === "mm/dd"
+        const dateString = user.settings.dateFormat === "mm/dd"
             ? `${date[0]}/${date[1]}`
             : `${date[1]}/${date[0]}`;
 
