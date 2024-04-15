@@ -2,7 +2,7 @@
 const Eris = require("eris");
 const MessageEmbed = require("./MessageEmbed.js");
 const { Webhook } = require("@top-gg/sdk");
-const app = require("express")();
+const express = require("express");
 
 // Database
 const mongoose = require("mongoose");
@@ -317,7 +317,8 @@ class RebirthRusher extends Eris.Client {
      */
     initTopGG() {
         console.info("Connecting to TopGG...");
-        const webhook = new Webhook(process.env.TOPGG_SECRET);
+        const app = express();
+        const webhook = new Webhook(process.env.TOPGG_AUTH);
         const PORT = 1717;
 
         app.post("/dblwebhook", webhook.listener(vote => {
