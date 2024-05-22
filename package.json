@@ -9,6 +9,7 @@
   "author": "JadeJaguar17",
   "license": "ISC",
   "dependencies": {
+    "@top-gg/sdk": "^3.1.6",
     "chart.js": "^2.9.4",
     "chartjs-node-canvas": "^3.1.0",
     "dotenv": "^16.3.1",
@@ -16,7 +17,6 @@
     "express": "^4.18.2",
     "mongoose": "^8.0.3",
     "node-schedule": "^2.1.1",
-    "require-reload": "^0.2.2",
-    "topgg-autoposter": "^2.0.1"
+    "require-reload": "^0.2.2"
   }
 }
