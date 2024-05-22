@@ -12,7 +12,7 @@ module.exports.needsAccount = true
 module.exports.execute = async function (interaction) {
     const user = await UserDB.getUserById(interaction.member.user.id);
 
-    // inital embed build for the reminders list
+    // initial embed build for the reminders list
     const setEmbed = new MessageEmbed()
         .setColor(RBR)
         .setAuthor(interaction.member.user.username, interaction.member.user.avatarURL)
