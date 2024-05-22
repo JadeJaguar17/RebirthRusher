@@ -71,18 +71,17 @@ module.exports.purchaseItem = async function (interaction, itemID, hex) {
     const user = await UserDB.getUserById(interaction.member.user.id);
 
     const item = shop.find(i => itemID === i.id);
-    const itemCopy = Object.create(item);
 
-    if (user.inventory.tokens < itemCopy.price) {
+    if (user.inventory.tokens < item.price) {
         return `:no_entry_sign: You can't afford this purchase! Get more `
             `tokens through \`/donate\` or \`/vote\``;
     }
 
-    if (itemCopy.id === 14 || itemCopy.id === 23) {
-        itemCopy.hex = hex;
+    if (item.id === 14 || item.id === 23) {
+        item.hex = hex;
     }
 
-    if (itemCopy.id === 14) {
+    if (item.id === 14) {
         let count = 0;
         for (let i = 0; i < user.inventory.graphColors.length; i++) {
             if (Math.floor(user.inventory.graphColors[i].id) === 14) {
@@ -90,19 +89,19 @@ module.exports.purchaseItem = async function (interaction, itemID, hex) {
             }
         }
 
-        itemCopy.id = Number(`14.${count + 1}`);
+        item.id = Number(`14.${count + 1}`);
     }
 
-    switch (itemCopy.category) {
+    switch (item.category) {
         case "graphColors":
-            user.inventory.graphColors.push(itemCopy);
+            user.inventory.graphColors.push(item);
             break;
         case "theme":
             user.inventory.hasDarkMode = true;
             break;
     }
 
-    if (itemCopy.id === 23) {
+    if (item.id === 23) {
         const roleEmbed = new MessageEmbed()
             .setColor(hex.replace("#", "0x"))
             .setTitle("Custom Color Role")
@@ -118,12 +117,12 @@ module.exports.purchaseItem = async function (interaction, itemID, hex) {
         await purchaseLog.addReaction("✅");
     }
 
-    user.inventory.tokens -= itemCopy.price;
+    user.inventory.tokens -= item.price;
     await user.save();
 
     return `You successfully bought `
-        + `${itemCopy.name}${(hex && ` **(${itemCopy.hex})**`) || ""}. `
-        + `${(itemCopy.category === "graphColors" && `To learn how to use `
+        + `${item.name}${(hex && ` **(${item.hex})**`) || ""}. `
+        + `${(item.category === "graphColors" && `To learn how to use `
             + `this color, see \`/graph set\`. `) || ""}Enjoy your purchase!`;
 }
 

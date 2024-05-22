@@ -6,7 +6,7 @@ const defaults = {
     "rbday": "#E74C3C"
 };
 
-const errorMesssage = ":banana: Here's an empathy banana or whatever. "
+const errorMessage = ":banana: Here's an empathy banana or whatever. "
     + "Anyways, something went wrong, please report it "
     + "in #feedback of the support server (`/server`)";
 
@@ -42,7 +42,7 @@ module.exports.execute = async function (interaction) {
                 + ` automatically send \`/pets\` when you check your Idle `
                 + `Miner pets`;
         default:
-            return errorMesssage;
+            return errorMessage;
     }
 }
 
@@ -143,7 +143,30 @@ module.exports.options = [
                         required: true
                     }
                 ]
-            }
+            },
+            {
+                name: "dateformat",
+                description: "Changes how dates on your graph are displayed",
+                type: 1,
+                options: [
+                    {
+                        name: "format",
+                        description: "your desired date format",
+                        type: 3,
+                        required: true,
+                        choices: [
+                            {
+                                name: "mm/dd",
+                                value: "mm/dd"
+                            },
+                            {
+                                name: "dd/mm",
+                                value: "dd/mm"
+                            }
+                        ]
+                    }
+                ]
+            },
         ]
     },
     {
@@ -406,9 +429,16 @@ async function handleGraph(args, user) {
             await user.save();
 
             return `Your graph timezone has been set to \`UTC${tz}\``;
+        case "dateformat":
+            console.log("args:", args.options[0].value);
+            if (user.settings.dateformat !== args.options[0].value) {
+                user.settings.dateformat = args.options[0].value;
+                await user.save()
+            }
 
+            return `Your graph now displays dates as \`${user.settings.dateformat}\``;
         default:
-            return errorMesssage;
+            return errorMessage;
     }
 }
 
@@ -514,6 +544,6 @@ async function handleReminders(args, user) {
                 + "cooldowns are the same)";
 
         default:
-            return errorMesssage;
+            return errorMessage;
     }
 }
