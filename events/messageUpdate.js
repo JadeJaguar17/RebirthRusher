@@ -54,21 +54,21 @@ module.exports = async (bot, message) => {
             && !embed.description.startsWith("**Event**")
             && embed.description.includes("Backpack full")
         ) {
-            const field = embed.fields?.find(f => f.name === "**Stats**");
+            const statsField = embed.fields?.find(f => f.name === "**Stats**");
 
-            const embedPr = field.value
+            const embedPr = statsField.value
                 .trim()
                 .split("\n")[0]
                 .replace("**Prestige:**", "")
                 .trim()
                 .replace(/,/g, '');
-            const embedRb = field.value
+            const embedRb = statsField.value
                 .trim()
                 .split("\n")[1]
                 .replace("**Rebirth:**", "")
                 .trim()
                 .replace(/,/g, '');
-            const embedRbDay = field.value
+            const embedRbDay = statsField.value
                 .trim()
                 .split("\n")[2]
                 .replace("**AVG rebirths/day**:", "")
