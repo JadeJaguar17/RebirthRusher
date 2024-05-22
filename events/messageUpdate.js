@@ -27,25 +27,6 @@ module.exports = async (bot, message) => {
         // pets embed
         if (embed.title === "Pets") {
             await bot.scanners.get("petScan").execute(embed, userID);
-
-        //     const user = await UserDB.getUserById(userID);
-        //     if (user.settings.autoPet && await bot.users.get(userID)) {
-        //         const msgData = {
-        //             member: { user: await bot.users.get(userID) },
-        //             data: { options: null }
-        //         };
-        //         const petEmbed = await bot.commands.get("pets").execute(msgData, userID);
-
-        //         petEmbed.embeds[0]
-        //             .setTitle(null)
-        //             .setDescription(null)
-        //             .setThumbnail(null)
-        //             .setAuthor(null, null);
-        //         petEmbed.embeds[0].fields = [petEmbed.embeds[0].fields[5]];
-        //         petEmbed.messageReference = { messageID: message.id };
-
-        //         return bot.send(message, petEmbed);
-        //     }
         }
 
         // normal /play embed
@@ -60,7 +41,7 @@ module.exports = async (bot, message) => {
                 .split("\n")[1]
                 .split(" ")[1]
                 .trim()
-            
+
             // handle profile states
             const statsField = embed.fields?.find(f => f.name === "**Stats**");
 
