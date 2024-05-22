@@ -54,6 +54,14 @@ module.exports = async (bot, message) => {
             && !embed.description.startsWith("**Event**")
             && embed.description.includes("Backpack full")
         ) {
+            // handle shard count
+            const currencyField = embed.fields?.find(f => f.name === "**Currency**");
+            const shards = currencyField.value
+                .split("\n")[1]
+                .split(" ")[1]
+                .trim()
+            
+            // handle profile states
             const statsField = embed.fields?.find(f => f.name === "**Stats**");
 
             const embedPr = statsField.value
