@@ -57,7 +57,7 @@ module.exports.execute = async function (interaction, pageNum = 1) {
             //     value: subscriptions || "When you buy subscriptions, they will appear here"
             // }
         );
-    
+
     const buttons = [];
     if (inventoryPages.length > 1) {
         for (let i = 1; i <= inventoryPages.length; i++) {
@@ -71,13 +71,12 @@ module.exports.execute = async function (interaction, pageNum = 1) {
         }
     }
 
+    const components = buttons.length > 0
+        ? [{ type: 1, components: buttons }]
+        : undefined;
+
     return {
         embeds: [inventoryEmbed],
-        components: [
-            {
-                type: 1,
-                components: buttons
-            }
-        ]
+        components
     };
 }
