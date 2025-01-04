@@ -26,7 +26,6 @@ module.exports.execute = async function (interaction) {
 
     const user = await UserDB.getUserById(interaction.member.user.id);
     const item = shop.find(i => itemID === i.id);
-    console.log("shop:", shop)
     if (!item) {
         return ":no_entry_sign: Item ID is invalid";
     } else if (user.inventory.tokens < item.price) {
