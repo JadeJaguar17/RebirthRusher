@@ -64,7 +64,7 @@ module.exports.execute = async function (interaction, pageNum = 1) {
             buttons.push({
                 type: 2,
                 style: 4,
-                label: `Page ${1}`,
+                label: `Page ${i}`,
                 custom_id: `${interaction.member.user.id}-inventory-${i}`,
                 disabled: pageNum === i
             });
