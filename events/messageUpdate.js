@@ -42,10 +42,13 @@ module.exports = async (bot, message) => {
                 .split(" ")[1]
                 .trim()
             const user = await UserDB.getUserById(userID);
-            if (user.pets.shards !== Number(shards)) {  
-                user.pets.shards = Number(shards)
-                await user.save();
-            }
+            // temp handler
+            try {
+                if (user.pets.shards !== Number(shards)) {  
+                    user.pets.shards = Number(shards)
+                    await user.save();
+                }
+            } catch (e) {}
 
             // handle profile states
             const statsField = embed.fields?.find(f => f.name === "**Stats**");
