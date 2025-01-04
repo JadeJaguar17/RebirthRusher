@@ -48,8 +48,8 @@ async function handleSlashCommand(bot, interaction) {
 
         // handle commands
         const command = bot.commands.get(interaction.data.name);
-
-        if (!(UserDB.checkUserExists(interaction.member.user.id)) && command?.needsAccount) {
+        const userExists = await UserDB.checkUserExists(interaction.member.user.id);
+        if (!userExists && command?.needsAccount) {
             return interaction.createMessage("You don't have an account yet! Enter \`/start\` to make an account");
         }
 
