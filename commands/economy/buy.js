@@ -69,9 +69,8 @@ module.exports.execute = async function (interaction) {
 
 module.exports.purchaseItem = async function (interaction, itemID, hex) {
     const user = await UserDB.getUserById(interaction.member.user.id);
-
-    const item = shop.find(i => itemID === i.id);
-    const purchasedItem = Object.create(item);
+    const item = shop.find(i => Number(itemID) === i.id);
+    const purchasedItem = {...item};
 
     if (user.inventory.tokens < purchasedItem.price) {
         return `:no_entry_sign: You can't afford this purchase! Get more `
