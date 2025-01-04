@@ -35,12 +35,17 @@ module.exports = async (bot, message) => {
             && !embed.description.startsWith("**Event**")
             && embed.description.includes("Backpack full")
         ) {
-            // handle shard count
+            // update shard count from .play
             const currencyField = embed.fields?.find(f => f.name === "**Currency**");
             const shards = currencyField.value
                 .split("\n")[1]
                 .split(" ")[1]
                 .trim()
+            const user = await UserDB.getUserById(userID);
+            if (user.pets.shards !== Number(shards)) {  
+                user.pets.shards = Number(shards)
+                await user.save();
+            }
 
             // handle profile states
             const statsField = embed.fields?.find(f => f.name === "**Stats**");
