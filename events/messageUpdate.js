@@ -35,20 +35,29 @@ module.exports = async (bot, message) => {
             && !embed.description.startsWith("**Event**")
             && embed.description.includes("Backpack full")
         ) {
-            // update shard count from .play
-            const currencyField = embed.fields?.find(f => f.name === "**Currency**");
-            const shards = currencyField.value
-                .split("\n")[1]
-                .split(" ")[1]
-                .trim()
-            const user = await UserDB.getUserById(userID);
-            // temp handler
+            // update shard count from /play
             try {
-                if (user.pets.shards !== Number(shards)) {  
-                    user.pets.shards = Number(shards)
+                const currencyField = embed.fields?.find(f => f.name === "**Currency**");
+                const shardsString = currencyField.value
+                    .split("\n")[1]
+                    .split(" ")[1]
+                    .trim();
+
+                let shards = 0;
+                if (shardsString.includes("K")) {
+                    console.log("float:", parseFloat(shardsString))
+                    shards = parseFloat(shardsString) * 1000;
+                }
+                else {
+                    shards = Number(shardsString);
+                }
+
+                const user = await UserDB.getUserById(userID);
+                if (user.pets.shards !== shards) {
+                    user.pets.shards = shards
                     await user.save();
                 }
-            } catch (e) {}
+            } catch (e) { /* do nothing */ }
 
             // handle profile states
             const statsField = embed.fields?.find(f => f.name === "**Stats**");
