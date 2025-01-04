@@ -151,7 +151,7 @@ async function handleButton(bot, interaction) {
                     }
 
                     if (args[0] === "confirm") {
-                        await UserDB.resetPersonalBest(interaction.member.user.id);
+                        await UserDB.resetPersonalBest(interaction.member.user.id, args[1] === "yes");
 
                         interaction.editMessage(interaction.message.id, { content: "Your stats has been reset", components: [] });
 
