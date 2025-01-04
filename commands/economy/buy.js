@@ -26,7 +26,7 @@ module.exports.execute = async function (interaction) {
 
     const user = await UserDB.getUserById(interaction.member.user.id);
     const item = shop.find(i => itemID === i.id);
-
+    console.log("shop:", shop)
     if (!item) {
         return ":no_entry_sign: Item ID is invalid";
     } else if (user.inventory.tokens < item.price) {
@@ -71,17 +71,18 @@ module.exports.purchaseItem = async function (interaction, itemID, hex) {
     const user = await UserDB.getUserById(interaction.member.user.id);
 
     const item = shop.find(i => itemID === i.id);
+    const purchasedItem = Object.create(item);
 
-    if (user.inventory.tokens < item.price) {
+    if (user.inventory.tokens < purchasedItem.price) {
         return `:no_entry_sign: You can't afford this purchase! Get more `
             `tokens through \`/donate\` or \`/vote\``;
     }
 
-    if (item.id === 14 || item.id === 23) {
-        item.hex = hex;
+    if (purchasedItem.id === 14 || purchasedItem.id === 23) {
+        purchasedItem.hex = hex;
     }
 
-    if (item.id === 14) {
+    if (purchasedItem.id === 14) {
         let count = 0;
         for (let i = 0; i < user.inventory.graphColors.length; i++) {
             if (Math.floor(user.inventory.graphColors[i].id) === 14) {
@@ -89,19 +90,19 @@ module.exports.purchaseItem = async function (interaction, itemID, hex) {
             }
         }
 
-        item.id = Number(`14.${count + 1}`);
+        purchasedItem.id = Number(`14.${count + 1}`);
     }
 
-    switch (item.category) {
+    switch (purchasedItem.category) {
         case "graphColors":
-            user.inventory.graphColors.push(item);
+            user.inventory.graphColors.push(purchasedItem);
             break;
         case "theme":
             user.inventory.hasDarkMode = true;
             break;
     }
 
-    if (item.id === 23) {
+    if (purchasedItem.id === 23) {
         const roleEmbed = new MessageEmbed()
             .setColor(hex.replace("#", "0x"))
             .setTitle("Custom Color Role")
@@ -117,12 +118,12 @@ module.exports.purchaseItem = async function (interaction, itemID, hex) {
         await purchaseLog.addReaction("✅");
     }
 
-    user.inventory.tokens -= item.price;
+    user.inventory.tokens -= purchasedItem.price;
     await user.save();
 
     return `You successfully bought `
-        + `${item.name}${(hex && ` **(${item.hex})**`) || ""}. `
-        + `${(item.category === "graphColors" && `To learn how to use `
+        + `${purchasedItem.name}${(hex && ` **(${purchasedItem.hex})**`) || ""}. `
+        + `${(purchasedItem.category === "graphColors" && `To learn how to use `
             + `this color, see \`/graph set\`. `) || ""}Enjoy your purchase!`;
 }
 
