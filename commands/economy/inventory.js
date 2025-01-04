@@ -61,7 +61,6 @@ module.exports.execute = async function (interaction, pageNum = 1) {
     const buttons = [];
     if (inventoryPages.length > 1) {
         for (let i = 1; i <= inventoryPages.length; i++) {
-            console.log("adding a button")
             buttons.push({
                 type: 2,
                 style: 4,

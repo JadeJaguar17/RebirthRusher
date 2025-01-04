@@ -111,6 +111,8 @@ async function handleButton(bot, interaction) {
             switch (command) {
                 case "guide":
                     return interaction.editMessage(interaction.message.id, await bot.commands.get("guide").execute(interaction, Number(args[0])));
+                case "inventory":
+                    return interaction.editMessage(interaction.message.id, await bot.commands.get("inventory").execute(interaction, Number(args[0])));
                 case "buy":
                     if (args[0] === "cancel") {
                         return interaction.editMessage(interaction.message.id, { content: "You cancelled your purchase", components: [] });
