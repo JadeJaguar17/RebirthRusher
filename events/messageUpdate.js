@@ -45,7 +45,6 @@ module.exports = async (bot, message) => {
 
                 let shards = 0;
                 if (shardsString.includes("K")) {
-                    console.log("float:", parseFloat(shardsString))
                     shards = parseFloat(shardsString) * 1000;
                 }
                 else {
