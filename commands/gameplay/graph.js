@@ -45,6 +45,7 @@ module.exports.execute = async function (interaction) {
         Math.max(...user.graph.tracker.rbDay)) / 5
     ) * 5;
     const theme = themes[user.settings.theme];
+    const hasData = user.graph.tracker.rebirths.some(e => e > 0);
 
     const dateLabels = [];
     for (let i = 0; i < user.graph.tracker.dates.length; i++) {
@@ -104,6 +105,7 @@ module.exports.execute = async function (interaction) {
             scales: {
                 yAxes: [{
                     ticks: {
+                        display: hasData,
                         beginAtZero: true,
                         stepSize: 5,
                         min: 0,
@@ -119,6 +121,7 @@ module.exports.execute = async function (interaction) {
                 },
                 {
                     ticks: {
+                        display: hasData,
                         beginAtZero: true,
                         stepSize: 5,
                         min: 0,
