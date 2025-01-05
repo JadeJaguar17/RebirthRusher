@@ -45,7 +45,9 @@ module.exports.execute = async function (interaction) {
         Math.max(...user.graph.tracker.rbDay)) / 5
     ) * 5;
     const theme = themes[user.settings.theme];
-    const hasData = user.graph.tracker.rebirths.some(e => e > 0);
+    const hasData = user.graph.tracker.rebirths.some(e => e > 0)
+        || user.graph.tracker.prestiges.some(e => e > 0)
+        || user.graph.tracker.rbDay.some(e => e > 0);
 
     const dateLabels = [];
     for (let i = 0; i < user.graph.tracker.dates.length; i++) {
