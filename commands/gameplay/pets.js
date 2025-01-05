@@ -9,7 +9,7 @@ const petPrices = {
     rare: 50,
     epic: 50,
     mythical: 60,
-    legendary: 75,
+    legendary: 250,
     "★ uncommon": 25,
     "★ rare": 50,
     "★ epic": 50,
