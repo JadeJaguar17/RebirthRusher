@@ -430,12 +430,12 @@ async function handleGraph(args, user) {
 
             return `Your graph timezone has been set to \`UTC${tz}\``;
         case "dateformat":
-            if (user.settings.dateformat !== args.options[0].value) {
-                user.settings.dateformat = args.options[0].value;
+            if (user.settings.dateFormat !== args.options[0].value) {
+                user.settings.dateFormat = args.options[0].value;
                 await user.save()
             }
 
-            return `Your graph now displays dates as \`${user.settings.dateformat}\``;
+            return `Your graph now displays dates as \`${user.settings.dateFormat}\``;
         default:
             return errorMessage;
     }
