@@ -183,7 +183,7 @@ module.exports.options = [
 /**
  * Gets the next single optimal upgrade (formulas taken from Wes' spreadsheet)
  * @param {*} pets user's current pets
- * @param {int} petPerks user's Pet Perks level (0-3)
+ * @param {int} petPerks user's event shop Pet Perks level (0-3)
  * @returns {string} Rarity to upgrade (ex: "uncommon")
  */
 function getOptimalUpgrade(pets, petPerks) {
@@ -192,6 +192,7 @@ function getOptimalUpgrade(pets, petPerks) {
     const rares = pets.rare + 2 * pets["★ rare"];
     const epics = pets.epic + 2 * pets["★ epic"];
 
+    // event shop Pet Perks boosts
     const petPerksBoost = petPerks >= 1
         ? 0.01
         : 0.0;
@@ -199,6 +200,7 @@ function getOptimalUpgrade(pets, petPerks) {
         ? 0.9
         : 1.0;
 
+    // percent increase from upgrading 1 uncommon
     if (Math.floor((petPrices.uncommon - pets["spider-jockey"]) * petPerkDiscount) > 0) {
         const addedBoost = (1 + (uncommons + 1 + (pets["★ uncommon"] > 0)) * (UNCOMMON_BOOST + petPerksBoost) * (1 + epics * EPIC_BOOST));
         const currBoost = (1 + uncommons * (UNCOMMON_BOOST + petPerksBoost) * (1 + epics * EPIC_BOOST));
@@ -207,6 +209,7 @@ function getOptimalUpgrade(pets, petPerks) {
         boosts.push([(percentIncrease / petPrices.uncommon) || 0, `${(pets["★ uncommon"] > 0 && "★ ") || ""}uncommon`]);
     }
 
+    // percent increase from upgrading 1 rare
     if (Math.floor((petPrices.rare - pets["spider-jockey"]) * petPerkDiscount) > 0) {
         const addedBoost = (1 + (rares + 1 + (pets["★ rare"] > 0)) * RARE_BOOST * (1 + epics * EPIC_BOOST));
         const currBoost = (1 + rares * RARE_BOOST * (1 + epics * EPIC_BOOST))
@@ -215,6 +218,7 @@ function getOptimalUpgrade(pets, petPerks) {
         boosts.push([(percentIncrease / petPrices.rare) || 0, `${(pets["★ rare"] > 0 && "★ ") || ""}rare`]);
     }
 
+    // percent increase from upgrading 1 epic
     if (Math.floor((petPrices.epic - pets["spider-jockey"]) * petPerkDiscount) > 0) {
         const addedUncommonBoost = (1 + uncommons * (UNCOMMON_BOOST + petPerksBoost) * (1 + EPIC_BOOST * (epics + 1 + (pets["★ epic"] > 0))));
         const currUncommonBoost = (1 + uncommons * (UNCOMMON_BOOST + petPerksBoost) * (1 + epics * EPIC_BOOST));
@@ -228,5 +232,6 @@ function getOptimalUpgrade(pets, petPerks) {
         boosts.push([(percentIncrease / petPrices.epic) || 0, `${(pets["★ epic"] > 0 && "★ ") || ""}epic`]);
     }
 
+    // return upgrade that gave highest percent increase
     return boosts.sort((a, b) => b[0] - a[0])[0][1];
 }
