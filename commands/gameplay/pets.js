@@ -201,12 +201,16 @@ function getOptimalUpgrade(pets) {
     }
 
     if (petPrices.epic - pets["spider-jockey"] > 0) {
-        const epicBoost = (1 + ((1 + uncommons * UNCOMMON_BOOST * (1 + EPIC_BOOST * (epics + 1 + (pets["★ epic"] > 0))))
-            - (1 + uncommons * UNCOMMON_BOOST * (1 + EPIC_BOOST * epics))) / (1 + uncommons * UNCOMMON_BOOST * (1 + EPIC_BOOST * epics)))
-            * (1 + ((1 + rares * RARE_BOOST * (1 + EPIC_BOOST * (epics + 1 + (pets["★ epic"] > 0))))
-                - (1 + rares * RARE_BOOST * (1 + EPIC_BOOST * epics))) / (1 + rares * RARE_BOOST * (1 + EPIC_BOOST * epics))) - 1;
+        const addedUncommonBoost = (1 + uncommons * UNCOMMON_BOOST * (1 + EPIC_BOOST * (epics + 1 + (pets["★ epic"] > 0))));
+        const currUncommonBoost = (1 + uncommons * UNCOMMON_BOOST * (1 + epics * EPIC_BOOST));
+        const uncommonIncrease = 1 + ((addedUncommonBoost - currUncommonBoost) / currUncommonBoost);
 
-        boosts.push([(epicBoost / petPrices.epic) || 0, `${(pets["★ epic"] > 0 && "★ ") || ""}epic`]);
+        const addedRareBoost = (1 + rares * RARE_BOOST * (1 + EPIC_BOOST * (epics + 1 + (pets["★ epic"] > 0))));
+        const currRareBoost = (1 + rares * RARE_BOOST * (1 + epics * EPIC_BOOST));
+        const rareIncrease = 1 + ((addedRareBoost - currRareBoost) / currRareBoost);
+
+        const percentIncrease = uncommonIncrease * rareIncrease - 1;
+        boosts.push([(percentIncrease / petPrices.epic) || 0, `${(pets["★ epic"] > 0 && "★ ") || ""}epic`]);
     }
     return boosts.sort((a, b) => b[0] - a[0])[0][1];
 }
