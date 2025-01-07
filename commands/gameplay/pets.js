@@ -200,26 +200,37 @@ function getOptimalUpgrade(pets, petPerks) {
         ? 0.9
         : 1.0;
 
+    // upgrade prices
+    const uncommonPrice = Math.floor((petPrices.uncommon - pets["spider-jockey"]) * petPerkDiscount);
+    const rarePrice = Math.floor((petPrices.rare - pets["spider-jockey"]) * petPerkDiscount);
+    const epicPrice = Math.floor((petPrices.epic - pets["spider-jockey"]) * petPerkDiscount);
+
     // percent increase from upgrading 1 uncommon
-    if (Math.floor((petPrices.uncommon - pets["spider-jockey"]) * petPerkDiscount) > 0) {
+    if (uncommonPrice > 0) {
         const addedBoost = (1 + (uncommons + 1 + (pets["★ uncommon"] > 0)) * (UNCOMMON_BOOST + petPerksBoost) * (1 + epics * EPIC_BOOST));
         const currBoost = (1 + uncommons * (UNCOMMON_BOOST + petPerksBoost) * (1 + epics * EPIC_BOOST));
-        const percentIncrease = (addedBoost - currBoost) / currBoost;
 
-        boosts.push([(percentIncrease / petPrices.uncommon) || 0, `${(pets["★ uncommon"] > 0 && "★ ") || ""}uncommon`]);
+        const percentIncrease = (addedBoost - currBoost) / currBoost;
+        const percentIncreasePerShard = percentIncrease / uncommonPrice;
+        const uncommonString = `${(pets["★ uncommon"] > 0 && "★ ") || ""}uncommon`;
+
+        boosts.push([percentIncreasePerShard || 0, uncommonString]);
     }
 
     // percent increase from upgrading 1 rare
-    if (Math.floor((petPrices.rare - pets["spider-jockey"]) * petPerkDiscount) > 0) {
+    if (rarePrice > 0) {
         const addedBoost = (1 + (rares + 1 + (pets["★ rare"] > 0)) * RARE_BOOST * (1 + epics * EPIC_BOOST));
         const currBoost = (1 + rares * RARE_BOOST * (1 + epics * EPIC_BOOST))
-        const percentIncrease = (addedBoost - currBoost) / currBoost;
 
-        boosts.push([(percentIncrease / petPrices.rare) || 0, `${(pets["★ rare"] > 0 && "★ ") || ""}rare`]);
+        const percentIncrease = (addedBoost - currBoost) / currBoost;
+        const percentIncreasePerShard = percentIncrease / rarePrice;
+        const rareString = `${(pets["★ rare"] > 0 && "★ ") || ""}rare`;
+
+        boosts.push([percentIncreasePerShard || 0, rareString]);
     }
 
     // percent increase from upgrading 1 epic
-    if (Math.floor((petPrices.epic - pets["spider-jockey"]) * petPerkDiscount) > 0) {
+    if (epicPrice > 0) {
         const addedUncommonBoost = (1 + uncommons * (UNCOMMON_BOOST + petPerksBoost) * (1 + EPIC_BOOST * (epics + 1 + (pets["★ epic"] > 0))));
         const currUncommonBoost = (1 + uncommons * (UNCOMMON_BOOST + petPerksBoost) * (1 + epics * EPIC_BOOST));
         const uncommonIncrease = 1 + ((addedUncommonBoost - currUncommonBoost) / currUncommonBoost);
@@ -229,7 +240,10 @@ function getOptimalUpgrade(pets, petPerks) {
         const rareIncrease = 1 + ((addedRareBoost - currRareBoost) / currRareBoost);
 
         const percentIncrease = uncommonIncrease * rareIncrease - 1;
-        boosts.push([(percentIncrease / petPrices.epic) || 0, `${(pets["★ epic"] > 0 && "★ ") || ""}epic`]);
+        const percentIncreasePerShard = percentIncrease / epicPrice;
+        const epicString = `${(pets["★ epic"] > 0 && "★ ") || ""}epic`;
+
+        boosts.push([percentIncreasePerShard || 0, epicString]);
     }
 
     // return upgrade that gave highest percent increase
