@@ -62,7 +62,7 @@ class RebirthRusher extends Eris.Client {
 
                 this.editStatus("online", { name: "/help", type: 3 });
 
-                if (process.env.NODE_ENV !== "development") {
+                if (process.env.NODE_ENV === "production") {
                     const startEmbed = new MessageEmbed()
                         .setTitle("Started")
                         .setColor(SUCCESS)
@@ -192,7 +192,7 @@ class RebirthRusher extends Eris.Client {
                 const category = commandPath.split("/")[0];
                 await this.createApplicationCommand(
                     command,
-                    category === "dev" || process.env.NODE_ENV === "development"
+                    category === "dev" || process.env.NODE_ENV !== "production"
                 );
             }
 
@@ -204,7 +204,7 @@ class RebirthRusher extends Eris.Client {
 
                     await this.createApplicationCommand(
                         command,
-                        commandPath === "dev" || process.env.NODE_ENV === "development"
+                        commandPath === "dev" || process.env.NODE_ENV !== "production"
                     );
                 });
             }

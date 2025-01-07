@@ -100,8 +100,8 @@ const userSchema = new mongoose.Schema({
 });
 
 // ensure I'm not modifying the actual database
-const collectionName = process.env.NODE_ENV === "development"
-    ? "users.test"
-    : "users"
+const collectionName = process.env.NODE_ENV === "production"
+    ? "users"
+    : "users.test"
 
 module.exports = mongoose.models[collectionName] || mongoose.model(collectionName, userSchema);
