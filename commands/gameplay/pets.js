@@ -15,6 +15,11 @@ const petPrices = {
     "★ epic": 50,
 }
 
+const COMMON_BOOST = 0.05;
+const UNCOMMON_BOOST = 0.1;
+const RARE_BOOST = 0.075;
+const EPIC_BOOST = 0.02;
+
 module.exports.name = "pets"
 module.exports.description = "Analyzes pet data and calculates some stats"
 module.exports.syntax = "`/pets`"
@@ -24,7 +29,7 @@ module.exports.needsAccount = true
 module.exports.execute = async function (interaction) {
     const user = await UserDB.getUserById(interaction.member.user.id);
 
-    // Some initial calculations
+    // number of each pet
     const commons = user.pets.common + 2 * user.pets["★ common"];
     const uncommons = user.pets.uncommon + 2 * user.pets["★ uncommon"];
     const rares = user.pets.rare + 2 * user.pets["★ rare"];
@@ -36,11 +41,19 @@ module.exports.execute = async function (interaction) {
         + user.pets["wither"]
         + user.pets["ender-dragon"];
 
-    const bpBoost = commons * 0.05;
-    const paBoost = uncommons * 0.1;
-    const sellBoost = rares * 0.075;
-    const epicBoost = 1 + (epics * 0.02);
+    // event shop Pet Perks boosts
+    const petPerkBoost = user.settings.petPerks >= 1
+        ? 0.01
+        : 0.0;
+    const petPerkDiscount = user.settings.petPerks >= 3
+        ? 0.9
+        : 1.0;
 
+    // base stats
+    const bpBoost = commons * COMMON_BOOST;
+    const paBoost = uncommons * (UNCOMMON_BOOST + petPerkBoost);
+    const sellBoost = rares * RARE_BOOST;
+    const epicBoost = 1 + (epics * EPIC_BOOST);
     const petWorth = petPrices.common * commons
         + petPrices.uncommon * uncommons
         + petPrices.rare * rares
@@ -61,8 +74,8 @@ module.exports.execute = async function (interaction) {
 
     // calculate upgrades within the amount of shards
     while (userShards > 0) {
-        const upgrade = getOptimalUpgrade(user.pets);
-        const price = Math.max((petPrices[upgrade] - user.pets["spider-jockey"]), 1);
+        const upgrade = getOptimalUpgrade(user.pets, user.settings.petPerks);
+        const price = Math.floor(Math.max((petPrices[upgrade] - user.pets["spider-jockey"]), 0) * petPerkDiscount);
 
         if ((userShards - price) < 0) {
             break;
@@ -78,16 +91,15 @@ module.exports.execute = async function (interaction) {
     }
 
     // generate list of upgrades
-    let nextOptimalUpgradeString = ""
+    let nextOptimalUpgradeString = "";
 
-    if (user.pets["spider-jockey"] >= 25) {
+    if ((user.settings.petPerks >= 3 && user.pets["spider-jockey"] >= 24) || user.pets["spider-jockey"] >= 25) {
         nextOptimalUpgradeString += "- You have free common and uncommon "
-            + "upgrades, so max them to your heart's content!\n"
+            + "upgrades, so max them to your heart's content!\n";
     }
-
-    if (user.pets["spider-jockey"] >= 10) {
+    else if ((user.settings.petPerks >= 3 && user.pets["spider-jockey"] >= 9) || user.pets["spider-jockey"] >= 10) {
         nextOptimalUpgradeString += "- You have free common upgrades, so "
-            + "max them to your heart's content!\n"
+            + "max them to your heart's content!\n";
     }
 
     for (rarity of Object.keys(nextOptimalUpgrade)) {
@@ -96,7 +108,7 @@ module.exports.execute = async function (interaction) {
 
     if (nextOptimalUpgradeString === "") {
         nextOptimalUpgradeString = "None (you can't afford any. You can do "
-            + "\`/pets [shards]\` to calculate )"
+            + "\`/pets [shards]\` to calculate )";
     }
 
     const petEmbed = new MessageEmbed()
@@ -168,35 +180,72 @@ module.exports.options = [
     }
 ]
 
-// next single optimal upgrade (formulas taken from Wes' spreadsheet)
-// yes, this code is messy, and yes I don't feel like cleaning it 🤣
-function getOptimalUpgrade(pets) {
+/**
+ * Gets the next single optimal upgrade (formulas taken from Wes' spreadsheet)
+ * @param {*} pets user's current pets
+ * @param {int} petPerks user's event shop Pet Perks level (0-3)
+ * @returns {string} Rarity to upgrade (ex: "uncommon")
+ */
+function getOptimalUpgrade(pets, petPerks) {
+    const boosts = [];
     const uncommons = pets.uncommon + 2 * pets["★ uncommon"];
     const rares = pets.rare + 2 * pets["★ rare"];
     const epics = pets.epic + 2 * pets["★ epic"];
-    const upgrades = [];
 
-    if (petPrices.uncommon - pets["spider-jockey"] > 0) {
-        const uncommonBoost = ((1 + (uncommons + 1 + (pets["★ uncommon"] > 0)) * 0.1 * (1 + epics * 0.02))
-            - (1 + uncommons * 0.1 * (1 + epics * 0.02))) / (1 + uncommons * 0.1 * (1 + epics * 0.02));
+    // event shop Pet Perks boosts
+    const petPerksBoost = petPerks >= 1
+        ? 0.01
+        : 0.0;
+    const petPerkDiscount = petPerks >= 3
+        ? 0.9
+        : 1.0;
 
-        upgrades.push([(uncommonBoost / petPrices.uncommon) || 0, `${(pets["★ uncommon"] > 0 && "★ ") || ""}uncommon`]);
+    // upgrade prices
+    const uncommonPrice = Math.floor((petPrices.uncommon - pets["spider-jockey"]) * petPerkDiscount);
+    const rarePrice = Math.floor((petPrices.rare - pets["spider-jockey"]) * petPerkDiscount);
+    const epicPrice = Math.floor((petPrices.epic - pets["spider-jockey"]) * petPerkDiscount);
+
+    // percent increase from upgrading 1 uncommon
+    if (uncommonPrice > 0) {
+        const addedBoost = (1 + (uncommons + 1 + (pets["★ uncommon"] > 0)) * (UNCOMMON_BOOST + petPerksBoost) * (1 + epics * EPIC_BOOST));
+        const currBoost = (1 + uncommons * (UNCOMMON_BOOST + petPerksBoost) * (1 + epics * EPIC_BOOST));
+
+        const percentIncrease = (addedBoost - currBoost) / currBoost;
+        const percentIncreasePerShard = percentIncrease / uncommonPrice;
+        const uncommonString = `${(pets["★ uncommon"] > 0 && "★ ") || ""}uncommon`;
+
+        boosts.push([percentIncreasePerShard || 0, uncommonString]);
     }
 
-    if (petPrices.rare - pets["spider-jockey"] > 0) {
-        const rareBoost = ((1 + (rares + 1 + (pets["★ rare"] > 0)) * 0.075 * (1 + epics * 0.02))
-            - (1 + rares * 0.075 * (1 + epics * 0.02))) / (1 + rares * 0.075 * (1 + epics * 0.02));
+    // percent increase from upgrading 1 rare
+    if (rarePrice > 0) {
+        const addedBoost = (1 + (rares + 1 + (pets["★ rare"] > 0)) * RARE_BOOST * (1 + epics * EPIC_BOOST));
+        const currBoost = (1 + rares * RARE_BOOST * (1 + epics * EPIC_BOOST))
 
-        upgrades.push([(rareBoost / petPrices.rare) || 0, `${(pets["★ rare"] > 0 && "★ ") || ""}rare`]);
+        const percentIncrease = (addedBoost - currBoost) / currBoost;
+        const percentIncreasePerShard = percentIncrease / rarePrice;
+        const rareString = `${(pets["★ rare"] > 0 && "★ ") || ""}rare`;
+
+        boosts.push([percentIncreasePerShard || 0, rareString]);
     }
 
-    if (petPrices.epic - pets["spider-jockey"] > 0) {
-        const epicBoost = (1 + ((1 + uncommons * 0.1 * (1 + 0.02 * (epics + 1 + (pets["★ epic"] > 0))))
-            - (1 + uncommons * 0.1 * (1 + 0.02 * epics))) / (1 + uncommons * 0.1 * (1 + 0.02 * epics)))
-            * (1 + ((1 + rares * 0.05 * (1 + 0.02 * (epics + 1 + (pets["★ epic"] > 0))))
-                - (1 + rares * 0.05 * (1 + 0.02 * epics))) / (1 + rares * 0.05 * (1 + 0.02 * epics))) - 1;
+    // percent increase from upgrading 1 epic
+    if (epicPrice > 0) {
+        const addedUncommonBoost = (1 + uncommons * (UNCOMMON_BOOST + petPerksBoost) * (1 + EPIC_BOOST * (epics + 1 + (pets["★ epic"] > 0))));
+        const currUncommonBoost = (1 + uncommons * (UNCOMMON_BOOST + petPerksBoost) * (1 + epics * EPIC_BOOST));
+        const uncommonIncrease = 1 + ((addedUncommonBoost - currUncommonBoost) / currUncommonBoost);
 
-        upgrades.push([(epicBoost / petPrices.epic) || 0, `${(pets["★ epic"] > 0 && "★ ") || ""}epic`]);
+        const addedRareBoost = (1 + rares * RARE_BOOST * (1 + EPIC_BOOST * (epics + 1 + (pets["★ epic"] > 0))));
+        const currRareBoost = (1 + rares * RARE_BOOST * (1 + epics * EPIC_BOOST));
+        const rareIncrease = 1 + ((addedRareBoost - currRareBoost) / currRareBoost);
+
+        const percentIncrease = uncommonIncrease * rareIncrease - 1;
+        const percentIncreasePerShard = percentIncrease / epicPrice;
+        const epicString = `${(pets["★ epic"] > 0 && "★ ") || ""}epic`;
+
+        boosts.push([percentIncreasePerShard || 0, epicString]);
     }
-    return upgrades.sort((a, b) => b[0] - a[0])[0][1];
+
+    // return upgrade that gave highest percent increase
+    return boosts.sort((a, b) => b[0] - a[0])[0][1];
 }

@@ -95,7 +95,8 @@ const userSchema = new mongoose.Schema({
         daily: { type: String },
         timezone: { type: String, default: "-0" },
         autoPet: { type: Boolean, default: false },
-        dateFormat: { type: String, default: "mm/dd" }
+        dateFormat: { type: String, default: "mm/dd" },
+        petPerks: { type: Number, default: 0 }
     }
 });
 
