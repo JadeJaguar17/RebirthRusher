@@ -59,6 +59,49 @@ module.exports.execute = async function (interaction) {
         dateLabels.push(dateString);
     }
 
+    // create plugin to draw line between Sunday & Monday
+    const drawVerticalLinePlugin = {
+        id: 'drawVerticalLine',
+        beforeDraw: (chart) => {
+            const { ctx, chartArea, scales } = chart;
+            const xScale = scales['x-axis-0'];
+
+            const labels = chart.data.labels;
+            const dataPoints = labels.map((label, index) => {
+                const [month, day] = label.split('/').map(Number);
+                const date = new Date(2025, month - 1, day); // Replace year if needed
+                return { dayOfWeek: date.getDay(), index }; // Sunday = 0, Monday = 1
+            });
+
+            const sundayIndexes = dataPoints.filter((d) => d.dayOfWeek === 0).map((d) => d.index);
+            const mondayIndexes = dataPoints.filter((d) => d.dayOfWeek === 1).map((d) => d.index);
+
+            ctx.save();
+            ctx.strokeStyle = 'rgb(255, 0, 0)'; // Red line
+            ctx.lineWidth = 4;
+
+            sundayIndexes.forEach((sundayIndex) => {
+                const mondayIndex = mondayIndexes.find((i) => i > sundayIndex);
+
+                if (mondayIndex !== undefined) {
+                    const sundayX = xScale.getPixelForValue(labels[sundayIndex]);
+                    const mondayX = xScale.getPixelForValue(labels[mondayIndex]);
+                    const xPosition = (sundayX + mondayX) / 2; // Draw the line between Sunday and Monday
+                    const { top, bottom } = chartArea;
+
+                    // Draw vertical line
+                    ctx.beginPath();
+                    ctx.moveTo(xPosition, top); // Top of the chart area
+                    ctx.lineTo(xPosition, bottom); // Bottom of the chart area
+                    ctx.stroke();
+                    ctx.closePath();
+                }
+            });
+
+            ctx.restore();
+        }
+    };
+
     // generate the graph
     const graph = theme.canvas.renderToBufferSync({
         type: "bar",
@@ -149,6 +192,7 @@ module.exports.execute = async function (interaction) {
                 }],
             }
         },
+        plugins: [drawVerticalLinePlugin]
     });
 
     // send personal bests only if the graph belongs to the user
