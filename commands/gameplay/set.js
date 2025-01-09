@@ -49,6 +49,13 @@ module.exports.execute = async function (interaction) {
             user.settings.petPerks = args.value;
             await user.save();
             return `Your Pet Perks level has been set to ${args.value}`;
+        case "mondayline":
+            user.settings.mondayLine = args.value === "on";
+            await user.save()
+            const message = user.settings.mondayLine
+                ? "`/graph` will draw a line between Sundays and Mondays"
+                : "`/graph` will no longer draw a line between Sundays and Mondays";
+            return message;
         default:
             return errorMessage;
     }
@@ -394,6 +401,29 @@ module.exports.options = [
                     {
                         name: "III",
                         value: 3
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        name: "mondayline",
+        description: "Toggle whether to draw a line between Mondays and Sundays",
+        type: 1,
+        options: [
+            {
+                name: "setting",
+                description: "on/off",
+                type: 3,
+                required: true,
+                choices: [
+                    {
+                        name: "on",
+                        value: "on"
+                    },
+                    {
+                        name: "off",
+                        value: "off"
                     }
                 ]
             }
