@@ -69,15 +69,23 @@ module.exports.execute = async function (interaction) {
             const labels = chart.data.labels;
             const dataPoints = labels.map((label, index) => {
                 const [month, day] = label.split('/').map(Number);
-                const date = new Date(2025, month - 1, day); // Replace year if needed
-                return { dayOfWeek: date.getDay(), index }; // Sunday = 0, Monday = 1
+                const currentYear = new Date().getFullYear();
+                let date = new Date(currentYear, month - 1, day);
+
+                // set year to last year if date is more than 30 days in the future
+                const today = new Date();
+                if (date - today > 30 * 24 * 60 * 60 * 1000) {
+                    date = new Date(currentYear - 1, month - 1, day);
+                }
+
+                return { dayOfWeek: date.getDay(), index };
             });
 
             const sundayIndexes = dataPoints.filter((d) => d.dayOfWeek === 0).map((d) => d.index);
             const mondayIndexes = dataPoints.filter((d) => d.dayOfWeek === 1).map((d) => d.index);
 
             ctx.save();
-            ctx.strokeStyle = 'rgb(255, 0, 0)'; // Red line
+            ctx.strokeStyle = 'rgb(255, 0, 0)';
             ctx.lineWidth = 4;
 
             sundayIndexes.forEach((sundayIndex) => {
@@ -86,13 +94,13 @@ module.exports.execute = async function (interaction) {
                 if (mondayIndex !== undefined) {
                     const sundayX = xScale.getPixelForValue(labels[sundayIndex]);
                     const mondayX = xScale.getPixelForValue(labels[mondayIndex]);
-                    const xPosition = (sundayX + mondayX) / 2; // Draw the line between Sunday and Monday
+                    const xPosition = (sundayX + mondayX) / 2;
                     const { top, bottom } = chartArea;
 
-                    // Draw vertical line
+                    // draw vertical line between Sunday and Monday
                     ctx.beginPath();
-                    ctx.moveTo(xPosition, top); // Top of the chart area
-                    ctx.lineTo(xPosition, bottom); // Bottom of the chart area
+                    ctx.moveTo(xPosition, top);
+                    ctx.lineTo(xPosition, bottom);
                     ctx.stroke();
                     ctx.closePath();
                 }
