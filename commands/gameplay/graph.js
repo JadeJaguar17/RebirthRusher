@@ -59,56 +59,10 @@ module.exports.execute = async function (interaction) {
         dateLabels.push(dateString);
     }
 
-    // create plugin to draw line between Sunday & Monday
-    const drawVerticalLinePlugin = {
-        id: 'drawVerticalLine',
-        beforeDraw: (chart) => {
-            const { ctx, chartArea, scales } = chart;
-            const xScale = scales['x-axis-0'];
-
-            const labels = chart.data.labels;
-            const dataPoints = labels.map((label, index) => {
-                const [month, day] = label.split('/').map(Number);
-                const currentYear = new Date().getFullYear();
-                let date = new Date(currentYear, month - 1, day);
-
-                // set year to last year if date is more than 30 days in the future
-                const today = new Date();
-                if (date - today > 30 * 24 * 60 * 60 * 1000) {
-                    date = new Date(currentYear - 1, month - 1, day);
-                }
-
-                return { dayOfWeek: date.getDay(), index };
-            });
-
-            const sundayIndexes = dataPoints.filter((d) => d.dayOfWeek === 0).map((d) => d.index);
-            const mondayIndexes = dataPoints.filter((d) => d.dayOfWeek === 1).map((d) => d.index);
-
-            ctx.save();
-            ctx.strokeStyle = 'rgb(255, 0, 0)';
-            ctx.lineWidth = 4;
-
-            sundayIndexes.forEach((sundayIndex) => {
-                const mondayIndex = mondayIndexes.find((i) => i > sundayIndex);
-
-                if (mondayIndex !== undefined) {
-                    const sundayX = xScale.getPixelForValue(labels[sundayIndex]);
-                    const mondayX = xScale.getPixelForValue(labels[mondayIndex]);
-                    const xPosition = (sundayX + mondayX) / 2;
-                    const { top, bottom } = chartArea;
-
-                    // draw vertical line between Sunday and Monday
-                    ctx.beginPath();
-                    ctx.moveTo(xPosition, top);
-                    ctx.lineTo(xPosition, bottom);
-                    ctx.stroke();
-                    ctx.closePath();
-                }
-            });
-
-            ctx.restore();
-        }
-    };
+    // enable/disable Monday line plugin
+    plugins = user.settings.mondayLine
+        ? [drawVerticalLinePlugin]
+        : []
 
     // generate the graph
     const graph = theme.canvas.renderToBufferSync({
@@ -200,7 +154,7 @@ module.exports.execute = async function (interaction) {
                 }],
             }
         },
-        plugins: [drawVerticalLinePlugin]
+        plugins: plugins
     });
 
     // send personal bests only if the graph belongs to the user
@@ -273,6 +227,56 @@ const themes = [
         })
     }
 ];
+
+const drawVerticalLinePlugin = {
+    id: 'drawVerticalLine',
+    beforeDraw: (chart) => {
+        const { ctx, chartArea, scales } = chart;
+        const xScale = scales['x-axis-0'];
+
+        const labels = chart.data.labels;
+        const dataPoints = labels.map((label, index) => {
+            const [month, day] = label.split('/').map(Number);
+            const currentYear = new Date().getFullYear();
+            let date = new Date(currentYear, month - 1, day);
+
+            // set year to last year if date is more than 30 days in the future
+            const today = new Date();
+            if (date - today > 30 * 24 * 60 * 60 * 1000) {
+                date = new Date(currentYear - 1, month - 1, day);
+            }
+
+            return { dayOfWeek: date.getDay(), index };
+        });
+
+        const sundayIndexes = dataPoints.filter((d) => d.dayOfWeek === 0).map((d) => d.index);
+        const mondayIndexes = dataPoints.filter((d) => d.dayOfWeek === 1).map((d) => d.index);
+
+        ctx.save();
+        ctx.strokeStyle = 'rgb(255, 0, 0)';
+        ctx.lineWidth = 4;
+
+        sundayIndexes.forEach((sundayIndex) => {
+            const mondayIndex = mondayIndexes.find((i) => i > sundayIndex);
+
+            if (mondayIndex !== undefined) {
+                const sundayX = xScale.getPixelForValue(labels[sundayIndex]);
+                const mondayX = xScale.getPixelForValue(labels[mondayIndex]);
+                const xPosition = (sundayX + mondayX) / 2;
+                const { top, bottom } = chartArea;
+
+                // draw vertical line between Sunday and Monday
+                ctx.beginPath();
+                ctx.moveTo(xPosition, top);
+                ctx.lineTo(xPosition, bottom);
+                ctx.stroke();
+                ctx.closePath();
+            }
+        });
+
+        ctx.restore();
+    }
+};
 
 const defaults = {
     "rb": RBR,
