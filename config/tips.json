@@ -46,5 +46,11 @@
         "text": "",
         "filename": "talismans.png",
         "credit": "By argonaut997"
+    },
+    {
+        "title": "Prestige Kit Drops",
+        "text": "Your *Prestige Kit* automatically levels up the more you prestige.",
+        "filename": "prestige_kit.png",
+        "credit": "By murtle_the_turtle"
     }
 ]
