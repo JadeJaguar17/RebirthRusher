@@ -62,7 +62,7 @@ class RebirthRusher extends Eris.Client {
 
                 this.editStatus("online", { name: "/help", type: 3 });
 
-                if (process.env.NODE_ENV !== "development") {
+                if (process.env.NODE_ENV === "production") {
                     const startEmbed = new MessageEmbed()
                         .setTitle("Started")
                         .setColor(SUCCESS)
@@ -70,7 +70,7 @@ class RebirthRusher extends Eris.Client {
 
                     this.log("startup", startEmbed);
                 }
-                console.info("Bot launch succesful");
+                console.info("Bot launch successful");
                 console.info("=========================");
             } catch (error) {
                 console.error(error);
@@ -192,7 +192,7 @@ class RebirthRusher extends Eris.Client {
                 const category = commandPath.split("/")[0];
                 await this.createApplicationCommand(
                     command,
-                    category === "dev"
+                    category === "dev" || process.env.NODE_ENV !== "production"
                 );
             }
 
@@ -204,7 +204,7 @@ class RebirthRusher extends Eris.Client {
 
                     await this.createApplicationCommand(
                         command,
-                        commandPath === "dev"
+                        commandPath === "dev" || process.env.NODE_ENV !== "production"
                     );
                 });
             }
@@ -319,7 +319,9 @@ class RebirthRusher extends Eris.Client {
         console.info("Connecting to TopGG...");
         const app = express();
         const webhook = new Webhook(process.env.TOPGG_AUTH);
-        const PORT = 1717;
+        const PORT = process.env.NODE_ENV === "production"
+	    ? 1717
+	    : 3000;
 
         app.post("/dblwebhook", webhook.listener(vote => {
             this.rewardVote(vote.user);

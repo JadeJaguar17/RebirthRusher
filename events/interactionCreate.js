@@ -48,8 +48,8 @@ async function handleSlashCommand(bot, interaction) {
 
         // handle commands
         const command = bot.commands.get(interaction.data.name);
-
-        if (!(UserDB.checkUserExists(interaction.member.user.id)) && command?.needsAccount) {
+        const userExists = await UserDB.checkUserExists(interaction.member.user.id);
+        if (!userExists && command?.needsAccount) {
             return interaction.createMessage("You don't have an account yet! Enter \`/start\` to make an account");
         }
 
@@ -111,6 +111,8 @@ async function handleButton(bot, interaction) {
             switch (command) {
                 case "guide":
                     return interaction.editMessage(interaction.message.id, await bot.commands.get("guide").execute(interaction, Number(args[0])));
+                case "inventory":
+                    return interaction.editMessage(interaction.message.id, await bot.commands.get("inventory").execute(interaction, Number(args[0])));
                 case "buy":
                     if (args[0] === "cancel") {
                         return interaction.editMessage(interaction.message.id, { content: "You cancelled your purchase", components: [] });
@@ -149,7 +151,7 @@ async function handleButton(bot, interaction) {
                     }
 
                     if (args[0] === "confirm") {
-                        await UserDB.resetPersonalBest(interaction.member.user.id);
+                        await UserDB.resetPersonalBest(interaction.member.user.id, args[1] === "yes");
 
                         interaction.editMessage(interaction.message.id, { content: "Your stats has been reset", components: [] });
 

@@ -1,9 +1,9 @@
 const RebirthRusher = require("./system/RebirthRusher");
 require("dotenv").config();
 
-const AUTH_TOKEN = process.env.NODE_ENV === "development"
-    ? process.env.DEVTOKEN
-    : process.env.TOKEN;
+const AUTH_TOKEN = process.env.NODE_ENV === "production"
+    ? process.env.TOKEN
+    : process.env.DEVTOKEN;
 
 // log which version of bot is being run
 if (AUTH_TOKEN === process.env.DEVTOKEN) {
@@ -23,7 +23,7 @@ rbr.init();
 
 global.bot = rbr;
 
-// deals with any undhandled rejected Promises
+// deals with any unhandled rejected Promises
 process.on('unhandledRejection', error => {
     rbr.error("Unhandled Promise Rejection", error);
 });

@@ -94,13 +94,16 @@ const userSchema = new mongoose.Schema({
         voteDisabled: { type: Boolean, default: false },
         daily: { type: String },
         timezone: { type: String, default: "-0" },
-        autoPet: { type: Boolean, default: false }
+        autoPet: { type: Boolean, default: false },
+        dateFormat: { type: String, default: "mm/dd" },
+        petPerks: { type: Number, default: 0 },
+        mondayLine: { type: Boolean, default: false }
     }
 });
 
 // ensure I'm not modifying the actual database
-const collectionName = process.env.NODE_ENV === "development"
-    ? "users.test"
-    : "users"
+const collectionName = process.env.NODE_ENV === "production"
+    ? "users"
+    : "users.test"
 
 module.exports = mongoose.models[collectionName] || mongoose.model(collectionName, userSchema);

@@ -6,7 +6,7 @@ const defaults = {
     "rbday": "#E74C3C"
 };
 
-const errorMesssage = ":banana: Here's an empathy banana or whatever. "
+const errorMessage = ":banana: Here's an empathy banana or whatever. "
     + "Anyways, something went wrong, please report it "
     + "in #feedback of the support server (`/server`)";
 
@@ -41,8 +41,23 @@ module.exports.execute = async function (interaction) {
                 + `${(args.value === "on" && "now start to") || "no longer"}`
                 + ` automatically send \`/pets\` when you check your Idle `
                 + `Miner pets`;
+        case "petperks":
+            if (args.value < 0 || args.value > 3) {
+                return "Pet perks needs to be between 0-3";
+            }
+
+            user.settings.petPerks = args.value;
+            await user.save();
+            return `Your Pet Perks level has been set to ${args.value}`;
+        case "mondayline":
+            user.settings.mondayLine = args.value === "on";
+            await user.save()
+            const message = user.settings.mondayLine
+                ? "`/graph` will draw a line between Sundays and Mondays"
+                : "`/graph` will no longer draw a line between Sundays and Mondays";
+            return message;
         default:
-            return errorMesssage;
+            return errorMessage;
     }
 }
 
@@ -143,7 +158,30 @@ module.exports.options = [
                         required: true
                     }
                 ]
-            }
+            },
+            {
+                name: "dateformat",
+                description: "Changes how dates on your graph are displayed",
+                type: 1,
+                options: [
+                    {
+                        name: "format",
+                        description: "your desired date format",
+                        type: 3,
+                        required: true,
+                        choices: [
+                            {
+                                name: "mm/dd",
+                                value: "mm/dd"
+                            },
+                            {
+                                name: "dd/mm",
+                                value: "dd/mm"
+                            }
+                        ]
+                    }
+                ]
+            },
         ]
     },
     {
@@ -336,6 +374,60 @@ module.exports.options = [
                 ]
             }
         ]
+    },
+    {
+        name: "petperks",
+        description: "Set your eventshop Pet Perks level",
+        type: 1,
+        options: [
+            {
+                name: "level",
+                description: "Pet Perks level",
+                type: 4,
+                required: true,
+                choices: [
+                    {
+                        name: "None",
+                        value: 0
+                    },
+                    {
+                        name: "I",
+                        value: 1
+                    },
+                    {
+                        name: "II",
+                        value: 2
+                    },
+                    {
+                        name: "III",
+                        value: 3
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        name: "mondayline",
+        description: "Toggle whether to draw a line between Mondays and Sundays",
+        type: 1,
+        options: [
+            {
+                name: "setting",
+                description: "on/off",
+                type: 3,
+                required: true,
+                choices: [
+                    {
+                        name: "on",
+                        value: "on"
+                    },
+                    {
+                        name: "off",
+                        value: "off"
+                    }
+                ]
+            }
+        ]
     }
 ]
 
@@ -406,9 +498,15 @@ async function handleGraph(args, user) {
             await user.save();
 
             return `Your graph timezone has been set to \`UTC${tz}\``;
+        case "dateformat":
+            if (user.settings.dateFormat !== args.options[0].value) {
+                user.settings.dateFormat = args.options[0].value;
+                await user.save()
+            }
 
+            return `Your graph now displays dates as \`${user.settings.dateFormat}\``;
         default:
-            return errorMesssage;
+            return errorMessage;
     }
 }
 
@@ -514,6 +612,6 @@ async function handleReminders(args, user) {
                 + "cooldowns are the same)";
 
         default:
-            return errorMesssage;
+            return errorMessage;
     }
 }

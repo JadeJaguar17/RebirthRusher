@@ -8,10 +8,11 @@ module.exports.description = "Displays all items that user has bought from the s
 module.exports.syntax = "`/inventory`"
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+module.exports.execute = async function (interaction, pageNum = 1) {
     const user = await UserDB.getUserById(interaction.member.user.id);
 
     // create list of colors
+    const inventoryPages = [];
     let colorString = "";
     const colors = user.inventory.graphColors.sort((a, b) => a.id - b.id);
     colors.forEach(color => {
@@ -19,8 +20,16 @@ module.exports.execute = async function (interaction) {
         const customHex = Math.floor(id) === 14
             ? (" **(" + color.hex + ")**")
             : "";
+        const stringToAdd = `\`${id}\` ${color.name}${customHex}\n`;
+
+        // handle overflow
+        if (stringToAdd.length + colorString.length > 1024) {
+            inventoryPages.push(colorString);
+            colorString = "";
+        }
         colorString += `\`${id}\` ${color.name}${customHex}\n`;
-    })
+    });
+    inventoryPages.push(colorString);
 
     // let subscriptions = "";
     // user.inventory.subscriptions.forEach(subscription => {
@@ -40,7 +49,7 @@ module.exports.execute = async function (interaction) {
         .addFields(
             {
                 name: "Colors",
-                value: colorString || "When you buy graph colors, "
+                value: inventoryPages[pageNum - 1] || "When you buy graph colors, "
                     + "they will appear here"
             },
             // {
@@ -49,5 +58,25 @@ module.exports.execute = async function (interaction) {
             // }
         );
 
-    return { embeds: [inventoryEmbed] };
+    const buttons = [];
+    if (inventoryPages.length > 1) {
+        for (let i = 1; i <= inventoryPages.length; i++) {
+            buttons.push({
+                type: 2,
+                style: 4,
+                label: `Page ${i}`,
+                custom_id: `${interaction.member.user.id}-inventory-${i}`,
+                disabled: pageNum === i
+            });
+        }
+    }
+
+    const components = buttons.length > 0
+        ? [{ type: 1, components: buttons }]
+        : undefined;
+
+    return {
+        embeds: [inventoryEmbed],
+        components
+    };
 }

@@ -77,14 +77,18 @@ module.exports.getTopTenTokens = async function () {
 /**
  * Reset a user's personal best stats in their graph
  * @param {string} userID user's Discord snowflake ID
+ * @param {Boolean} resetRbDay whether to reset RbDay
  */
-module.exports.resetPersonalBest = async function (userID) {
+module.exports.resetPersonalBest = async function (userID, resetRbDay) {
     const user = await this.getUserById(userID);
+    rbDay = !resetRbDay
+    ? user.graph.personalBests.rbDay
+    : 0;
 
     user.graph.personalBests = {
         rb: 0,
         pr: 0,
-        rbDay: 0
+        rbDay: rbDay
     }
 
     await user.save();

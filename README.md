@@ -42,9 +42,6 @@ I would say my code structure is fairly straightforward, but I've added README's
 in all of the different folders to help provide more guidance on both navigation
 and the code itself.
 
-Take a look at the [Trello](https://trello.com/b/4Z4MAGIV/rebirth-rusher) board
-to see what I'm currently working on!
-
 ## Contributing
 If you want to directly contribute to the main repository, by all means go ahead.
 To do so, all you have to do is make a branch, do your thing, and make a pull

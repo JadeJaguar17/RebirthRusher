@@ -27,25 +27,6 @@ module.exports = async (bot, message) => {
         // pets embed
         if (embed.title === "Pets") {
             await bot.scanners.get("petScan").execute(embed, userID);
-
-        //     const user = await UserDB.getUserById(userID);
-        //     if (user.settings.autoPet && await bot.users.get(userID)) {
-        //         const msgData = {
-        //             member: { user: await bot.users.get(userID) },
-        //             data: { options: null }
-        //         };
-        //         const petEmbed = await bot.commands.get("pets").execute(msgData, userID);
-
-        //         petEmbed.embeds[0]
-        //             .setTitle(null)
-        //             .setDescription(null)
-        //             .setThumbnail(null)
-        //             .setAuthor(null, null);
-        //         petEmbed.embeds[0].fields = [petEmbed.embeds[0].fields[5]];
-        //         petEmbed.messageReference = { messageID: message.id };
-
-        //         return bot.send(message, petEmbed);
-        //     }
         }
 
         // normal /play embed
@@ -54,21 +35,45 @@ module.exports = async (bot, message) => {
             && !embed.description.startsWith("**Event**")
             && embed.description.includes("Backpack full")
         ) {
-            const field = embed.fields?.find(f => f.name === "**Stats**");
+            // update shard count from /play
+            try {
+                const currencyField = embed.fields?.find(f => f.name === "**Currency**");
+                const shardsString = currencyField.value
+                    .split("\n")[1]
+                    .split(" ")[1]
+                    .trim();
 
-            const embedPr = field.value
+                let shards = 0;
+                if (shardsString.includes("K")) {
+                    shards = parseFloat(shardsString) * 1000;
+                }
+                else {
+                    shards = Number(shardsString);
+                }
+
+                const user = await UserDB.getUserById(userID);
+                if (user.pets.shards !== shards) {
+                    user.pets.shards = shards
+                    await user.save();
+                }
+            } catch (e) { /* do nothing */ }
+
+            // handle profile states
+            const statsField = embed.fields?.find(f => f.name === "**Stats**");
+
+            const embedPr = statsField.value
                 .trim()
                 .split("\n")[0]
                 .replace("**Prestige:**", "")
                 .trim()
                 .replace(/,/g, '');
-            const embedRb = field.value
+            const embedRb = statsField.value
                 .trim()
                 .split("\n")[1]
                 .replace("**Rebirth:**", "")
                 .trim()
                 .replace(/,/g, '');
-            const embedRbDay = field.value
+            const embedRbDay = statsField.value
                 .trim()
                 .split("\n")[2]
                 .replace("**AVG rebirths/day**:", "")
