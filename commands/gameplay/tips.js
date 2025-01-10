@@ -62,6 +62,22 @@ module.exports.options = [
         name: "tip",
         description: "tip to read",
         type: 3,
-        choices: choices
+        choices: getTipChoices(tipsData)
     }
 ]
+
+/**
+ * Converts tips data into Discord slash command options
+ * @param {Array<{title: string}>} tips list of tips data
+ * @returns {Array<{tip: string, value: string}>}  
+ */
+function getTipChoices(tips) {
+    const choices = [];
+    tips.forEach(tip => {
+        choices.push({
+            name: tip.title,
+            value: tip.title
+        });
+    });
+    return choices;
+}
