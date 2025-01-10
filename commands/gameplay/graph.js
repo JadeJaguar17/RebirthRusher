@@ -253,7 +253,7 @@ const drawVerticalLinePlugin = {
         const mondayIndexes = dataPoints.filter((d) => d.dayOfWeek === 1).map((d) => d.index);
 
         ctx.save();
-        ctx.strokeStyle = 'rgb(255, 0, 0)';
+        ctx.strokeStyle = '#72767D';
         ctx.lineWidth = 4;
 
         sundayIndexes.forEach((sundayIndex) => {
