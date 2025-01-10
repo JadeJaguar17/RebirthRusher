@@ -4,5 +4,35 @@
         "text": "The table shows the chance of obtaining certain pets at different rebirths as well as its upgrade cost. Note that you are guaranteed to get a pet from hunting at rebirth **20+**.",
         "filename": "hunt_chances.png",
         "credit": "Original by Meowbear#8979\nUpdated by jadejaguar17"
+    },
+    {
+        "title": "Branches Guide",
+        "text": "",
+        "filename": "branches_guide.png",
+        "credit": "By argonaut997"
+    },
+    {
+        "title": "Crate Drops",
+        "text": "All rewards have equal chance of dropping.",
+        "filename": "crate_drops.png",
+        "credit": "By argonaut997"
+    },
+    {
+        "title": "Guild Bosses",
+        "text": "",
+        "filename": "guild_bosses.png",
+        "credit": "By argonaut997"
+    },
+    {
+        "title": "Karma Sources",
+        "text": "Karma comes in the form of points and slightly buff progression. You get karma when performing actions that support the bot. This includes donating, activating a global booster, voting, and more. All possible ways are listed in the table below.",
+        "filename": "karma.png",
+        "credit": "By argonaut997"
+    },
+    {
+        "title": "Tokens Guide",
+        "text": "This guide is designed for playing the game with **minimal to no globals**. If there are frequent globals, focus more on *Lucky Hunter* and *Cheater* and less on *Merchant* and *Legendary*",
+        "filename": "tokens_guide.png",
+        "credit": "By argonaut997 and lenny1224"
     }
 ]
