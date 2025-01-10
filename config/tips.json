@@ -1,37 +1,56 @@
 [
     {
-        "name": "Token Guide",
-        "link": "https://i.imgur.com/eJl4DIJ.jpg",
-        "author": "ByDeXx#4885"
+        "title": "Hunt Chances",
+        "text": "The table shows the chance of obtaining certain pets at different rebirths as well as its upgrade cost. Note that you are guaranteed to get a pet from hunting at rebirth **20+**.",
+        "filename": "hunt_chances.png",
+        "credit": "Original by Meowbear#8979\nUpdated by jadejaguar17"
     },
     {
-        "name": "Crate Drops",
-        "link": "https://i.imgur.com/8mAOVc9.png",
-        "author": "Meowbear#8979"
+        "title": "Branches Guide",
+        "text": "",
+        "filename": "branches_guide.png",
+        "credit": "By argonaut997"
     },
     {
-        "name": "Max Pshop",
-        "body": "https://docs.google.com/spreadsheets/d/1QYKWVQo6bcs2njLqoqmE38ct6_3GIAJsskdcgLta4og/edit#gid=0",
-        "author": "J_83#3689"
+        "title": "Crate Drops",
+        "text": "All rewards have equal chance of dropping.",
+        "filename": "crate_drops.png",
+        "credit": "By argonaut997"
     },
     {
-        "name": "Prestige Master",
-        "link": "https://i.imgur.com/8PfSx7w.png",
-        "author": "Unknown"
+        "title": "Guild Bosses",
+        "text": "",
+        "filename": "guild_bosses.png",
+        "credit": "By argonaut997"
     },
     {
-        "name": "Hunt Chances",
-        "link": "https://i.imgur.com/uMsjbYg.png",
-        "author": "Meowbear#8979"
+        "title": "Karma Sources",
+        "text": "Karma comes in the form of points and slightly buff progression. You get karma when performing actions that support the bot. This includes donating, activating a global booster, voting, and more. All possible ways are listed in the table below.",
+        "filename": "karma.png",
+        "credit": "By argonaut997"
     },
     {
-        "name": "Guild Bosses",
-        "link": "https://i.imgur.com/zf2kTRC.png",
-        "author": "darkness#8824"
+        "title": "Tokens Guide",
+        "text": "This guide is designed for playing the game with **minimal to no globals**. If there are frequent globals, focus more on *Lucky Hunter* and *Cheater* and less on *Merchant* and *Legendary*",
+        "filename": "tokens_guide.png",
+        "credit": "By argonaut997 and lenny1224"
     },
     {
-        "name": "Crystal List",
-        "body": "https://docs.google.com/document/d/1WXOWM0WcLmmnZ2EQDYDrsh3jX4fWiDD4GI2a1Vbp_KQ/edit",
-        "author": "𓅭 𝓜𝓻. 𝓓𝓾𝓬𝓴 ✓#0001"
+        "title": "Prestige Master",
+        "text": "",
+        "filename": "prestige_master.png",
+        "credit": "By argonaut997"
+    },
+    {
+        "title": "Talismans Info",
+        "text": "",
+        "filename": "talismans.png",
+        "credit": "By argonaut997"
+    },
+    {
+        "title": "Prestige Kit Drops",
+        "text": "Your *Prestige Kit* automatically levels up the more you prestige.",
+        "filename": "prestige_kit.png",
+        "credit": "By murtle_the_turtle"
     }
 ]
