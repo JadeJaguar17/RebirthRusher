@@ -52,5 +52,11 @@
         "text": "Your *Prestige Kit* automatically levels up the more you prestige.",
         "filename": "prestige_kit.png",
         "credit": "By murtle_the_turtle"
+    },
+    {
+        "title": "Talismans Guide",
+        "text": "",
+        "filename": "talismans_guide.png",
+        "credit": "By argonaut997"
     }
 ]
