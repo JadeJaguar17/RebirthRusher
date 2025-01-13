@@ -19,7 +19,7 @@
     },
     {
         "title": "Guild Bosses",
-        "text": "",
+        "text": "Guild bosses are damaged by hunting and fishing, see `/guild boss` for more information.",
         "filename": "guild_bosses.png",
         "credit": "By argonaut997"
     },
