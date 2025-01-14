@@ -111,7 +111,11 @@ module.exports.options = [
                             },
                             {
                                 name: "rb/day",
-                                value: "rbday"
+                                value: "rbDay"
+                            },
+                            {
+                                name: "monday line",
+                                value: "mondayLine"
                             }
                         ]
                     },
@@ -181,7 +185,7 @@ module.exports.options = [
                         ]
                     }
                 ]
-            },
+            }
         ]
     },
     {
@@ -446,9 +450,7 @@ async function handleGraph(args, user) {
                 return ":no_entry_sign: You do not have this item";
             }
 
-            const colorCategory = category === "rbday"
-                ? "rbDayColor"
-                : category + "Color";
+            const colorCategory = category + "Color";
             user.settings[colorCategory] = color.hex;
             await user.save();
 
