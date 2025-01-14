@@ -43,12 +43,20 @@ module.exports.execute = async function (interaction) {
                 + `Miner pets`;
         case "petperks":
             if (args.value < 0 || args.value > 3) {
-                return "Pet perks needs to be between 0-3";
+                return "Pet Perks needs to be between 0-3";
             }
 
             user.settings.petPerks = args.value;
             await user.save();
             return `Your Pet Perks level has been set to ${args.value}`;
+        case "fishingperks":
+            if (args.value < 0 || args.value > 3) {
+                return "Fishing Perks needs to be between 0-3";
+            }
+
+            user.settings.fishingPerks = args.value;
+            await user.save();
+            return `Your Fishing Perks level has been set to ${args.value}`;
         case "mondayline":
             user.settings.mondayLine = args.value === "on";
             await user.save()
@@ -111,7 +119,11 @@ module.exports.options = [
                             },
                             {
                                 name: "rb/day",
-                                value: "rbday"
+                                value: "rbDay"
+                            },
+                            {
+                                name: "monday line",
+                                value: "mondayLine"
                             }
                         ]
                     },
@@ -181,7 +193,7 @@ module.exports.options = [
                         ]
                     }
                 ]
-            },
+            }
         ]
     },
     {
@@ -407,6 +419,37 @@ module.exports.options = [
         ]
     },
     {
+        name: "fishingperks",
+        description: "Set your eventshop Fishing Perks level",
+        type: 1,
+        options: [
+            {
+                name: "level",
+                description: "Fishing Perks level",
+                type: 4,
+                required: true,
+                choices: [
+                    {
+                        name: "None",
+                        value: 0
+                    },
+                    {
+                        name: "I",
+                        value: 1
+                    },
+                    {
+                        name: "II",
+                        value: 2
+                    },
+                    {
+                        name: "III",
+                        value: 3
+                    }
+                ]
+            }
+        ]
+    },
+    {
         name: "mondayline",
         description: "Toggle whether to draw a line between Mondays and Sundays",
         type: 1,
@@ -446,9 +489,7 @@ async function handleGraph(args, user) {
                 return ":no_entry_sign: You do not have this item";
             }
 
-            const colorCategory = category === "rbday"
-                ? "rbDayColor"
-                : category + "Color";
+            const colorCategory = category + "Color";
             user.settings[colorCategory] = color.hex;
             await user.save();
 

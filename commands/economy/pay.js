@@ -9,33 +9,30 @@ module.exports.needsAccount = true
 
 module.exports.execute = async function (interaction) {
     const payeeID = interaction.data.options[0].value;
+    const payerID = interaction.member.user.id;
     const tokens = interaction.data.options[1].value;
-
-    if (tokens < 0 && interaction.member.user.id !== DEV_ID) {
-        return "You can't give somebody negative tokens!";
-    }
-
-    const payer = await UserDB.getUserById(interaction.member.user.id);
     const payee = await UserDB.getUserById(payeeID);
-
+    
     if (!payee) {
-        return "I cannot find the person you want to give tokens to. Make "
-            + "sure they have an account first!";
+        return "User does not have a Rebirth Rusher account!";
     }
 
-    if (payer._id === DEV_ID) {
-        payer.inventory.tokens += tokens;
-    } else if (payer._id === payee._id) {
-        return "You can't pay yourself!";
+    // dev payments
+    if (payerID === DEV_ID) {
+        payee.inventory.tokens += tokens;
+        await payee.save()
+        return `<@${payee._id}> received ${tokens} ${token}`;
     }
 
-    if (payer.inventory.tokens < tokens) {
-        return "You don't have enough tokens to give";
-    }
+    // normal payments
+    if (tokens < 0) return "You can't give somebody negative tokens!";
+    if (payerID === payeeID) return "You can't pay yourself!";
+
+    const payer = await UserDB.getUserById(payerID);
+    if (payer.inventory.tokens < tokens) return "You don't have enough tokens to give";
 
     payer.inventory.tokens -= tokens;
     payee.inventory.tokens += tokens;
-
     await payer.save();
     await payee.save();
 

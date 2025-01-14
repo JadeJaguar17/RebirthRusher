@@ -89,6 +89,7 @@ const userSchema = new mongoose.Schema({
         rbColor: { type: String, default: "#E67E22" },
         prColor: { type: String, default: "#A84300" },
         rbDayColor: { type: String, default: "#E74C3C" },
+        mondayLineColor: {type: String, default: "#72767D"},
         theme: { type: Number, default: 1 },
         isPrivate: { type: Boolean, default: false },
         voteDisabled: { type: Boolean, default: false },
@@ -97,6 +98,7 @@ const userSchema = new mongoose.Schema({
         autoPet: { type: Boolean, default: false },
         dateFormat: { type: String, default: "mm/dd" },
         petPerks: { type: Number, default: 0 },
+        fishingPerks: {type: Number, default: 0},
         mondayLine: { type: Boolean, default: false }
     }
 });
