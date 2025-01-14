@@ -179,8 +179,8 @@ module.exports.options = [
         type: 6,
     },
     {
-        name: "tag",
-        description: "user to check graph (via tag)",
+        name: "username",
+        description: "user to check graph (via username)",
         type: 3
     }
 ]
