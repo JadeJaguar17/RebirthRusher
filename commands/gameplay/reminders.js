@@ -46,11 +46,13 @@ module.exports.execute = async function (interaction) {
     });
 
     // add final settings
-    const settings = `huntcd: \`${user.settings.huntcd}\` *set your hunt `
-        + `cooldown here*\n`
-        + `boostercd: \`${user.settings.boostercd}s\` *get pinged when there's`
-        + ` ${user.settings.boostercd}s left for a booster*\n`
-        + `pKit: \`${user.settings.pkit}\` set your prestige kit level here`
+    const settings =
+        `huntcd: \`${user.settings.huntcd}s\` *set your hunt cooldown here*`
+        + `\nboostercd: \`${user.settings.boostercd}s\` *get pinged when there's`
+        + ` ${user.settings.boostercd}s left for a booster*`
+        + `\npKit: \`${user.settings.pkit}\` *set your prestige kit level here*`
+        + `\npetPerks: \`${user.settings.petPerks}\` *set your Pet Perks level here*`
+        + `\ndateFormat: *your graph is using \`${user.settings.dateFormat}\` format for dates*`
 
     setEmbed.addFields({
         name: "**Settings**",
