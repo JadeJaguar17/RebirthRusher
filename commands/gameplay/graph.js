@@ -62,7 +62,7 @@ module.exports.execute = async function (interaction) {
     // enable/disable Monday line plugin
     const drawVerticalLinePlugin = {
         id: 'drawVerticalLine',
-        beforeDraw: (chart) => {
+        beforeDatasetsDraw: (chart) => {
             const { ctx, chartArea, scales } = chart;
             const xScale = scales['x-axis-0'];
 
@@ -197,8 +197,7 @@ module.exports.execute = async function (interaction) {
                         fontColor: theme.labels
                     },
                     gridLines: {
-                        color: theme.background,
-                        zeroLineColor: theme.gridLines
+                        display: false
                     }
                 }],
             }
