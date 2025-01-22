@@ -69,7 +69,7 @@ module.exports.execute = async function (interaction) {
 module.exports.purchaseItem = async function (interaction, itemID, hex) {
     const user = await UserDB.getUserById(interaction.member.user.id);
     const item = shop.find(i => Number(itemID) === i.id);
-    const purchasedItem = {...item};
+    const purchasedItem = { ...item };
 
     if (user.inventory.tokens < purchasedItem.price) {
         return `:no_entry_sign: You can't afford this purchase! Get more `
@@ -80,15 +80,13 @@ module.exports.purchaseItem = async function (interaction, itemID, hex) {
         purchasedItem.hex = hex;
     }
 
+    // calculate new ID for custom color
     if (purchasedItem.id === 14) {
-        let count = 0;
-        for (let i = 0; i < user.inventory.graphColors.length; i++) {
-            if (Math.floor(user.inventory.graphColors[i].id) === 14) {
-                count++;
-            }
-        }
-
-        purchasedItem.id = Number(`14.${count + 1}`);
+        const existingItemIds = user.inventory.graphColors
+            .map(c => c.id)
+            .filter(id => Math.floor(id) === 14);
+        const nextId = findNextID(existingItemIds);
+        purchasedItem.id = nextId;
     }
 
     switch (purchasedItem.category) {
@@ -151,4 +149,28 @@ function hasItem(user, item) {
 
 function isHex(hex) {
     return /^#?([0-9A-F]{3}){1,2}$/i.test(hex);
+}
+
+/**
+ * Finds the next ID based on the highest existing ID in the array
+ * @param {Array<number>} existingIds array of existing IDs
+ * @returns {number} the next valid ID
+ */
+function findNextID(existingIds) {
+    // split IDs into their integer and decimal parts
+    const ids = existingIds.map(id => id
+        .toString()
+        .split(".")
+        .map(Number)
+    );
+    ids.push([14, 0]);
+    ids.sort((a, b) => b[1] - a[1]);
+
+    // find the next highest ID based on the decimal part
+    const [int, dec] = ids[0];
+    let nextDec = (dec || 0) + 1;
+    if (nextDec % 10 === 0) {
+        nextDec++;
+    }
+    return Number(`${int}.${nextDec}`);
 }

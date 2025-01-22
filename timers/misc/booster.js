@@ -12,6 +12,7 @@ module.exports.execute = async function (message, userID, boosterID, time) {
         return;
     }
 
+    // set a timer
     const timer = setTimeout(async () => {
         const timerUser = await UserDB.getUserById(user._id);
         if (timerUser.timers.boosters[booster.type] === "off") {
@@ -31,19 +32,16 @@ module.exports.execute = async function (message, userID, boosterID, time) {
     user.timers.boosters[booster.type] = "running";
     await user.save();
 
-    // Timer reset collector
-    function resetFilter(m) {
+    // set up timer reset filter
+    function resetFilter(msg) {
         try {
-            if (m.embeds?.[0]?.author) {
-                const embedAuthorID = m.embeds[0].author.icon_url
+            if (msg.embeds?.[0]?.author) {
+                const embedAuthorID = msg.embeds[0].author.icon_url
                     ?.replace("https://cdn.discordapp.com/avatars/", "")
                     .split("/")[0]
                     .trim();
-                const hasPrestiged = m.embeds[0].title?.startsWith("You are now prestige");
-                const hasRevoked = m.embeds[0].description
-                    ?.startsWith("You revoked the following")
-                    && m.embeds[0].description?.includes(booster.id);
-
+                const hasPrestiged = msg.embeds[0].title?.startsWith("You are now prestige");
+                const hasRevoked = msg.embeds[0].description?.startsWith("You revoked the following");
                 return (embedAuthorID === userID) && (hasPrestiged || hasRevoked);
             }
         } catch (error) {
@@ -52,13 +50,15 @@ module.exports.execute = async function (message, userID, boosterID, time) {
         }
     }
 
+    // set up message collector
     const resetCollector = new MessageCollector(
         bot,
         message.channel,
         resetFilter,
         { time: time * 1000, max: 1 }
     );
-    resetCollector.on("collect", async (m) => {
+
+    resetCollector.on("collect", async () => {
         clearTimeout(timer);
         user.timers.boosters[booster.type] = "ready";
 

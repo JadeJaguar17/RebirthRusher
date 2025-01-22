@@ -25,7 +25,7 @@ const { token } = require("../config/emojis.json");
 
 class RebirthRusher extends Eris.Client {
     constructor(token) {
-        super(token, { restMode: true });
+        super(token, { restMode: true, intents: ["allNonPrivileged", "messageContent"] });
         this.commands = new Eris.Collection();
         this.timers = new Eris.Collection();
         this.scanners = new Eris.Collection();
@@ -243,7 +243,7 @@ class RebirthRusher extends Eris.Client {
     async initDB() {
         console.info("Connecting to MongoDB...");
         try {
-            await mongoose.connect(process.env.SRV);
+            await mongoose.connect(process.env.SRV, { family: 4 });
             console.info(` - Users: [${UserDB.collectionName}]`);
             console.info(` - Timers: [${TimerDB.collectionName}]`)
         } catch (error) {
@@ -320,8 +320,8 @@ class RebirthRusher extends Eris.Client {
         const app = express();
         const webhook = new Webhook(process.env.TOPGG_AUTH);
         const PORT = process.env.NODE_ENV === "production"
-	    ? 1717
-	    : 3000;
+            ? 1717
+            : 3000;
 
         app.post("/dblwebhook", webhook.listener(vote => {
             this.rewardVote(vote.user);
