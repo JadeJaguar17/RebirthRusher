@@ -4,7 +4,7 @@ module.exports.name = "profileScan"
 
 module.exports.execute = async function (userID, embedPr, embedRb, embedRbDay) {
     if (isNaN(embedPr) || isNaN(embedRb) || isNaN(embedRbDay)) {
-        return await bot.error("profileScan", new TypeError("Invalid embed stats"));
+        return await bot.error("profileScan", new TypeError(`Invalid embed stats: [${embedPr}/${embedRb}/${embedRbDay}]`));
     }
 
     const user = await UserDB.getUserById(userID);
@@ -84,14 +84,14 @@ function hasDataYesterday(tracker, timezone = "+0") {
     const now = new Date();
     const yesterdayDate = new Date(now.toLocaleString('en-US', { timeZone: `Etc/GMT${timezone}` }));
     yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-    
+
     // get date string as mm/dd/yyyy
     const month = yesterdayDate.getMonth() + 1;
     const day = yesterdayDate.getDate();
     const year = yesterdayDate.getFullYear();
     const yesterdayString = `${month}/${day}/${year}`;
     const yesterdayIndex = tracker.dates.indexOf(yesterdayString);
-    
+
     // check presence of rbDay stat
     return tracker.rbDay[yesterdayIndex] !== null && tracker.rbDay[yesterdayIndex] !== undefined;
 }
