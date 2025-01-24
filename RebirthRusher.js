@@ -24,6 +24,10 @@ const { DEV_SERVER_ID } = require("./config/discordIds.json");
 const { token } = require("./config/emojis.json");
 
 class RebirthRusher extends Eris.Client {
+    /**
+     * Creates a new instance of RebirthRusher
+     * @param {string} token Discord bot token
+     */
     constructor(token) {
         super(token, { restMode: true, intents: ["allNonPrivileged", "messageContent"] });
         this.commands = new Eris.Collection();
@@ -174,11 +178,7 @@ class RebirthRusher extends Eris.Client {
     }
 
     /**
-     * Loads slash commands when applicable. Slash commands only need to be
-     * created if they're new or their command structure (command.options) has
-     * changed. Otherwise, it's a waste of API calls to create slash commands
-     * that haven't changed. Therefore we use a config file to indicate which
-     * slash commands have changed and need to be reloaded in the API.
+     * Loads slash commands in config file
      */
     async loadApplicationCommands() {
         console.info("Loading application commands...");
@@ -213,7 +213,7 @@ class RebirthRusher extends Eris.Client {
     }
 
     /**
-     * 
+     * Creates a Discord application command
      * @param {any} commandConfig command config to load in (determined by each
      * property in module.exports)
      * @param {boolean} isDev whether or not to create command only in dev server
@@ -380,7 +380,7 @@ class RebirthRusher extends Eris.Client {
      * like guild and channel IDs
      * @param {Eris.MessageContent} content content of message to send
      * @param {Eris.FileContent} file (optional) files to attach to message
-     * @returns Eris awaitable action or error
+     * @returns {Promise<Eris.Message | void>} Eris message on success, void on failure
      */
     async send(interaction, content, file) {
         if (!interaction || (!content && !file)) {
@@ -496,7 +496,7 @@ class RebirthRusher extends Eris.Client {
     /**
      * Converts a time's string representation to seconds
      * @param {string} timeString time in string format
-     * @returns time in seconds
+     * @returns {number} time in seconds
      */
     stringToTime(timeString) {
         if (!timeString || timeString === "**FULL**" || timeString === "<1s") {
