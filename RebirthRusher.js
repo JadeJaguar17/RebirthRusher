@@ -120,12 +120,12 @@ class RebirthRusher extends Eris.Client {
         console.info("Loading events...")
         this.removeAllListeners();
         const eventFiles = fs.readdirSync(`./events`).filter(file => file.endsWith(".js"));
-        eventFiles.forEach(async (file) => {
+        await Promise.all(eventFiles.map(async (file) => {
             const resolve = require.resolve(`./events/${file}`);
             delete require.cache[resolve];
             const event = require(`./events/${file}`);
             this.on(file.split(".")[0], await event.bind(null, this));
-        });
+        }))
     }
 
     /**
