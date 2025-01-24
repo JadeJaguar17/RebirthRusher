@@ -6,6 +6,8 @@ const MessageEmbed = require("../system/MessageEmbed");
 const { ERROR } = require("../config/embedColors.json");
 const { DEV_ID } = require("../config/discordIds.json");
 
+const FIFTEEN_SECONDS = 15000;
+
 /**
  * @param {RebirthRusher} bot base class of RbR
  * @param {Eris.Interaction} interaction Interaction object
@@ -61,12 +63,12 @@ async function handleSlashCommand(bot, interaction) {
             if (command.name === "delete") {
                 setTimeout(() => {
                     interaction.editOriginalMessage({ content: "Time's up, your data deletion was cancelled", components: [] })
-                }, 15000);
+                }, FIFTEEN_SECONDS);
             }
             else if (command.name === "resetstats") {
                 setTimeout(() => {
                     interaction.editOriginalMessage({ content: "Time's up, your stats reset was cancelled", components: [] })
-                }, 15000);
+                }, FIFTEEN_SECONDS);
             }
 
             return interaction.createMessage(result, result?.file);
