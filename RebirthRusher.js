@@ -23,6 +23,8 @@ const { ERROR, RBR, SUCCESS } = require("./config/embedColors.json");
 const { DEV_SERVER_ID } = require("./config/discordIds.json");
 const { token } = require("./config/emojis.json");
 
+const ONE_HOUR = 60000;
+
 class RebirthRusher extends Eris.Client {
     /**
      * Creates a new instance of RebirthRusher
@@ -62,7 +64,7 @@ class RebirthRusher extends Eris.Client {
                 await this.loadEvents();
 
                 this.initDailies();
-                setInterval(this.loadTimers, 60000);
+                setInterval(this.loadTimers, ONE_HOUR);
 
                 this.editStatus("online", { name: "/help", type: 3 });
 
