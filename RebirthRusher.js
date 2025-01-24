@@ -1,14 +1,14 @@
 // Discord
 const Eris = require("eris");
-const MessageEmbed = require("./MessageEmbed.js");
+const MessageEmbed = require("./system/MessageEmbed.js");
 const { Webhook } = require("@top-gg/sdk");
 const express = require("express");
 
 // Database
 const mongoose = require("mongoose");
-const Timer = require("./Timer.js");
-const UserDB = require("../database/controllers/userController.js");
-const TimerDB = require("../database/controllers/timerController.js");
+const Timer = require("./system/Timer.js");
+const UserDB = require("./database/controllers/userController.js");
+const TimerDB = require("./database/controllers/timerController.js");
 
 // JS libraries
 const fs = require("fs")
@@ -19,9 +19,9 @@ const schedule = require("node-schedule");
 const dotenv = require("dotenv");
 dotenv.config()
 
-const { ERROR, RBR, SUCCESS } = require("../config/embedColors.json");
-const { DEV_SERVER_ID } = require("../config/discordIds.json");
-const { token } = require("../config/emojis.json");
+const { ERROR, RBR, SUCCESS } = require("./config/embedColors.json");
+const { DEV_SERVER_ID } = require("./config/discordIds.json");
+const { token } = require("./config/emojis.json");
 
 class RebirthRusher extends Eris.Client {
     constructor(token) {
@@ -117,9 +117,9 @@ class RebirthRusher extends Eris.Client {
         this.removeAllListeners();
         const eventFiles = fs.readdirSync(`./events`).filter(file => file.endsWith(".js"));
         eventFiles.forEach(async (file) => {
-            const resolve = require.resolve(`../events/${file}`);
+            const resolve = require.resolve(`./events/${file}`);
             delete require.cache[resolve];
-            const event = require(`../events/${file}`);
+            const event = require(`./events/${file}`);
             this.on(file.split(".")[0], await event.bind(null, this));
         });
     }
@@ -135,7 +135,7 @@ class RebirthRusher extends Eris.Client {
         commands
             .filter(f => !f.includes("."))
             .forEach(subFolder => {
-                this.loadFolder("commands", `../commands/${subFolder}`)
+                this.loadFolder("commands", `./commands/${subFolder}`)
             });
 
         // load timers
@@ -143,11 +143,11 @@ class RebirthRusher extends Eris.Client {
         timers
             .filter(f => !f.includes("."))
             .forEach(subFolder => {
-                this.loadFolder("timers", `../timers/${subFolder}`)
+                this.loadFolder("timers", `./timers/${subFolder}`)
             });
 
         // load scanners
-        this.loadFolder("scanners", "../scanners")
+        this.loadFolder("scanners", "./scanners")
     }
 
     /**
@@ -182,12 +182,12 @@ class RebirthRusher extends Eris.Client {
      */
     async loadApplicationCommands() {
         console.info("Loading application commands...");
-        const updatedCommands = require("../config/updatedCommands.json");
+        const updatedCommands = require("./config/updatedCommands.json");
 
         await Promise.all(updatedCommands.map(async (commandPath) => {
             // specific command file
             if (commandPath.includes("/")) {
-                const command = require(`../commands/${commandPath}.js`);
+                const command = require(`./commands/${commandPath}.js`);
 
                 const category = commandPath.split("/")[0];
                 await this.createApplicationCommand(
@@ -200,7 +200,7 @@ class RebirthRusher extends Eris.Client {
             else {
                 const subfolder = fs.readdirSync(`./commands/${commandPath}`);
                 subfolder.forEach(async (file) => {
-                    const command = require(`../commands/${commandPath}/${file}`);
+                    const command = require(`./commands/${commandPath}/${file}`);
 
                     await this.createApplicationCommand(
                         command,
