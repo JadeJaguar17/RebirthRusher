@@ -1,5 +1,5 @@
 const Eris = require("eris");
-const RebirthRusher = require("../system/RebirthRusher");
+const RebirthRusher = require("../RebirthRusher");
 const MessageEmbed = require("../system/MessageEmbed");
 const { ERROR2 } = require("../config/embedColors.json");
 
