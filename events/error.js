@@ -1,4 +1,4 @@
-const RebirthRusher = require("../system/RebirthRusher");
+const RebirthRusher = require("../RebirthRusher");
 
 /**
  * @param {RebirthRusher} bot base class of RbR

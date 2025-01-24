@@ -1,5 +1,5 @@
 const Eris = require("eris");
-const RebirthRusher = require("../system/RebirthRusher");
+const RebirthRusher = require("../RebirthRusher");
 const fs = require("fs");
 const UserDB = require("../database/controllers/userController");
 const MessageEmbed = require("../system/MessageEmbed");
