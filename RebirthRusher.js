@@ -31,11 +31,17 @@ class RebirthRusher extends Eris.Client {
      * @param {string} token Discord bot token
      */
     constructor(token) {
+        // use singleton pattern
+        if (RebirthRusher.instance) return RebirthRusher.instance;
+
+        // initialize RbR
         super(token, { restMode: true, intents: ["allNonPrivileged", "messageContent"] });
         this.commands = new Eris.Collection();
         this.timers = new Eris.Collection();
         this.scanners = new Eris.Collection();
         this.errorCase = 0;
+
+        RebirthRusher.instance = this;
     }
 
     /**
