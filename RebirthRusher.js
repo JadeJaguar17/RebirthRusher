@@ -52,8 +52,6 @@ class RebirthRusher extends Eris.Client {
 
         this.once("ready", async () => {
             try {
-                const promises = [];
-
                 this.initTopGG();
                 this.loadAllFiles();
                 await this.loadApplicationCommands();
@@ -201,14 +199,14 @@ class RebirthRusher extends Eris.Client {
             // whole subdirectory
             else {
                 const subfolder = fs.readdirSync(`./commands/${commandPath}`);
-                subfolder.forEach(async (file) => {
+                await Promise.all(subfolder.map(async (file) => {
                     const command = require(`./commands/${commandPath}/${file}`);
 
                     await this.createApplicationCommand(
                         command,
                         commandPath === "dev" || process.env.NODE_ENV !== "production"
                     );
-                });
+                }));
             }
         }));
         console.info("Loading application commands done");
