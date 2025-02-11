@@ -60,10 +60,17 @@ module.exports.execute = async function (interaction) {
         case "mondayline":
             user.settings.mondayLine = args.value === "on";
             await user.save()
-            const message = user.settings.mondayLine
+            const mondayMessage = user.settings.mondayLine
                 ? "`/graph` will draw a line between Sundays and Mondays"
                 : "`/graph` will no longer draw a line between Sundays and Mondays";
-            return message;
+            return mondayMessage;
+        case "minimalpet":
+            user.settings.minimalPets = args.value === "on";
+            await user.save()
+            const minimalpetMessage = user.settings.minimalPets
+                ? "`/pets` will only list next optimal upgrades"
+                : "`/pets` will display both pet stats and next optimal upgrades";
+            return minimalpetMessage;
         default:
             return errorMessage;
     }
@@ -452,6 +459,29 @@ module.exports.options = [
     {
         name: "mondayline",
         description: "Toggle whether to draw a line between Mondays and Sundays",
+        type: 1,
+        options: [
+            {
+                name: "setting",
+                description: "on/off",
+                type: 3,
+                required: true,
+                choices: [
+                    {
+                        name: "on",
+                        value: "on"
+                    },
+                    {
+                        name: "off",
+                        value: "off"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        name: "minimalpet",
+        description: "Toggle whether to only display optimal pet upgrades",
         type: 1,
         options: [
             {
