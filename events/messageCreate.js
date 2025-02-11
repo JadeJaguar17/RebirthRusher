@@ -191,7 +191,7 @@ async function handleEmbedMessage(bot, message) {
     }
 
     // backpack timer
-    else if (embed.fields?.[0]?.name === "**Backpack**") {
+    else if (embed.fields?.[0]?.name === "**Storage**") {
         const remainingTime = bot.stringToTime(message.embeds[0].fields[0].value.split("\n")[4].replace("Full in ", ""));
 
         if (remainingTime) return await bot.timers.get("backpack").execute(message, userID, remainingTime);
