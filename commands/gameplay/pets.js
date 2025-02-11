@@ -115,54 +115,61 @@ module.exports.execute = async function (interaction) {
         .setColor(RBR)
         .setAuthor(interaction.member.user.username, interaction.member.user.avatarURL)
         .setThumbnail("https://i.imgur.com/q3j286y.png")
-        .setTitle("Pets")
-        .setDescription(
-            `- *${boost} = epic boost*\n`
-            + `- *Each golden level counts as 2 levels*`
-        )
-        .addFields(
-            {
-                name: `Total Levels`,
-                value: `${backpack} ${commons}\n`
-                    + `${pick} ${uncommons}\n`
-                    + `${gold} ${rares}\n`
-                    + `${boost} ${epics}\n`,
-                inline: true
-            },
-            {
-                name: `Base Boost`,
-                value: `+${bpBoost.toFixed(2)}x\n`
-                    + `+${paBoost.toFixed(2)}x\n`
-                    + `+${sellBoost.toFixed(2)}x\n`
-                    + `+${(epicBoost - 1).toFixed(2)}x`,
-                inline: true
-            },
-            {
-                name: `${boost} (+${epics * 2}%)`,
-                value: `+${(bpBoost * epicBoost).toFixed(2)}x\n`
-                    + `+${(paBoost * epicBoost).toFixed(2)}x\n`
-                    + `+${(sellBoost * epicBoost).toFixed(2)}x`,
-                inline: true
-            },
-            {
-                name: "Net worth",
-                value: `Pets: ${petWorth} ${shard}\n`
-                    + `Shards: ${user.pets.shards} ${shard}\n`
-                    + `**Total:** ${petWorth + user.pets.shards} ${shard}`,
-                inline: true
-            },
-            {
-                name: "Ratios",
-                value: `${backpack} to ${pick} ratio = ${(commons / uncommons).toFixed(3)}\n`
-                    + `${pick} to ${gold} ratio = ${(uncommons / rares).toFixed(3)}\n`
-                    + `${gold} to ${backpack} ratio = ${(rares / commons).toFixed(3)}`,
-                inline: true
-            },
-            {
-                name: "Next Optimal Upgrades",
-                value: nextOptimalUpgradeString
-            },
-        );
+        .setTitle("Pets");
+
+    if (!user.settings.minimalPets) {
+        petEmbed
+            .setDescription(
+                `- *${boost} = epic boost*`
+                + `\n- *Each golden level counts as 2 levels*`
+            )
+            .addFields(
+                {
+                    name: `Total Levels`,
+                    value: `${backpack} ${commons}\n`
+                        + `${pick} ${uncommons}\n`
+                        + `${gold} ${rares}\n`
+                        + `${boost} ${epics}\n`,
+                    inline: true
+                },
+                {
+                    name: `Base Boost`,
+                    value: `+${bpBoost.toFixed(2)}x\n`
+                        + `+${paBoost.toFixed(2)}x\n`
+                        + `+${sellBoost.toFixed(2)}x\n`
+                        + `+${(epicBoost - 1).toFixed(2)}x`,
+                    inline: true
+                },
+                {
+                    name: `${boost} (+${epics * 2}%)`,
+                    value: `+${(bpBoost * epicBoost).toFixed(2)}x\n`
+                        + `+${(paBoost * epicBoost).toFixed(2)}x\n`
+                        + `+${(sellBoost * epicBoost).toFixed(2)}x`,
+                    inline: true
+                },
+                {
+                    name: "Net worth",
+                    value: `Pets: ${petWorth} ${shard}\n`
+                        + `Shards: ${user.pets.shards} ${shard}\n`
+                        + `**Total:** ${petWorth + user.pets.shards} ${shard}`,
+                    inline: true
+                },
+                {
+                    name: "Ratios",
+                    value: `${backpack} to ${pick} ratio = ${(commons / uncommons).toFixed(3)}\n`
+                        + `${pick} to ${gold} ratio = ${(uncommons / rares).toFixed(3)}\n`
+                        + `${gold} to ${backpack} ratio = ${(rares / commons).toFixed(3)}`,
+                    inline: true
+                }
+            );
+    }
+
+    petEmbed.addFields(
+        {
+            name: "Next Optimal Upgrades",
+            value: nextOptimalUpgradeString
+        }
+    );
 
     return {
         content: isCapped
