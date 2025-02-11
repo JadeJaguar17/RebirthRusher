@@ -1,5 +1,5 @@
 const Eris = require("eris");
-const RebirthRusher = require("../system/RebirthRusher");
+const RebirthRusher = require("../RebirthRusher");
 const UserDB = require("../database/controllers/userController");
 const fs = require("fs");
 
@@ -10,85 +10,29 @@ const fs = require("fs");
 module.exports = async (bot, message) => {
     try {
         // ignore if message is not from Idle Miner or message is not an embed
+        const embed = message?.embeds?.[0];
         if (message.author?.id !== "518759221098053634") return;
-        if (!message.embeds[0]?.author) return;
+        if (!embed?.author) return;
 
-        // parse user ID from the embed author's avatar
-        const userID = message.embeds[0].author?.icon_url
-            ?.replace("https://cdn.discordapp.com/avatars/", "")
-            .split("/")[0]
-            .trim();
-
-        // ignore if user is banned or isn't an RbR user
+        // ignore if userID not present or RbR user is banned/doesn't exist
+        const userID = getUserID(embed);
+        if (!userID) return;
         if (isBanned(userID) || !(await UserDB.checkUserExists(userID))) return;
 
-        const embed = message.embeds[0];
+        // handle /play embed
+        const isPlayEmbed =
+            message.interaction?.name === "play"
+            && !embed.description.startsWith("**Event**")
+            && embed.description.includes("Backpack full");
+        if (isPlayEmbed) {
+            await updateShardCount(embed);
+            await updateProfileStats(embed);
+        }
 
-        // pets embed
+        // handle /pets embed (coming from /play)
         if (embed.title === "Pets") {
             await bot.scanners.get("petScan").execute(embed, userID);
         }
-
-        // normal /play embed
-        if (
-            message.interaction?.name === "play"
-            && !embed.description.startsWith("**Event**")
-            && embed.description.includes("Backpack full")
-        ) {
-            // update shard count from /play
-            try {
-                const currencyField = embed.fields?.find(f => f.name === "**Currency**");
-                const shardsString = currencyField.value
-                    .split("\n")[1]
-                    .split(" ")[1]
-                    .trim();
-
-                let shards = 0;
-                if (shardsString.includes("K")) {
-                    shards = parseFloat(shardsString) * 1000;
-                }
-                else {
-                    shards = Number(shardsString);
-                }
-
-                const user = await UserDB.getUserById(userID);
-                if (user.pets.shards !== shards) {
-                    user.pets.shards = shards
-                    await user.save();
-                }
-            } catch (e) { /* do nothing */ }
-
-            // handle profile states
-            const statsField = embed.fields?.find(f => f.name === "**Stats**");
-
-            const embedPr = statsField.value
-                .trim()
-                .split("\n")[0]
-                .replace("**Prestige:**", "")
-                .trim()
-                .replace(/,/g, '');
-            const embedRb = statsField.value
-                .trim()
-                .split("\n")[1]
-                .replace("**Rebirth:**", "")
-                .trim()
-                .replace(/,/g, '');
-            const embedRbDay = statsField.value
-                .trim()
-                .split("\n")[2]
-                .replace("**AVG rebirths/day**:", "")
-                .trim()
-                .replace(/,/g, '');
-
-            return await bot.scanners.get("profileScan").execute(
-                userID,
-                Number(embedPr),
-                Number(embedRb),
-                Number(embedRbDay)
-            );
-        }
-
-        return;
     } catch (error) {
         await bot.error("MessageUpdate", error, message);
     }
@@ -103,4 +47,87 @@ function isBanned(userID) {
     const bannedUsers = JSON.parse(fs.readFileSync("./config/bannedUsers.json"));
 
     return bannedUsers.indexOf(userID) !== -1;
+}
+
+/**
+ * Parses user's ID from a message embed
+ * @param {Eris.Embed} embed message embed object
+ * @returns {string | undefined} user's Discord ID
+ */
+function getUserID(embed) {
+    return embed?.author?.icon_url
+        ?.replace("https://cdn.discordapp.com/avatars/", "")
+        ?.split("/")[0]
+        ?.trim();
+}
+
+/**
+ * Updates user's shard count
+ * @param {Eris.Embed} embed message embed object
+ * @returns {Promise<boolean>} whether update succeeded or not 
+ */
+async function updateShardCount(embed) {
+    try {
+        const userID = getUserID(embed);
+        const currencyField = embed.fields?.find(f => f.name === "**Currency**");
+        const shardsString = currencyField.value
+            .split("\n")[1]
+            .split(" ")[1]
+            .trim();
+
+        let shards = 0;
+        if (shardsString.includes("K")) {
+            shards = parseFloat(shardsString) * 1000;
+        }
+        else {
+            shards = Number(shardsString);
+        }
+
+        const user = await UserDB.getUserById(userID);
+        if (user.pets.shards !== shards) {
+            user.pets.shards = shards
+            await user.save();
+        }
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+/**
+ * Updates rb/pr/rbday stats
+ * @param {Eris.Embed} embed message embed object
+ */
+async function updateProfileStats(embed) {
+    const userID = getUserID(embed);
+
+    const statsField = embed.fields?.find(f => f.name === "**Stats**");
+    const statsStrings = statsField.value.trim().split("\n");
+
+    await bot.scanners.get("profileScan").execute(
+        userID,
+        parseStat(statsStrings, "**Prestige:**"),
+        parseStat(statsStrings, "**Rebirth:**"),
+        parseStat(statsStrings, "**AVG rebirths/day**:")
+    );
+}
+
+/**
+ * Finds and parses a stat from a list of stat strings
+ * @param {Array<string>} statStrings list of stats strings to parse
+ * @param {string} label name of stat to find (including formatting)
+ * @returns {number} parsed number, or 0 if unsuccesful
+ */
+function parseStat(statStrings, label) {
+    const embedStat = statStrings
+        .find(ss => ss.startsWith(label))
+        .replace(label, "")
+        .trim();
+
+    try {
+        return Number(embedStat);
+    }
+    catch (e) {
+        return 0;
+    }
 }

@@ -1,4 +1,4 @@
-const RebirthRusher = require("./system/RebirthRusher");
+const RebirthRusher = require("./RebirthRusher.js");
 require("dotenv").config();
 
 const AUTH_TOKEN = process.env.NODE_ENV === "production"
