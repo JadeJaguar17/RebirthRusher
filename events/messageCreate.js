@@ -97,7 +97,7 @@ async function handleEmbedMessage(bot, message) {
             .replace("**Rebirth:**", "")
             .trim()
             .replace(/,/g, '');
-        const embedRbDay = embed.fields[1].value.trim().split("\n")[4]
+        const embedRbDay = embed.fields[1].value.trim().split("\n")[5]
             ? embed.fields[1].value
                 .trim()
                 .split("\n")[4]
