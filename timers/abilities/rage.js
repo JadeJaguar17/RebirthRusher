@@ -16,7 +16,7 @@ module.exports.execute = async function (message, userID) {
             420 - 60 * user.pets.wither
         );
 
-        return bot.timers.get("booster").execute(
+        return bot.timers.get("booster").execute(bot,
             message,
             userID,
             "rage",

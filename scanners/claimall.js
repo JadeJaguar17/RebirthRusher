@@ -12,7 +12,7 @@ module.exports.execute = async function (interaction, userID) {
         const name = kit.split("**")[1].toLowerCase();
 
         try {
-            await bot.timers.get(name).execute(newMessage, userID);
+            await bot.timers.get(name).execute(bot, newMessage, userID);
         } catch (error) { }
     }
 }

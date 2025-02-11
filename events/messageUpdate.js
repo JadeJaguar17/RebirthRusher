@@ -31,7 +31,7 @@ module.exports = async (bot, message) => {
 
         // handle /pets embed (coming from /play)
         if (embed.title === "Pets") {
-            await bot.scanners.get("petScan").execute(embed, userID);
+            await bot.scanners.get("petScan").execute(bot, embed, userID);
         }
     } catch (error) {
         await bot.error("MessageUpdate", error, message);
@@ -104,7 +104,7 @@ async function updateProfileStats(embed) {
     const statsField = embed.fields?.find(f => f.name === "**Stats**");
     const statsStrings = statsField.value.trim().split("\n");
 
-    await bot.scanners.get("profileScan").execute(
+    await bot.scanners.get("profileScan").execute(bot,
         userID,
         parseStat(statsStrings, "**Prestige:**"),
         parseStat(statsStrings, "**Rebirth:**"),
