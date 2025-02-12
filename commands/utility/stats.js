@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const MessageEmbed = require("../../system/MessageEmbed");
 const UserDB = require("../../database/controllers/userController");
 const { RBR } = require("../../config/embedColors.json");
@@ -6,7 +12,13 @@ module.exports.name = "stats"
 module.exports.description = "Displays bot stats"
 module.exports.syntax = "`/stats`"
 
-module.exports.execute = async function () {
+/**
+ * Displays bot's user and server count
+ * @param {RebirthRusher} bot instance of RbR base class
+ * @param {CommandInteraction} interaction triggering Eris interaction
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const statEmbed = new MessageEmbed()
         .setColor(RBR)
         .setAuthor(bot.user.username, bot.user.avatarURL)
