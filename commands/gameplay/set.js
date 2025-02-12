@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const UserDB = require("../../database/controllers/userController");
 
 const defaults = {
@@ -15,7 +21,14 @@ module.exports.description = "Changes your different settings on Rebirth Rusher"
 module.exports.syntax = "`/set`"
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+
+/**
+ * Changes user settings
+ * @param {RebirthRusher} bot instance of RbR base class
+ * @param {CommandInteraction} interaction triggering Eris interaction
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const user = await UserDB.getUserById(interaction.member.user.id);
 
     const subcommand = interaction.data.options[0];
