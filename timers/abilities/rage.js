@@ -19,13 +19,14 @@ module.exports.execute = async function (bot, message, userID) {
     const user = await UserDB.getUserById(userID);
 
     if (user.timers.abilities.rage === "ready") {
-        new Timer().startTimer(
+        await new Timer(
+            bot,
             message,
             user,
             "rage",
             "abilities",
             420 - 60 * user.pets.wither
-        );
+        ).start();
 
         return bot.timers.get("booster").execute(bot,
             message,

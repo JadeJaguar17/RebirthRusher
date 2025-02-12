@@ -18,12 +18,13 @@ module.exports.execute = async function (bot, message, userID, harvestTime) {
     const user = await UserDB.getUserById(userID);
 
     if (user.timers.games.harvest === "ready") {
-        await new Timer().startTimer(
+        await new Timer(
+            bot,
             message,
             userID,
             "harvest",
             "games",
             harvestTime
-        );
+        ).start();
     }
 }

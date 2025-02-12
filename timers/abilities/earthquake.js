@@ -18,12 +18,13 @@ module.exports.execute = async function (bot, message, userID) {
     const user = await UserDB.getUserById(userID);
 
     if (user.timers.abilities.earthquake === "ready") {
-        await new Timer().startTimer(
+        await new Timer(
+            bot,
             message,
             userID,
             "earthquake",
             "abilities",
             180
-        );
+        ).start();
     }
 }

@@ -20,12 +20,13 @@ module.exports.execute = async function (bot, message, userID) {
         ? 240
         : 300
     if (user?.timers.games.fish === "ready") {
-        await new Timer().startTimer(
+        await new Timer(
+            bot,
             message,
             userID,
             "fish",
             "games",
             fishcd
-        );
+        ).start();
     }
 }

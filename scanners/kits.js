@@ -26,7 +26,7 @@ module.exports.execute = async function (bot, message, userID) {
                 const time = bot.stringToTime(line.split(" ")[3]);
 
                 if (user.timers[category][name] === "ready" && Number.isInteger(time) && name !== "daily") {
-                    await new Timer().startTimer(message, userID, name, category, time);
+                    await new Timer(bot, message, userID, name, category, time).start();
                 }
             } catch (error) { }
         }
