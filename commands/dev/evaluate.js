@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const UserDB = require("../../database/controllers/userController");
 const { DEV_ID } = require("../../config/discordIds.json");
 
@@ -6,7 +12,13 @@ module.exports.description = "Lets developers directly evaluate code with Discor
 module.exports.syntax = "`/evaluate [code]`"
 module.exports.hidden = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Evaluate code with Discord messages
+ * @param {RebirthRusher} bot instance of RbR base class
+ * @param {CommandInteraction} interaction triggering Eris interaction
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     // extra protection in case future changes to interactionCreate exposes this
     if (interaction.member.user.id !== DEV_ID) {
         await bot.error("eval", new Error("EVAL HAS BEEN ACCESSED"));
