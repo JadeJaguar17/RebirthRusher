@@ -1,9 +1,21 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 module.exports.name = "resetstats"
 module.exports.description = "Reset your personal best stats"
 module.exports.syntax = "`/resetstats`"
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Resets a user's personal best stats
+ * @param {RebirthRusher} bot instance of RbR base class
+ * @param {CommandInteraction} interaction triggering Eris interaction
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const resetRbDay = interaction.data.options?.[0].value;
 
     let resetString = "- Rebirths\n- Prestiges";

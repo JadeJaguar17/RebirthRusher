@@ -1,22 +1,34 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").Message} Message 
+ */
+
 const UserDB = require("../../database/controllers/userController");
 const Timer = require("../../system/Timer");
 
 module.exports.name = "wings"
 module.exports.aliases = ["ws", "wg", "dragon", "wotb"]
 
-module.exports.execute = async function (message, userID) {
+/**
+ * Starts wings timer
+ * @param {RebirthRusher} bot instance of RbR base class
+ * @param {Message} message triggering Discord message
+ * @param {string} userID user's Discord ID
+ */
+module.exports.execute = async function (bot, message, userID) {
     const user = await UserDB.getUserById(userID);
 
     if (user?.timers.abilities.wings === "ready") {
-        await new Timer().startTimer(
+        await new Timer(
+            bot,
             message,
             userID,
             "wings",
             "abilities",
             420 - 60 * user.pets["ender-dragon"]
-        );
+        ).start();
 
-        return await bot.timers.get("booster").execute(
+        return await bot.timers.get("booster").execute(bot,
             message,
             userID,
             "wings",

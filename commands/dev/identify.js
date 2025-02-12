@@ -1,14 +1,25 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const MessageEmbed = require("../../system/MessageEmbed");
 const UserDB = require("../../database/controllers/userController");
 const { RBR } = require("../../config/embedColors.json");
-const { DEV_ID } = require("../../config/discordIds.json");
 
 module.exports.name = "identify"
 module.exports.description = "Retrieves and displays data associated with a Discord ID\n*(operator only)*"
 module.exports.syntax = "`/identify [id]`"
 module.exports.hidden = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Identifies a Discord snowflake ID
+ * @param {RebirthRusher} bot instance of RbR base class
+ * @param {CommandInteraction} interaction triggering Eris interaction
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const id = interaction.data.options[0].value;
     if (!id) return "Please enter an id";
 

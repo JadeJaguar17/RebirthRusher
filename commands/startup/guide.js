@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
 
@@ -5,7 +11,13 @@ module.exports.name = "guide"
 module.exports.description = "Gives a guide on how to use the bot"
 module.exports.syntax = "`/guide [page]` (*[] = optional*)"
 
-module.exports.execute = async function (interaction, pageNum = 1) {
+/**
+ * Gives a guide on how to use the bot
+ * @param {RebirthRusher} bot instance of RbR base class
+ * @param {CommandInteraction} interaction triggering Eris interaction
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction, pageNum = 1) {
     const guideEmbed = new MessageEmbed()
         .setColor(RBR)
         .setAuthor(bot.user.username, bot.user.avatarURL)

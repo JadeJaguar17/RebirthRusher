@@ -28,7 +28,7 @@ module.exports = async (bot, message) => {
             const imCommand = await bot.timers.get(message.interaction.name);
 
             if (imCommand) {
-                return await imCommand.execute(message.interaction.member.user.id);
+                return await imCommand.execute(bot, message.interaction.member.user.id);
             }
         }
 
@@ -66,7 +66,7 @@ async function handleEmbedMessage(bot, message) {
 
     // pet embed
     if (embed.title === "Pets") {
-        await bot.scanners.get("petScan").execute(embed, userID);
+        await bot.scanners.get("petScan").execute(bot, embed, userID);
 
         // autopet feature
         const user = await UserDB.getUserById(userID);
@@ -75,7 +75,7 @@ async function handleEmbedMessage(bot, message) {
                 member: { user: await bot.users.get(userID) },
                 data: { options: null }
             };
-            const petEmbed = await bot.commands.get("pets").execute(msgData, userID);
+            const petEmbed = await bot.commands.get("pets").execute(bot, msgData, userID);
 
             petEmbed.messageReference = { messageID: message.id };
 
@@ -111,7 +111,7 @@ async function handleEmbedMessage(bot, message) {
                 .trim()
                 .replace(/,/g, '') || 0;
 
-        return await bot.scanners.get("profileScan").execute(
+        return await bot.scanners.get("profileScan").execute(bot,
             userID,
             Number(embedPr),
             Number(embedRb),
@@ -121,20 +121,20 @@ async function handleEmbedMessage(bot, message) {
 
     // claimall resets timers for claimed kits
     else if (embed.title === "Claimall" && embed.description) {
-        return await bot.scanners.get("claimall").execute(message, userID);
+        return await bot.scanners.get("claimall").execute(bot, message, userID);
     }
 
     // cooldowns sets any missing timers
     else if (embed.title === "Cooldowns") {
-        return await bot.scanners.get("kits").execute(message, userID);
+        return await bot.scanners.get("kits").execute(bot, message, userID);
     }
 
     // Idle Miner games and abilities
     else if (embed.title === "Fish") {
-        return await bot.timers.get("fish").execute(message, userID);
+        return await bot.timers.get("fish").execute(bot, message, userID);
     }
     else if (embed.title === "Hunt") {
-        return await bot.timers.get("hunt").execute(message, userID);
+        return await bot.timers.get("hunt").execute(bot, message, userID);
     }
     else if (embed.title === "Farm") {
         let time;
@@ -153,10 +153,10 @@ async function handleEmbedMessage(bot, message) {
             time += 60
         }
 
-        return await bot.timers.get("harvest").execute(message, userID, time);
+        return await bot.timers.get("harvest").execute(bot, message, userID, time);
     }
     else if (embed.title?.startsWith("Earthquake broke")) {
-        return await bot.timers.get("earthquake").execute(message, userID);
+        return await bot.timers.get("earthquake").execute(bot, message, userID);
     }
 
     // booster timers
@@ -175,7 +175,7 @@ async function handleEmbedMessage(bot, message) {
                         );
 
                         if (boosterTime < 86400) { // 24 hours
-                            await bot.timers.get("booster").execute(
+                            await bot.timers.get("booster").execute(bot,
                                 message,
                                 userID,
                                 boosterID,
@@ -194,12 +194,12 @@ async function handleEmbedMessage(bot, message) {
     else if (embed.fields?.[0]?.name === "**Storage**") {
         const remainingTime = bot.stringToTime(message.embeds[0].fields[0].value.split("\n")[4].replace("Full in ", ""));
 
-        if (remainingTime) return await bot.timers.get("backpack").execute(message, userID, remainingTime);
+        if (remainingTime) return await bot.timers.get("backpack").execute(bot, message, userID, remainingTime);
     }
 
     // prestiging resets timers
     else if (embed.title?.startsWith("You are now prestige")) {
-        return await bot.timers.get("prestige").execute(userID);
+        return await bot.timers.get("prestige").execute(bot, userID);
     }
 
     // /play for the first time
@@ -223,7 +223,7 @@ async function handleEmbedMessage(bot, message) {
             .trim()
             .replace(/,/g, '');
 
-        return await bot.scanners.get("profileScan").execute(
+        return await bot.scanners.get("profileScan").execute(bot,
             userID,
             Number(embedPr),
             Number(embedRb),
@@ -244,23 +244,23 @@ async function handleTextMessage(bot, message) {
 
     if (user && !isBanned(user.id) && await UserDB.checkUserExists(user.id)) {
         if (message.content.includes("You didn't get any pet")) {
-            return await bot.timers.get("hunt").execute(message, user.id);
+            return await bot.timers.get("hunt").execute(bot, message, user.id);
         }
         else if (message.content.includes("Activated Wings")) {
-            return await bot.timers.get("wings").execute(message, user.id);
+            return await bot.timers.get("wings").execute(bot, message, user.id);
         }
         else if (message.content.includes("Activated Rage")) {
-            return await bot.timers.get("rage").execute(message, user.id);
+            return await bot.timers.get("rage").execute(bot, message, user.id);
         }
         else if (message.content.includes("You claimed your")) {
             const kit = await bot.timers.get(message.content.split("**")[3].toLowerCase());
 
-            return kit && await kit.execute(message, user.id);
+            return kit && await kit.execute(bot, message, user.id);
         }
         else if (message.content.includes("Your next crop will be ready in")) {
             const time = bot.stringToTime(message.content.split("\n")[1].split(" ")[7]);
 
-            return await bot.timers.get("harvest").execute(message, user.id, time);
+            return await bot.timers.get("harvest").execute(bot, message, user.id, time);
         }
 
         // backpack timer based on the 'BP' stat in messages
@@ -268,7 +268,7 @@ async function handleTextMessage(bot, message) {
         if (lines[lines.length - 1].startsWith("BP:")) {
             const time = bot.stringToTime(lines[lines.length - 1].replace("BP:", ""));
 
-            if (time) return await bot.timers.get("backpack").execute(message, user.id, time);
+            if (time) return await bot.timers.get("backpack").execute(bot, message, user.id, time);
         }
     }
 }

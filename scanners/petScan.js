@@ -1,8 +1,20 @@
+/**
+ * @typedef {import("../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("../system/MessageEmbed.js")} MessageEmbed
+ */
+
 const UserDB = require("../database/controllers/userController");
+const MessageEmbed = require("../system/MessageEmbed.js");
 
 module.exports.name = "petScan"
 
-module.exports.execute = async function (embed, userID) {
+/**
+ * Scans user's pets and updates stats
+ * @param {RebirthRusher} bot instance of RbR base class
+ * @param {MessageEmbed} embed Idle Miner /pets embed
+ * @param {string} userID user's Discord ID
+ */
+module.exports.execute = async function (bot, embed, userID) {
     const user = await UserDB.getUserById(userID);
     user.pets.shards = Number(embed.description.split("\n")[2].split(" ")[2].replace(/,/g, ''));
 

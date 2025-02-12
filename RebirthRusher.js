@@ -104,7 +104,7 @@ class RebirthRusher extends Eris.Client {
             const allUsers = await UserDB.getAllUsers();
             allUsers.forEach(async (user) => {
                 if (user.timers.kits.daily === "ready" && user.settings.daily) {
-                    await bot.send(
+                    await this.send(
                         {
                             channel: {
                                 id: user.settings.daily,
@@ -303,14 +303,15 @@ class RebirthRusher extends Eris.Client {
                 await TimerDB.deleteTimer(timer._id);
             } else if (duration <= 60) {
                 if (user.timers[timer.timerCategory][timer.timerName] !== "off") {
-                    await new Timer().startTimer(
+                    await new Timer(
+                        this,
                         timer.message,
                         user,
                         timer.timerName,
                         timer.timerCategory,
                         Math.max(duration, 0),
                         timer._id
-                    );
+                    ).start();
                 }
                 await TimerDB.deleteTimer(timer._id);
             } else if (user.timers[timer.timerCategory][timer.timerName] === "ready") {

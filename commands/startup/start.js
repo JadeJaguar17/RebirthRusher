@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const MessageEmbed = require("../../system/MessageEmbed");
 const { createUser } = require("../../database/controllers/userController");
 const { SUCCESS } = require("../../config/embedColors.json");
@@ -6,7 +12,13 @@ module.exports.name = "start"
 module.exports.description = "Creates a new account for the user"
 module.exports.syntax = "`/start`"
 
-module.exports.execute = async function (interaction) {
+/**
+ * Creates a new account for the user
+ * @param {RebirthRusher} bot instance of RbR base class
+ * @param {CommandInteraction} interaction triggering Eris interaction
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     try {
         await createUser(interaction.member.user.id);
     } catch (error) {

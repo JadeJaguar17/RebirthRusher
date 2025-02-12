@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
 const UserDB = require("../../database/controllers/userController");
@@ -9,7 +15,13 @@ module.exports.syntax = "`/reminders`"
 module.exports.aliases = ["r"]
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Displays settings for cooldown reminders
+ * @param {RebirthRusher} bot instance of RbR base class
+ * @param {CommandInteraction} interaction triggering Eris interaction
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const user = await UserDB.getUserById(interaction.member.user.id);
 
     // initial embed build for the reminders list

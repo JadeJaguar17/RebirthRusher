@@ -1,13 +1,23 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const fs = require("fs");
-const { DEV_ID } = require("../../config/discordIds.json");
 
 module.exports.name = "ban"
 module.exports.description = "Bans user from the bot"
 module.exports.syntax = "`/ban`"
 module.exports.hidden = true
 
-module.exports.execute = async function (interaction) {
-
+/**
+ * command_description
+ * @param {RebirthRusher} bot instance of RbR base class
+ * @param {CommandInteraction} interaction triggering Eris interaction
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const userID = interaction.data.options[0].value;
     const bannedUsers = JSON.parse(fs.readFileSync("./config/bannedUsers.json"));
 
