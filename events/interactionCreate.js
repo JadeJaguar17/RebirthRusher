@@ -123,7 +123,7 @@ async function handleButton(bot, interaction) {
                     const itemID = Number(args[0]);
                     const hex = args[1];
 
-                    const result = await bot.commands.get("buy").purchaseItem(interaction, itemID, hex);
+                    const result = await bot.commands.get("buy").purchaseItem(bot, interaction, itemID, hex);
                     return interaction.editMessage(interaction.message.id, { content: result, components: [] });
                 case "delete":
                     if (args[0] === "cancel") {
