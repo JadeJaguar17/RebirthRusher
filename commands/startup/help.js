@@ -17,8 +17,8 @@ module.exports.aliases = ["h"]
 
 /**
  * Displays either a list of commands or gives more info on a specific command
- * @param {RebirthRusher} bot instance of RbR base class
- * @param {CommandInteraction} interaction triggering Eris interaction
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
  * @returns {Promise<MessageContent>} message to display to user
  */
 module.exports.execute = async function (bot, interaction) {

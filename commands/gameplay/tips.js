@@ -15,8 +15,8 @@ module.exports.syntax = "`/tips [tip]` (*[] = optional*)"
 
 /**
  * Provides community tips and tricka
- * @param {RebirthRusher} bot instance of RbR base class
- * @param {CommandInteraction} interaction triggering Eris interaction
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
  * @returns {Promise<MessageContent>} message to display to user
  */
 module.exports.execute = async function (bot, interaction) {

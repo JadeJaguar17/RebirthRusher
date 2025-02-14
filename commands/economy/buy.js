@@ -16,8 +16,8 @@ module.exports.needsAccount = true
 
 /**
  * Purchases an item from the shop
- * @param {RebirthRusher} bot instance of RbR base class
- * @param {CommandInteraction} interaction triggering Eris interaction
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
  * @returns {Promise<MessageContent>} message to display to user
  */
 module.exports.execute = async function (bot, interaction) {
@@ -80,8 +80,8 @@ module.exports.execute = async function (bot, interaction) {
 
 /**
  * 
- * @param {RebirthRusher} bot instance of RbR base class
- * @param {CommandInteraction} interaction triggering Eris interaction 
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command 
  * @param {Number} itemID item ID
  * @param {string | undefined} hex hexcode (for custom color items only)
  * @returns 

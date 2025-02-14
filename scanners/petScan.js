@@ -10,7 +10,7 @@ module.exports.name = "petScan"
 
 /**
  * Scans user's pets and updates stats
- * @param {RebirthRusher} bot instance of RbR base class
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {MessageEmbed} embed Idle Miner /pets embed
  * @param {string} userID user's Discord ID
  */

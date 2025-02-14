@@ -11,8 +11,8 @@ module.exports.needsAccount = true
 
 /**
  * Deletes the user's account
- * @param {RebirthRusher} bot instance of RbR base class
- * @param {CommandInteraction} interaction triggering Eris interaction
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
  * @returns {Promise<MessageContent>} message to display to user
  */
 module.exports.execute = async function (bot, interaction) {

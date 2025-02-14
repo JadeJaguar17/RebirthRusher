@@ -8,7 +8,7 @@ module.exports.name = "profileScan"
 
 /**
  * Scans user's IM profile and updates rb/pr/rbday stats
- * @param {RebirthRusher} bot instance of RbR base class
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {string} userID user's Discord ID
  * @param {Number} embedPr user's prestige count
  * @param {Number} embedRb user's rebirth count

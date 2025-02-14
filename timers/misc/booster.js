@@ -10,7 +10,7 @@ module.exports.name = "booster"
 
 /**
  * Starts timers for boosters
- * @param {RebirthRusher} bot instance of RbR base class
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {Message} message triggering Discord message
  * @param {string} userID user's Discord ID
  * @param {string} boosterID booster's ID

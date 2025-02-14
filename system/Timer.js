@@ -11,7 +11,7 @@ const slashIDS = require("../config/slashIds.json");
 class Timer {
     /**
      * Creates a new Timer object
-     * @param {RebirthRusher} bot instance of RbR base class
+     * @param {RebirthRusher} bot RbR Discord client
      * @param {Message} message triggering Discord message
      * @param {string} userID user's Discord ID
      * @param {string} timerName timer name (ex: "hunt")

@@ -7,7 +7,7 @@ module.exports.name = "claimall"
 
 /**
  * Scans claimed kits from Idle Miner /claimall
- * @param {RebirthRusher} bot instance of RbR base class
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {Message} message triggering Eris interaction
  * @param {string} userID user's Discord ID
  */

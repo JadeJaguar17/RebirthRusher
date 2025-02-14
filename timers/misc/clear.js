@@ -9,7 +9,7 @@ module.exports.aliases = ["cl"]
 
 /**
  * Clearing cancels the harvest timer
- * @param {RebirthRusher} bot instance of RbR base class
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {string} userID user's Discord ID
  */
 module.exports.execute = async function (bot, userID) {
