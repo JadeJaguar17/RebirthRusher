@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
 
@@ -5,7 +11,13 @@ module.exports.name = "history"
 module.exports.description = "Gives a brief history on the origins of Rebirth Rusher"
 module.exports.syntax = "`/history`"
 
-module.exports.execute = async function () {
+/**
+ * Gives a brief history on the origins of Rebirth Rusher
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const historyMessage =
         "Rebirth Rusher was an old guild that had a good run. It was "
         + "created by Anto but taken over by breezyy where the magic "

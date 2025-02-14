@@ -1,11 +1,15 @@
-const Eris = require("eris");
-const RebirthRusher = require("../RebirthRusher");
+/**
+ * @typedef {import("../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").Message} Message
+ * @typedef {import("eris").Embed} Embed
+ */
+
 const UserDB = require("../database/controllers/userController");
 const fs = require("fs");
 
 /**
- * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.Message} message Message that got updated
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {Message} message Message that got updated
  */
 module.exports = async (bot, message) => {
     try {
@@ -26,12 +30,12 @@ module.exports = async (bot, message) => {
             && embed.description.includes("Backpack full");
         if (isPlayEmbed) {
             await updateShardCount(embed);
-            await updateProfileStats(embed);
+            await updateProfileStats(bot, embed);
         }
 
         // handle /pets embed (coming from /play)
         if (embed.title === "Pets") {
-            await bot.scanners.get("petScan").execute(embed, userID);
+            await bot.scanners.get("petScan").execute(bot, embed, userID);
         }
     } catch (error) {
         await bot.error("MessageUpdate", error, message);
@@ -51,7 +55,7 @@ function isBanned(userID) {
 
 /**
  * Parses user's ID from a message embed
- * @param {Eris.Embed} embed message embed object
+ * @param {Embed} embed message embed object
  * @returns {string | undefined} user's Discord ID
  */
 function getUserID(embed) {
@@ -63,7 +67,7 @@ function getUserID(embed) {
 
 /**
  * Updates user's shard count
- * @param {Eris.Embed} embed message embed object
+ * @param {Embed} embed message embed object
  * @returns {Promise<boolean>} whether update succeeded or not 
  */
 async function updateShardCount(embed) {
@@ -96,15 +100,17 @@ async function updateShardCount(embed) {
 
 /**
  * Updates rb/pr/rbday stats
- * @param {Eris.Embed} embed message embed object
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {Embed} embed message embed object
  */
-async function updateProfileStats(embed) {
+async function updateProfileStats(bot, embed) {
     const userID = getUserID(embed);
 
     const statsField = embed.fields?.find(f => f.name === "**Stats**");
     const statsStrings = statsField.value.trim().split("\n");
 
     await bot.scanners.get("profileScan").execute(
+        bot,
         userID,
         parseStat(statsStrings, "**Prestige:**"),
         parseStat(statsStrings, "**Rebirth:**"),
@@ -116,18 +122,18 @@ async function updateProfileStats(embed) {
  * Finds and parses a stat from a list of stat strings
  * @param {Array<string>} statStrings list of stats strings to parse
  * @param {string} label name of stat to find (including formatting)
- * @returns {number} parsed number, or 0 if unsuccesful
+ * @returns {number?} parsed number, or 0 if unsuccesful
  */
 function parseStat(statStrings, label) {
     const embedStat = statStrings
         .find(ss => ss.startsWith(label))
         .replace(label, "")
+        .replace(/,/g, '')
         .trim();
 
-    try {
-        return Number(embedStat);
+    const numberStat = Number(embedStat);
+    if (isNaN(numberStat)) {
+        return null;
     }
-    catch (e) {
-        return 0;
-    }
+    return numberStat;
 }

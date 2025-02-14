@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const UserDB = require("../../database/controllers/userController");
 const Canvas = require('chartjs-node-canvas');
 const { RBR, DEV } = require("../../config/embedColors.json");
@@ -9,7 +15,13 @@ module.exports.syntax = "`/graph`"
 module.exports.aliases = ["g"]
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Graphs user profile stats
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const identifier = (interaction.data.options?.[0]?.value) || interaction.member.user.id;
 
     // try to find the corresponding Discord User
@@ -20,11 +32,7 @@ module.exports.execute = async function (interaction) {
             || bot.users.find(u => identifier === `${u.username}#${u.discriminator}`)
             || bot.users.find(u => identifier === u.username)
             || await bot.getRESTUser(identifier);
-
-        // if (discordUser && !bot.users.find(u => discordUser.id === u.id)) {
-        //     bot.users.add(discordUser);
-        // }
-    } catch (error) { }
+    } catch (error) { /* Do nothing */ }
 
     // validate graph data
     const user = discordUser && await UserDB.getUserById(discordUser.id);
@@ -39,7 +47,7 @@ module.exports.execute = async function (interaction) {
     }
 
     // calculate some data to build the graph
-    const tag = discordUser.username
+    const tag = discordUser.username;
     const maxTick = Math.ceil(Math.max(
         Math.max(...user.graph.tracker.rebirths),
         Math.max(...user.graph.tracker.rbDay)) / 5

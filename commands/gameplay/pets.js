@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
 const UserDB = require("../../database/controllers/userController");
@@ -26,7 +32,13 @@ module.exports.syntax = "`/pets`"
 module.exports.aliases = ["p"]
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Analyzes pet data and calculates some stats
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const user = await UserDB.getUserById(interaction.member.user.id);
 
     // number of each pet

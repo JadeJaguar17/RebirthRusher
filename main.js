@@ -21,8 +21,6 @@ else {
 const rbr = new RebirthRusher(AUTH_TOKEN);
 rbr.init();
 
-global.bot = rbr;
-
 // deals with any unhandled rejected Promises
 process.on('unhandledRejection', error => {
     rbr.error("Unhandled Promise Rejection", error);

@@ -1,10 +1,23 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").Message} Message 
+ */
 const UserDB = require("../../database/controllers/userController");
 const MessageCollector = require("../../system/collector/MessageCollector");
 const boosters = require("../../config/boosters.json");
 
 module.exports.name = "booster"
 
-module.exports.execute = async function (message, userID, boosterID, time) {
+/**
+ * Starts timers for boosters
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {Message} message triggering Discord message
+ * @param {string} userID user's Discord ID
+ * @param {string} boosterID booster's ID
+ * @param {Number} time duration of booster (in seconds)
+ * @returns {Promise<void>}
+ */
+module.exports.execute = async function (bot, message, userID, boosterID, time) {
     const user = await UserDB.getUserById(userID);
     const booster = boosters.find(b => b.id === boosterID);
 

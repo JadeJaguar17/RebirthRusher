@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const UserDB = require("../../database/controllers/userController");
 const shop = require("../../config/shop.json");
 const Canvas = require('chartjs-node-canvas');
@@ -7,7 +13,13 @@ module.exports.description = "Previews a graph color"
 module.exports.syntax = "`/preview [graph color] [category]`"
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Previews a graph color
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const category = interaction.data.options[0].value;
     const colorID = interaction.data.options[1].value;
     const hex = (interaction.data.options[2] && interaction.data.options[2].value) || null;

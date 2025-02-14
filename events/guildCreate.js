@@ -1,11 +1,14 @@
-const Eris = require("eris");
-const RebirthRusher = require("../RebirthRusher");
+/**
+ * @typedef {import("../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").Guild} Guild
+ */
+
 const MessageEmbed = require("../system/MessageEmbed");
 const { SUCCESS2 } = require("../config/embedColors.json");
 
 /**
- * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.Guild} guild guild that got created
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {Guild} guild guild that got created
  */
 module.exports = async (bot, guild) => {
     const newServerEmbed = new MessageEmbed()

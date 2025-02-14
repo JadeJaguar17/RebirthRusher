@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const UserDB = require("../../database/controllers/userController");
 const { RBR_SERVER_ID } = require("../../config/discordIds.json");
 const { token } = require("../../config/emojis.json");
@@ -7,7 +13,13 @@ module.exports.description = "Claims token gifts during special events"
 module.exports.syntax = "`/claim`"
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Claims token gifts during special events
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const user = await UserDB.getUserById(interaction.member.user.id);
 
     if (!bot.eventReward) {

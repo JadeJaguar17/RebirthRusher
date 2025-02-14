@@ -1,14 +1,26 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const UserDB = require("../../database/controllers/userController");
 const shop = require("../../config/shop.json");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { ROLE_PURCHASE_CHANNEL_ID } = require("../../config/discordIds.json");
 
 module.exports.name = "buy"
-module.exports.description = "Purchases and item from the shop"
+module.exports.description = "Purchases an item from the shop"
 module.exports.syntax = "`/buy [item id] [hex code if applicable]`"
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Purchases an item from the shop
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const itemID = interaction.data.options[0].value;
     const hex = interaction.data.options[1]
         && `#${interaction.data.options[1].value.replace("#", "")}`;
@@ -66,14 +78,22 @@ module.exports.execute = async function (interaction) {
     }
 }
 
-module.exports.purchaseItem = async function (interaction, itemID, hex) {
+/**
+ * Helper function to complete a purchase
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command 
+ * @param {Number} itemID item ID
+ * @param {string?} hex hexcode (for custom color items only)
+ * @returns 
+ */
+module.exports.purchaseItem = async function (bot, interaction, itemID, hex = null) {
     const user = await UserDB.getUserById(interaction.member.user.id);
     const item = shop.find(i => Number(itemID) === i.id);
     const purchasedItem = { ...item };
 
     if (user.inventory.tokens < purchasedItem.price) {
         return `:no_entry_sign: You can't afford this purchase! Get more `
-            `tokens through \`/donate\` or \`/vote\``;
+            + `tokens through \`/donate\` or \`/vote\``;
     }
 
     if (purchasedItem.id === 14 || purchasedItem.id === 23) {
@@ -147,6 +167,11 @@ function hasItem(user, item) {
     return false;
 }
 
+/**
+ * Checks if a string is valid hexcode
+ * @param {string} hex hexcode
+ * @returns {Boolean} whether provided hex is valid
+ */
 function isHex(hex) {
     return /^#?([0-9A-F]{3}){1,2}$/i.test(hex);
 }

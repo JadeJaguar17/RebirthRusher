@@ -1,5 +1,9 @@
-const Eris = require("eris");
-const RebirthRusher = require("../RebirthRusher");
+/**
+ * @typedef {import("../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").Interaction} Interaction
+ */
+
+const { CommandInteraction, ComponentInteraction } = require("eris");
 const fs = require("fs");
 const UserDB = require("../database/controllers/userController");
 const MessageEmbed = require("../system/MessageEmbed");
@@ -9,18 +13,18 @@ const { DEV_ID } = require("../config/discordIds.json");
 const FIFTEEN_SECONDS = 15000;
 
 /**
- * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.Interaction} interaction Interaction object
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {Interaction} interaction Interaction object
  */
 module.exports = async (bot, interaction) => {
     try {
         // slash commands
-        if (interaction instanceof Eris.CommandInteraction) {
+        if (interaction instanceof CommandInteraction) {
             return await handleSlashCommand(bot, interaction);
         }
 
         // buttons
-        else if (interaction instanceof Eris.ComponentInteraction) {
+        else if (interaction instanceof ComponentInteraction) {
             return await handleButton(bot, interaction);
         }
     } catch (error) {
@@ -30,8 +34,8 @@ module.exports = async (bot, interaction) => {
 
 /**
  * Handles slash commands
- * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.CommandInteraction} interaction Interaction object for slash command
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction Interaction object for slash command
  * @returns awaitable RbR response
  */
 async function handleSlashCommand(bot, interaction) {
@@ -57,7 +61,7 @@ async function handleSlashCommand(bot, interaction) {
 
         if (command) {
             if (command.hidden && interaction.member.user.id !== DEV_ID) return;
-            const result = await bot.commands.get(interaction.data.name).execute(interaction);
+            const result = await bot.commands.get(interaction.data.name).execute(bot, interaction);
 
             // 'delete' and 'resetstats' have a 15s expiry time
             if (command.name === "delete") {
@@ -77,7 +81,7 @@ async function handleSlashCommand(bot, interaction) {
         // context menu graph
         else if (interaction.data.name === "Fetch Graph") {
             interaction.data.options = [{ value: interaction.data.target_id }];
-            const graph = await bot.commands.get("graph").execute(interaction);
+            const graph = await bot.commands.get("graph").execute(bot, interaction);
             return interaction.createMessage(graph, graph.file);
         }
 
@@ -97,8 +101,8 @@ async function handleSlashCommand(bot, interaction) {
 
 /**
  * Handles buttons
- * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.ComponentInteraction} interaction Interaction object for button
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {ComponentInteraction} interaction Interaction object for button
  * @returns awaitable RbR response
  */
 async function handleButton(bot, interaction) {
@@ -112,9 +116,9 @@ async function handleButton(bot, interaction) {
             await interaction.acknowledge();
             switch (command) {
                 case "guide":
-                    return interaction.editMessage(interaction.message.id, await bot.commands.get("guide").execute(interaction, Number(args[0])));
+                    return interaction.editMessage(interaction.message.id, await bot.commands.get("guide").execute(bot, interaction, Number(args[0])));
                 case "inventory":
-                    return interaction.editMessage(interaction.message.id, await bot.commands.get("inventory").execute(interaction, Number(args[0])));
+                    return interaction.editMessage(interaction.message.id, await bot.commands.get("inventory").execute(bot, interaction, Number(args[0])));
                 case "buy":
                     if (args[0] === "cancel") {
                         return interaction.editMessage(interaction.message.id, { content: "You cancelled your purchase", components: [] });
@@ -123,7 +127,7 @@ async function handleButton(bot, interaction) {
                     const itemID = Number(args[0]);
                     const hex = args[1];
 
-                    const result = await bot.commands.get("buy").purchaseItem(interaction, itemID, hex);
+                    const result = await bot.commands.get("buy").purchaseItem(bot, interaction, itemID, hex);
                     return interaction.editMessage(interaction.message.id, { content: result, components: [] });
                 case "delete":
                     if (args[0] === "cancel") {

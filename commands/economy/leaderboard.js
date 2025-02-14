@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const { getTopTenTokens } = require("../../database/controllers/userController");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
@@ -6,7 +12,13 @@ module.exports.name = "leaderboard"
 module.exports.description = "A leaderboard for the top 10 with the most tokens"
 module.exports.syntax = "`/leaderboard`"
 
-module.exports.execute = async function () {
+/**
+ * Displays a leaderboard for top 10 users with most tokens
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     // only get the top 10 users
     const places = await getTopTenTokens();
 

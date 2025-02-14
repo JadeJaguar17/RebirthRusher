@@ -1,18 +1,29 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
 const UserDB = require("../../database/controllers/userController");
 const { DEV_ID } = require("../../config/discordIds.json");
 const { token } = require("../../config/emojis.json");
 
 module.exports.name = "pay"
-module.exports.description = "Pays users tokens\n*(operator only)*"
+module.exports.description = "Pays users tokens"
 module.exports.syntax = "`/pay [@user] [tokens]`"
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Pays user tokens
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const payeeID = interaction.data.options[0].value;
     const payerID = interaction.member.user.id;
     const tokens = interaction.data.options[1].value;
     const payee = await UserDB.getUserById(payeeID);
-    
+
     if (!payee) {
         return "User does not have a Rebirth Rusher account!";
     }

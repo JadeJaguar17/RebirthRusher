@@ -1,14 +1,26 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const UserDB = require("../../database/controllers/userController");
 const { RBR } = require("../../config/embedColors.json");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { token } = require("../../config/emojis.json");
 
 module.exports.name = "inventory"
-module.exports.description = "Displays all items that user has bought from the shop"
+module.exports.description = "Displays all your purchased items from `/shop`"
 module.exports.syntax = "`/inventory`"
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction, pageNum = 1) {
+/**
+ * Lists all items that user has bought from the shop
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction, pageNum = 1) {
     const user = await UserDB.getUserById(interaction.member.user.id);
 
     // create list of colors

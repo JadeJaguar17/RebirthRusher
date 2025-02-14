@@ -1,3 +1,9 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../config/embedColors.json");
 const links = require("../../config/links.json");
@@ -9,7 +15,13 @@ module.exports.description = "Displays either a list of commands or gives more i
 module.exports.syntax = "`/help [command]` (*[] = optional*)"
 module.exports.aliases = ["h"]
 
-module.exports.execute = async function (interaction) {
+/**
+ * Displays either a list of commands or gives more info on a specific command
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const inputCommand = interaction.data.options?.[0]?.value.toLowerCase();
 
     const helpEmbed = new MessageEmbed()
