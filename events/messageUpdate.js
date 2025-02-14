@@ -1,11 +1,15 @@
-const Eris = require("eris");
-const RebirthRusher = require("../RebirthRusher");
+/**
+ * @typedef {import("../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").Message} Message
+ * @typedef {import("eris").Embed} Embed
+ */
+
 const UserDB = require("../database/controllers/userController");
 const fs = require("fs");
 
 /**
  * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.Message} message Message that got updated
+ * @param {Message} message Message that got updated
  */
 module.exports = async (bot, message) => {
     try {
@@ -51,7 +55,7 @@ function isBanned(userID) {
 
 /**
  * Parses user's ID from a message embed
- * @param {Eris.Embed} embed message embed object
+ * @param {Embed} embed message embed object
  * @returns {string | undefined} user's Discord ID
  */
 function getUserID(embed) {
@@ -63,7 +67,7 @@ function getUserID(embed) {
 
 /**
  * Updates user's shard count
- * @param {Eris.Embed} embed message embed object
+ * @param {Embed} embed message embed object
  * @returns {Promise<boolean>} whether update succeeded or not 
  */
 async function updateShardCount(embed) {
@@ -96,7 +100,7 @@ async function updateShardCount(embed) {
 
 /**
  * Updates rb/pr/rbday stats
- * @param {Eris.Embed} embed message embed object
+ * @param {Embed} embed message embed object
  */
 async function updateProfileStats(embed) {
     const userID = getUserID(embed);

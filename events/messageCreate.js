@@ -1,11 +1,14 @@
-const Eris = require("eris");
-const RebirthRusher = require("../RebirthRusher");
+/**
+ * @typedef {import("../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").Message} Message
+ */
+
 const UserDB = require("../database/controllers/userController");
 const fs = require("fs");
 
 /**
  * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.Message} message Message that got updated
+ * @param {Message} message Message that got updated
  */
 module.exports = async (bot, message) => {
     try {
@@ -52,7 +55,7 @@ function isBanned(userID) {
 /**
  * Handles message embeds from Idle Miner
  * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.Message} message message containing the embed to process
+ * @param {Message} message message containing the embed to process
  * @returns an awaitable RbR action
  */
 async function handleEmbedMessage(bot, message) {
@@ -235,7 +238,7 @@ async function handleEmbedMessage(bot, message) {
 /**
  * Handles text messages from Idle Miner
  * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.Message} message text message to process
+ * @param {Message} message text message to process
  * @returns an awaitable RbR action
  */
 async function handleTextMessage(bot, message) {

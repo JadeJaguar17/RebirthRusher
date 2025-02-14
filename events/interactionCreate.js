@@ -1,5 +1,9 @@
-const Eris = require("eris");
-const RebirthRusher = require("../RebirthRusher");
+/**
+ * @typedef {import("../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").Interaction} Interaction
+ */
+
+const {CommandInteraction, ComponentInteraction} = require("eris");
 const fs = require("fs");
 const UserDB = require("../database/controllers/userController");
 const MessageEmbed = require("../system/MessageEmbed");
@@ -10,17 +14,17 @@ const FIFTEEN_SECONDS = 15000;
 
 /**
  * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.Interaction} interaction Interaction object
+ * @param {Interaction} interaction Interaction object
  */
 module.exports = async (bot, interaction) => {
     try {
         // slash commands
-        if (interaction instanceof Eris.CommandInteraction) {
+        if (interaction instanceof CommandInteraction) {
             return await handleSlashCommand(bot, interaction);
         }
 
         // buttons
-        else if (interaction instanceof Eris.ComponentInteraction) {
+        else if (interaction instanceof ComponentInteraction) {
             return await handleButton(bot, interaction);
         }
     } catch (error) {
@@ -31,7 +35,7 @@ module.exports = async (bot, interaction) => {
 /**
  * Handles slash commands
  * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.CommandInteraction} interaction Interaction object for slash command
+ * @param {CommandInteraction} interaction Interaction object for slash command
  * @returns awaitable RbR response
  */
 async function handleSlashCommand(bot, interaction) {
@@ -98,7 +102,7 @@ async function handleSlashCommand(bot, interaction) {
 /**
  * Handles buttons
  * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.ComponentInteraction} interaction Interaction object for button
+ * @param {ComponentInteraction} interaction Interaction object for button
  * @returns awaitable RbR response
  */
 async function handleButton(bot, interaction) {
