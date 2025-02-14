@@ -12,7 +12,7 @@ module.exports.syntax = "`/ban`"
 module.exports.hidden = true
 
 /**
- * command_description
+ * Bans a user from the bot
  * @param {RebirthRusher} bot RbR Discord client
  * @param {CommandInteraction} interaction triggering Discord slash command
  * @returns {Promise<MessageContent>} message to display to user

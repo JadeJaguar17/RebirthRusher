@@ -12,7 +12,7 @@ module.exports.description = "Gives a brief history on the origins of Rebirth Ru
 module.exports.syntax = "`/history`"
 
 /**
- * command_description
+ * Gives a brief history on the origins of Rebirth Rusher
  * @param {RebirthRusher} bot RbR Discord client
  * @param {CommandInteraction} interaction triggering Discord slash command
  * @returns {Promise<MessageContent>} message to display to user

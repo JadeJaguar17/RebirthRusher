@@ -114,7 +114,8 @@ async function handleEmbedMessage(bot, message) {
                 .trim()
                 .replace(/,/g, '') || 0;
 
-        return await bot.scanners.get("profileScan").execute(bot,
+        return await bot.scanners.get("profileScan").execute(
+            bot,
             userID,
             Number(embedPr),
             Number(embedRb),
@@ -178,7 +179,8 @@ async function handleEmbedMessage(bot, message) {
                         );
 
                         if (boosterTime < 86400) { // 24 hours
-                            await bot.timers.get("booster").execute(bot,
+                            await bot.timers.get("booster").execute(
+                                bot,
                                 message,
                                 userID,
                                 boosterID,
@@ -226,7 +228,8 @@ async function handleEmbedMessage(bot, message) {
             .trim()
             .replace(/,/g, '');
 
-        return await bot.scanners.get("profileScan").execute(bot,
+        return await bot.scanners.get("profileScan").execute(
+            bot,
             userID,
             Number(embedPr),
             Number(embedRb),

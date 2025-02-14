@@ -79,7 +79,7 @@ module.exports.execute = async function (bot, interaction) {
 }
 
 /**
- * 
+ * Helper function to complete a purchase
  * @param {RebirthRusher} bot RbR Discord client
  * @param {CommandInteraction} interaction triggering Discord slash command 
  * @param {Number} itemID item ID
@@ -167,6 +167,11 @@ function hasItem(user, item) {
     return false;
 }
 
+/**
+ * Checks if a string is valid hexcode
+ * @param {string} hex hexcode
+ * @returns {Boolean} whether provided hex is valid
+ */
 function isHex(hex) {
     return /^#?([0-9A-F]{3}){1,2}$/i.test(hex);
 }

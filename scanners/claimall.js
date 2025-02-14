@@ -10,6 +10,7 @@ module.exports.name = "claimall"
  * @param {RebirthRusher} bot RbR Discord client
  * @param {Message} message triggering Eris interaction
  * @param {string} userID user's Discord ID
+ * @returns {Promise<void>}
  */
 module.exports.execute = async function (bot, message, userID) {
     const newMessage = {

@@ -14,6 +14,7 @@ module.exports.name = "backpack"
  * @param {Message} message triggering Discord message
  * @param {string} userID user's Discord ID
  * @param {Number} time remaining time for backpack (in seconds)
+ * @returns {Promise<void>}
  */
 module.exports.execute = async function (bot, message, userID, time) {
     const user = await UserDB.getUserById(userID);

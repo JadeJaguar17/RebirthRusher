@@ -11,7 +11,7 @@ module.exports.description = "Sends server invite link"
 module.exports.syntax = "`/server`"
 
 /**
- * command_description
+ * Sends support server invite link
  * @param {RebirthRusher} bot RbR Discord client
  * @param {CommandInteraction} interaction triggering Discord slash command
  * @returns {Promise<MessageContent>} message to display to user

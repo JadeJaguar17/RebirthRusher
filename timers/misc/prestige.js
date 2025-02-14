@@ -11,7 +11,8 @@ module.exports.aliases = ["pr"]
  * Prestige cancels all existing timers except harvest
  * @param {RebirthRusher} bot RbR Discord client
  * @param {string} userID user's Discord ID
+ * @returns {Promise<void>}
  */
 module.exports.execute = async function (bot, userID) {
-    return await TimerDB.deleteTimerForUserExcept(userID, ["harvest"]);
+    await TimerDB.deleteTimerForUserExcept(userID, ["harvest"]);
 }
