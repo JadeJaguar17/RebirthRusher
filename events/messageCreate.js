@@ -7,7 +7,7 @@ const UserDB = require("../database/controllers/userController");
 const fs = require("fs");
 
 /**
- * @param {RebirthRusher} bot base class of RbR
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {Message} message Message that got updated
  */
 module.exports = async (bot, message) => {
@@ -54,7 +54,7 @@ function isBanned(userID) {
 
 /**
  * Handles message embeds from Idle Miner
- * @param {RebirthRusher} bot base class of RbR
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {Message} message message containing the embed to process
  * @returns an awaitable RbR action
  */
@@ -237,7 +237,7 @@ async function handleEmbedMessage(bot, message) {
 
 /**
  * Handles text messages from Idle Miner
- * @param {RebirthRusher} bot base class of RbR
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {Message} message text message to process
  * @returns an awaitable RbR action
  */

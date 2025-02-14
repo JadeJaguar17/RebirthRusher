@@ -3,7 +3,7 @@
  */
 
 /**
- * @param {RebirthRusher} bot base class of RbR
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {Error} error error that was emitted
  */
 module.exports = async (bot, error, _) => {

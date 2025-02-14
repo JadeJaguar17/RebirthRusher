@@ -8,7 +8,7 @@ const UserDB = require("../database/controllers/userController");
 const fs = require("fs");
 
 /**
- * @param {RebirthRusher} bot base class of RbR
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {Message} message Message that got updated
  */
 module.exports = async (bot, message) => {

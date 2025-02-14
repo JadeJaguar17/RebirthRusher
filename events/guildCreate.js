@@ -7,7 +7,7 @@ const MessageEmbed = require("../system/MessageEmbed");
 const { SUCCESS2 } = require("../config/embedColors.json");
 
 /**
- * @param {RebirthRusher} bot base class of RbR
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {Guild} guild guild that got created
  */
 module.exports = async (bot, guild) => {

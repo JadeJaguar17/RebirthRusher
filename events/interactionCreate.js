@@ -3,7 +3,7 @@
  * @typedef {import("eris").Interaction} Interaction
  */
 
-const {CommandInteraction, ComponentInteraction} = require("eris");
+const { CommandInteraction, ComponentInteraction } = require("eris");
 const fs = require("fs");
 const UserDB = require("../database/controllers/userController");
 const MessageEmbed = require("../system/MessageEmbed");
@@ -13,7 +13,7 @@ const { DEV_ID } = require("../config/discordIds.json");
 const FIFTEEN_SECONDS = 15000;
 
 /**
- * @param {RebirthRusher} bot base class of RbR
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {Interaction} interaction Interaction object
  */
 module.exports = async (bot, interaction) => {
@@ -34,7 +34,7 @@ module.exports = async (bot, interaction) => {
 
 /**
  * Handles slash commands
- * @param {RebirthRusher} bot base class of RbR
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {CommandInteraction} interaction Interaction object for slash command
  * @returns awaitable RbR response
  */
@@ -101,7 +101,7 @@ async function handleSlashCommand(bot, interaction) {
 
 /**
  * Handles buttons
- * @param {RebirthRusher} bot base class of RbR
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {ComponentInteraction} interaction Interaction object for button
  * @returns awaitable RbR response
  */
