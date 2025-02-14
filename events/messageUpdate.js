@@ -30,7 +30,7 @@ module.exports = async (bot, message) => {
             && embed.description.includes("Backpack full");
         if (isPlayEmbed) {
             await updateShardCount(embed);
-            await updateProfileStats(embed);
+            await updateProfileStats(bot, embed);
         }
 
         // handle /pets embed (coming from /play)
@@ -100,15 +100,17 @@ async function updateShardCount(embed) {
 
 /**
  * Updates rb/pr/rbday stats
+ * @param {RebirthRusher} bot RbR Discord client
  * @param {Embed} embed message embed object
  */
-async function updateProfileStats(embed) {
+async function updateProfileStats(bot, embed) {
     const userID = getUserID(embed);
 
     const statsField = embed.fields?.find(f => f.name === "**Stats**");
     const statsStrings = statsField.value.trim().split("\n");
 
-    await bot.scanners.get("profileScan").execute(bot,
+    await bot.scanners.get("profileScan").execute(
+        bot,
         userID,
         parseStat(statsStrings, "**Prestige:**"),
         parseStat(statsStrings, "**Rebirth:**"),
