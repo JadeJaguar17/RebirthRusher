@@ -122,18 +122,18 @@ async function updateProfileStats(bot, embed) {
  * Finds and parses a stat from a list of stat strings
  * @param {Array<string>} statStrings list of stats strings to parse
  * @param {string} label name of stat to find (including formatting)
- * @returns {number} parsed number, or 0 if unsuccesful
+ * @returns {number?} parsed number, or 0 if unsuccesful
  */
 function parseStat(statStrings, label) {
     const embedStat = statStrings
         .find(ss => ss.startsWith(label))
         .replace(label, "")
+        .replace(/,/g, '')
         .trim();
 
-    try {
-        return Number(embedStat);
+    const numberStat = Number(embedStat);
+    if (isNaN(numberStat)) {
+        return null;
     }
-    catch (e) {
-        return 0;
-    }
+    return numberStat;
 }
