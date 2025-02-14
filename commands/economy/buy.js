@@ -83,10 +83,10 @@ module.exports.execute = async function (bot, interaction) {
  * @param {RebirthRusher} bot RbR Discord client
  * @param {CommandInteraction} interaction triggering Discord slash command 
  * @param {Number} itemID item ID
- * @param {string | undefined} hex hexcode (for custom color items only)
+ * @param {string?} hex hexcode (for custom color items only)
  * @returns 
  */
-module.exports.purchaseItem = async function (bot, interaction, itemID, hex = undefined) {
+module.exports.purchaseItem = async function (bot, interaction, itemID, hex = null) {
     const user = await UserDB.getUserById(interaction.member.user.id);
     const item = shop.find(i => Number(itemID) === i.id);
     const purchasedItem = { ...item };
