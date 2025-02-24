@@ -23,8 +23,45 @@ module.exports.needsAccount = true
  * @returns {Promise<MessageContent>} message to display to user
  */
 module.exports.execute = async function (bot, interaction) {
-    const user = await UserDB.getUserById(interaction.member.user.id);
+    // generate shop menu embed
+    const shopMenuEmbed = new MessageEmbed()
+        .setTitle("Shop")
+        .setColor(RBR)
+        .setThumbnail("attachment://shopping_cart.png");
 
+    let graphStandards = "";
+    shop
+        .filter(i => i.id <= 12)
+        .forEach(color => {
+            const id = color.id < 10 ? ` ${color.id}` : color.id;
+            graphStandards += `\`${id}\` ${color.name}\n`;
+        });
+
+    let graphSpecials = "";
+    shop
+        .filter(i => i.id > 12 && i.id <= 15)
+        .forEach(color => {
+            graphSpecials += `\`${color.id}\` ${color.name} | ${color.price} ${token}\n`
+                + `${color.description}\n`;
+        });
+
+    let serverPerks = "";
+    shop
+        .filter(i => i.category == "server")
+        .forEach(perk => {
+            serverPerks += `\`${perk.id}\` ${perk.name} | ${perk.price} ${token}\n`
+                + `${perk.description}\n`;
+        });
+
+    shopMenuEmbed
+        .addFields(
+            { name: "Standard Colors (20 ${token} each)", value: graphStandards },
+            { name: "Graph Specials", value: graphSpecials },
+            { name: "Server Perks", value: serverPerks }
+        );
+
+    // get user info
+    const user = await UserDB.getUserById(interaction.member.user.id);
     shopMenuEmbed
         .setAuthor(bot.user.username, bot.user.avatarURL)
         .setDescription(
@@ -46,39 +83,3 @@ module.exports.execute = async function (bot, interaction) {
         file: thumbnail
     };
 }
-
-const shopMenuEmbed = new MessageEmbed()
-    .setTitle("Shop")
-    .setColor(RBR)
-    .setThumbnail("attachment://shopping_cart.png");
-
-let graphStandards = "";
-shop
-    .filter(i => i.id <= 12)
-    .forEach(color => {
-        const id = color.id < 10 ? ` ${color.id}` : color.id;
-        graphStandards += `\`${id}\` ${color.name}\n`;
-    });
-
-let graphSpecials = "";
-shop
-    .filter(i => i.id > 12 && i.id <= 15)
-    .forEach(color => {
-        graphSpecials += `\`${color.id}\` ${color.name} | ${color.price} ${token}\n`
-            + `${color.description}\n`;
-    });
-
-let serverPerks = "";
-shop
-    .filter(i => i.category == "server")
-    .forEach(perk => {
-        serverPerks += `\`${perk.id}\` ${perk.name} | ${perk.price} ${token}\n`
-            + `${perk.description}\n`;
-    });
-
-shopMenuEmbed
-    .addFields(
-        { name: "Standard Colors (20 ${token} each)", value: graphStandards },
-        { name: "Graph Specials", value: graphSpecials },
-        { name: "Server Perks", value: serverPerks }
-    );
