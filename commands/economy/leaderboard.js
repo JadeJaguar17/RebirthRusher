@@ -6,7 +6,7 @@
 
 const { getTopTenTokens } = require("../../database/controllers/userController");
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 
 module.exports.name = "leaderboard"
 module.exports.description = "A leaderboard for the top 10 with the most tokens"

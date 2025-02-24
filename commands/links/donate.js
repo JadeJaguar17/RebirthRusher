@@ -5,8 +5,8 @@
  */
 
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
-const { patreon } = require("../../config/links.json");
+const { RBR } = require("../../resources/embedColors.json");
+const { patreon } = require("../../resources/links.json");
 
 module.exports.name = "donate"
 module.exports.description = "Sends link to Patreon page"

@@ -6,9 +6,9 @@
 
 const MessageEmbed = require("../../system/MessageEmbed");
 const UserDB = require("../../database/controllers/userController");
-const { RBR } = require("../../config/embedColors.json");
-const shop = require("../../config/shop.json");
-const { token } = require("../../config/emojis.json");
+const { RBR } = require("../../resources/embedColors.json");
+const shop = require("../../resources/shop.json");
+const { token } = require("../../resources/emojis.json");
 
 module.exports.name = "shop"
 module.exports.description = "Displays the shop"

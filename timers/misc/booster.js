@@ -4,7 +4,7 @@
  */
 const UserDB = require("../../database/controllers/userController");
 const MessageCollector = require("../../system/collector/MessageCollector");
-const boosters = require("../../config/boosters.json");
+const boosters = require("../../resources/boosters.json");
 
 module.exports.name = "booster"
 

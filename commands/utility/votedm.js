@@ -6,8 +6,8 @@
 
 const UserDB = require("../../database/controllers/userController");
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
-const { off, on } = require("../../config/emojis.json");
+const { RBR } = require("../../resources/embedColors.json");
+const { off, on } = require("../../resources/emojis.json");
 
 module.exports.name = "votedm"
 module.exports.description = "Enables/disables the bot DMing you after a vote"

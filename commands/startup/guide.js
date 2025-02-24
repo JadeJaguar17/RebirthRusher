@@ -5,7 +5,7 @@
  */
 
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 
 module.exports.name = "guide"
 module.exports.description = "Gives a guide on how to use the bot"

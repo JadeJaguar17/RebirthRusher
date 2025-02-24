@@ -5,10 +5,10 @@
  */
 
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
-const links = require("../../config/links.json");
+const { RBR } = require("../../resources/embedColors.json");
+const links = require("../../resources/links.json");
 const fs = require("fs");
-const { DEV_ID } = require("../../config/discordIds.json");
+const { DEV_ID } = require("../../resources/discordIds.json");
 
 module.exports.name = "help"
 module.exports.description = "Displays either a list of commands or gives more info on a specific command"

@@ -5,8 +5,8 @@
  */
 
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
-const { invite } = require("../../config/links.json");
+const { RBR } = require("../../resources/embedColors.json");
+const { invite } = require("../../resources/links.json");
 
 module.exports.name = "invite"
 module.exports.description = "Sends the bot invite link"

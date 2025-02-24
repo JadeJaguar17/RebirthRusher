@@ -19,9 +19,9 @@ const schedule = require("node-schedule");
 const dotenv = require("dotenv");
 dotenv.config()
 
-const { ERROR, RBR, SUCCESS } = require("./config/embedColors.json");
-const { DEV_SERVER_ID } = require("./config/discordIds.json");
-const { token } = require("./config/emojis.json");
+const { ERROR, RBR, SUCCESS } = require("./resources/embedColors.json");
+const { DEV_SERVER_ID } = require("./resources/discordIds.json");
+const { token } = require("./resources/emojis.json");
 
 // constants
 const ONE_MINUTE = 60000;

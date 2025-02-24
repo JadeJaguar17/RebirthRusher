@@ -6,7 +6,7 @@
 
 const MessageEmbed = require("../../system/MessageEmbed");
 const UserDB = require("../../database/controllers/userController");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 
 module.exports.name = "calculate"
 module.exports.description = "Calculates the price of upgrading your pick/bp a certain number of levels"

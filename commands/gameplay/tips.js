@@ -6,8 +6,8 @@
 
 const fs = require("fs");
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
-const tipsData = require("../../config/tips.json");
+const { RBR } = require("../../resources/embedColors.json");
+const tipsData = require("../../resources/tips.json");
 
 module.exports.name = "tips"
 module.exports.description = "Community-provided tips and tricks for Idle Miner"
@@ -54,7 +54,7 @@ module.exports.execute = async function (bot, interaction) {
     let file = undefined;
     if (tip.filename) {
         file = {
-            file: fs.readFileSync(`config/tips/${tip.filename}`),
+            file: fs.readFileSync(`resources/tips/${tip.filename}`),
             name: tip.filename
         };
         tipEmbed.setImage(`attachment://${tip.filename}`);

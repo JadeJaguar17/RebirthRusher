@@ -5,9 +5,9 @@
  */
 
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 const UserDB = require("../../database/controllers/userController");
-const { off, on } = require("../../config/emojis.json");
+const { off, on } = require("../../resources/emojis.json");
 
 module.exports.name = "reminders"
 module.exports.description = "Displays settings for cooldown reminders"

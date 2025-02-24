@@ -7,8 +7,8 @@ const { CommandInteraction, ComponentInteraction } = require("eris");
 const fs = require("fs");
 const UserDB = require("../database/controllers/userController");
 const MessageEmbed = require("../system/MessageEmbed");
-const { ERROR } = require("../config/embedColors.json");
-const { DEV_ID } = require("../config/discordIds.json");
+const { ERROR } = require("../resources/embedColors.json");
+const { DEV_ID } = require("../resources/discordIds.json");
 
 const FIFTEEN_SECONDS = 15000;
 

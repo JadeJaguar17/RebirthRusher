@@ -6,7 +6,7 @@
 
 const MessageEmbed = require("../../system/MessageEmbed");
 const UserDB = require("../../database/controllers/userController");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 
 module.exports.name = "stats"
 module.exports.description = "Displays bot stats"

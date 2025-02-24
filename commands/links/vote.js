@@ -5,8 +5,8 @@
  */
 
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
-const { vote } = require("../../config/links.json");
+const { RBR } = require("../../resources/embedColors.json");
+const { vote } = require("../../resources/links.json");
 
 module.exports.name = "vote"
 module.exports.description = "Sends the bot vote link"

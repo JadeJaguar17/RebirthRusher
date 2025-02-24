@@ -6,7 +6,7 @@
 
 const MessageEmbed = require("../../system/MessageEmbed");
 const { createUser } = require("../../database/controllers/userController");
-const { SUCCESS } = require("../../config/embedColors.json");
+const { SUCCESS } = require("../../resources/embedColors.json");
 
 module.exports.name = "start"
 module.exports.description = "Creates a new account for the user"

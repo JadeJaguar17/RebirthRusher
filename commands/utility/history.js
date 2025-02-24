@@ -5,7 +5,7 @@
  */
 
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 
 module.exports.name = "history"
 module.exports.description = "Gives a brief history on the origins of Rebirth Rusher"

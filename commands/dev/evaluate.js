@@ -5,7 +5,7 @@
  */
 
 const UserDB = require("../../database/controllers/userController");
-const { DEV_ID } = require("../../config/discordIds.json");
+const { DEV_ID } = require("../../resources/discordIds.json");
 
 module.exports.name = "evaluate"
 module.exports.description = "Lets developers directly evaluate code with Discord messages\n*(dev only)*"
