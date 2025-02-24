@@ -6,7 +6,7 @@
 const UserDB = require("../database/controllers/userController");
 const TimerDB = require("../database/controllers/timerController");
 const MessageCollector = require("./collector/MessageCollector");
-const slashIDS = require("../config/slashIds.json");
+const slashIDS = require("../resources/slashIds.json");
 
 class Timer {
     /**

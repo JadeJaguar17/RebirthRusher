@@ -4,9 +4,10 @@
  * @typedef {import("eris").MessageContent} MessageContent 
  */
 
+const fs = require("fs");
 const MessageEmbed = require("../../system/MessageEmbed");
 const UserDB = require("../../database/controllers/userController");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 
 module.exports.name = "stats"
 module.exports.description = "Displays bot stats"
@@ -26,8 +27,16 @@ module.exports.execute = async function (bot, interaction) {
             `**Servers:** ${bot.guilds.size}\n`
             + `**Users:** ${await UserDB.getUserCount()}`
         )
-        .setThumbnail("https://i.imgur.com/JUNFqEn.png")
+        .setThumbnail("attachment://graph.png")
         .setTitle("Stats");
 
-    return { embeds: [statEmbed] };
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/graph.png"),
+        name: "graph.png"
+    };
+
+    return {
+        embeds: [statEmbed],
+        file: thumbnail
+    };
 }

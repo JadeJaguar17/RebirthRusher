@@ -5,7 +5,7 @@
  */
 
 const UserDB = require("../../database/controllers/userController");
-const shop = require("../../config/shop.json");
+const shop = require("../../resources/shop.json");
 const Canvas = require('chartjs-node-canvas');
 
 module.exports.name = "preview"

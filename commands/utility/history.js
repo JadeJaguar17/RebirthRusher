@@ -4,8 +4,9 @@
  * @typedef {import("eris").MessageContent} MessageContent 
  */
 
+const fs = require("fs");
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 
 module.exports.name = "history"
 module.exports.description = "Gives a brief history on the origins of Rebirth Rusher"
@@ -45,9 +46,17 @@ module.exports.execute = async function (bot, interaction) {
         .setColor(RBR)
         .setAuthor(bot.user.username, bot.user.avatarURL)
         .setDescription(historyMessage)
-        .setThumbnail("https://i.imgur.com/JUNFqEn.png")
+        .setThumbnail("attachment://scroll.png")
         .setFooter("Courtesy of fuzzbeed")
         .setTitle("History");
 
-    return { embeds: [historyEmbed] };
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/scroll.png"),
+        name: "scroll.png"
+    };
+
+    return {
+        embeds: [historyEmbed],
+        file: thumbnail
+    };
 }

@@ -4,10 +4,11 @@
  * @typedef {import("eris").MessageContent} MessageContent 
  */
 
+const fs = require("fs");
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 const UserDB = require("../../database/controllers/userController");
-const { off, on } = require("../../config/emojis.json");
+const { off, on } = require("../../resources/emojis.json");
 
 module.exports.name = "reminders"
 module.exports.description = "Displays settings for cooldown reminders"
@@ -28,7 +29,7 @@ module.exports.execute = async function (bot, interaction) {
     const setEmbed = new MessageEmbed()
         .setColor(RBR)
         .setAuthor(interaction.member.user.username, interaction.member.user.avatarURL)
-        .setThumbnail("https://i.imgur.com/Lmc0Jzo.png")
+        .setThumbnail("attachment://bell.png")
         .setTitle("Reminders")
         .setDescription(`To change your reminder settings, use \`/set reminders\``);
 
@@ -71,7 +72,15 @@ module.exports.execute = async function (bot, interaction) {
         value: settings
     });
 
-    return { embeds: [setEmbed] };
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/bell.png"),
+        name: "bell.png"
+    };
+
+    return {
+        embeds: [setEmbed],
+        file: thumbnail
+    };
 }
 
 function isTimer(user, settingName) {

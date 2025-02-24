@@ -4,7 +4,7 @@
  */
 
 const MessageEmbed = require("../system/MessageEmbed");
-const { SUCCESS2 } = require("../config/embedColors.json");
+const { SUCCESS2 } = require("../resources/embedColors.json");
 
 /**
  * @param {RebirthRusher} bot RbR Discord client

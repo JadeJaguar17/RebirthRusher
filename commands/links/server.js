@@ -4,7 +4,7 @@
  * @typedef {import("eris").MessageContent} MessageContent 
  */
 
-const { server } = require("../../config/links.json");
+const { server } = require("../../resources/links.json");
 
 module.exports.name = "server"
 module.exports.description = "Sends server invite link"

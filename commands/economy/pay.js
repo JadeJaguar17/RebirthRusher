@@ -4,8 +4,8 @@
  * @typedef {import("eris").MessageContent} MessageContent 
  */
 const UserDB = require("../../database/controllers/userController");
-const { DEV_ID } = require("../../config/discordIds.json");
-const { token } = require("../../config/emojis.json");
+const { DEV_ID } = require("../../resources/discordIds.json");
+const { token } = require("../../resources/emojis.json");
 
 module.exports.name = "pay"
 module.exports.description = "Pays users tokens"

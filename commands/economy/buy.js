@@ -5,9 +5,9 @@
  */
 
 const UserDB = require("../../database/controllers/userController");
-const shop = require("../../config/shop.json");
+const shop = require("../../resources/shop.json");
 const MessageEmbed = require("../../system/MessageEmbed");
-const { ROLE_PURCHASE_CHANNEL_ID } = require("../../config/discordIds.json");
+const { ROLE_PURCHASE_CHANNEL_ID } = require("../../resources/discordIds.json");
 
 module.exports.name = "buy"
 module.exports.description = "Purchases an item from the shop"

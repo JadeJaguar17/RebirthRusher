@@ -5,10 +5,10 @@
  */
 
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
-const links = require("../../config/links.json");
+const { RBR } = require("../../resources/embedColors.json");
+const links = require("../../resources/links.json");
 const fs = require("fs");
-const { DEV_ID } = require("../../config/discordIds.json");
+const { DEV_ID } = require("../../resources/discordIds.json");
 
 module.exports.name = "help"
 module.exports.description = "Displays either a list of commands or gives more info on a specific command"
@@ -27,7 +27,7 @@ module.exports.execute = async function (bot, interaction) {
     const helpEmbed = new MessageEmbed()
         .setColor(RBR)
         .setAuthor(bot.user.username, bot.user.avatarURL)
-        .setThumbnail("https://i.imgur.com/0sHQBWA.png");
+        .setThumbnail("attachment://question_mark.png");
 
     // just '/help' provides the whole list
     if (!inputCommand) {
@@ -86,8 +86,14 @@ module.exports.execute = async function (bot, interaction) {
             ]
         }];
 
+        const thumbnail = {
+            file: fs.readFileSync("resources/thumbnails/question_mark.png"),
+            name: "question_mark.png"
+        };
+
         return {
             embeds: [helpEmbed],
+            file: thumbnail,
             components: linkButtons
         };
     }

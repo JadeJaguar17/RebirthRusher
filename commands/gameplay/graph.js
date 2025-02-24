@@ -6,8 +6,8 @@
 
 const UserDB = require("../../database/controllers/userController");
 const Canvas = require('chartjs-node-canvas');
-const { RBR, DEV } = require("../../config/embedColors.json");
-const { DEV_ID } = require("../../config/discordIds.json");
+const { RBR, DEV } = require("../../resources/embedColors.json");
+const { DEV_ID } = require("../../resources/discordIds.json");
 
 module.exports.name = "graph"
 module.exports.description = "Graphs rebirth and prestige count"
