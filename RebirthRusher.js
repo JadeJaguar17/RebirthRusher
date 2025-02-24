@@ -23,7 +23,10 @@ const { ERROR, RBR, SUCCESS } = require("./config/embedColors.json");
 const { DEV_SERVER_ID } = require("./config/discordIds.json");
 const { token } = require("./config/emojis.json");
 
+// constants
 const ONE_MINUTE = 60000;
+const TOPGG_DEV_PORT = 3000;
+const TOPGG_PROD_PORT = 1717;
 
 class RebirthRusher extends Eris.Client {
     /**
@@ -333,8 +336,8 @@ class RebirthRusher extends Eris.Client {
         const app = express();
         const webhook = new Webhook(process.env.TOPGG_AUTH);
         const PORT = process.env.NODE_ENV === "production"
-            ? 1717
-            : 3000;
+            ? TOPGG_PROD_PORT
+            : TOPGG_DEV_PORT;
 
         app.post("/dblwebhook", webhook.listener(vote => {
             this.rewardVote(vote.user);
