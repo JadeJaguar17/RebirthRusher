@@ -63,6 +63,7 @@ class RebirthRusher extends Eris.Client {
             try {
                 this.initTopGG();
                 this.loadAllFiles();
+                await this.deleteApplicationCommands();
                 await this.loadApplicationCommands();
 
                 await this.initDB();
@@ -219,6 +220,28 @@ class RebirthRusher extends Eris.Client {
             }
         }));
         console.info("Loading application commands done");
+    }
+
+    /**
+     * Deletes slash commands in config file
+     */
+    async deleteApplicationCommands() {
+        console.info("Deleting application commands...");
+
+        const updatedCommands = require("./config/deletedCommands.json");
+        const currentCommands = await this.getCommands();
+
+        await Promise.all(updatedCommands.map(async (commandName) => {
+            const slashCommand = currentCommands.find(c => c.name === commandName);
+            if (slashCommand) {
+                await this.deleteCommand(slashCommand.id);
+                console.info(` - Deleted [${commandName}]`);
+            }
+            else {
+                console.info(` - Could not find command with the name [${commandName}]`);
+            }
+        }));
+        console.info("Deleting application commands done");
     }
 
     /**
