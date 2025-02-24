@@ -4,6 +4,7 @@
  * @typedef {import("eris").MessageContent} MessageContent 
  */
 
+const fs = require("fs");
 const { getTopTenTokens } = require("../../database/controllers/userController");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../resources/embedColors.json");
@@ -37,10 +38,18 @@ module.exports.execute = async function (bot, interaction) {
     const leaderboardEmbed = new MessageEmbed()
         .setTitle("Token Leaderboard")
         .setDescription(leaderboard)
-        .setThumbnail("https://i.imgur.com/QGeVBwy.png")
+        .setThumbnail("attachment://trophy.png")
         .setColor(RBR);
 
-    return { embeds: [leaderboardEmbed] };
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/trophy.png"),
+        name: "trophy.png"
+    };
+
+    return {
+        embeds: [leaderboardEmbed],
+        file: thumbnail
+    };
 }
 
 // add commas to number string

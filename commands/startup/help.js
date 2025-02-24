@@ -27,7 +27,7 @@ module.exports.execute = async function (bot, interaction) {
     const helpEmbed = new MessageEmbed()
         .setColor(RBR)
         .setAuthor(bot.user.username, bot.user.avatarURL)
-        .setThumbnail("https://i.imgur.com/0sHQBWA.png");
+        .setThumbnail("attachment://question_mark.png");
 
     // just '/help' provides the whole list
     if (!inputCommand) {
@@ -86,8 +86,14 @@ module.exports.execute = async function (bot, interaction) {
             ]
         }];
 
+        const thumbnail = {
+            file: fs.readFileSync("resources/thumbnails/question_mark.png"),
+            name: "question_mark.png"
+        };
+
         return {
             embeds: [helpEmbed],
+            file: thumbnail,
             components: linkButtons
         };
     }

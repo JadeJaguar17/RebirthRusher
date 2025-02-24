@@ -4,6 +4,7 @@
  * @typedef {import("eris").MessageContent} MessageContent 
  */
 
+const fs = require("fs");
 const MessageEmbed = require("../../system/MessageEmbed");
 const UserDB = require("../../database/controllers/userController");
 const { RBR } = require("../../resources/embedColors.json");
@@ -35,13 +36,21 @@ module.exports.execute = async function (bot, interaction) {
             + `so far`
         );
 
-    return { embeds: [shopMenuEmbed] };
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/shopping_cart.png"),
+        name: "shopping_cart.png"
+    };
+
+    return {
+        embeds: [shopMenuEmbed],
+        file: thumbnail
+    };
 }
 
 const shopMenuEmbed = new MessageEmbed()
     .setTitle("Shop")
     .setColor(RBR)
-    .setThumbnail("https://i.imgur.com/x7GRidJ.png");
+    .setThumbnail("attachment://shopping_cart.png");
 
 let graphStandards = "";
 shop

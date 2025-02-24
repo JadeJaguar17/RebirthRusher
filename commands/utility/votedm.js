@@ -4,6 +4,7 @@
  * @typedef {import("eris").MessageContent} MessageContent 
  */
 
+const fs = require("fs");
 const UserDB = require("../../database/controllers/userController");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../resources/embedColors.json");
@@ -28,9 +29,17 @@ module.exports.execute = async function (bot, interaction) {
 
     const votedmEmbed = new MessageEmbed()
         .setTitle("Vote DM Settings")
-        .setThumbnail("https://i.imgur.com/TDSkM7u.png")
+        .setThumbnail("attachment://mail.png")
         .setColor(RBR)
         .setDescription(`Vote DM's are currently ${emoji}`);
 
-    return { embeds: [votedmEmbed] };
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/mail.png"),
+        name: "mail.png"
+    };
+
+    return {
+        embeds: [votedmEmbed],
+        file: thumbnail
+    };
 }

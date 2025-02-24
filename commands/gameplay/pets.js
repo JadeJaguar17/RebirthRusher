@@ -4,6 +4,7 @@
  * @typedef {import("eris").MessageContent} MessageContent 
  */
 
+const fs = require("fs");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../resources/embedColors.json");
 const UserDB = require("../../database/controllers/userController");
@@ -126,7 +127,7 @@ module.exports.execute = async function (bot, interaction) {
     const petEmbed = new MessageEmbed()
         .setColor(RBR)
         .setAuthor(interaction.member.user.username, interaction.member.user.avatarURL)
-        .setThumbnail("https://i.imgur.com/q3j286y.png")
+        .setThumbnail("attachment://minecraft_dog.png")
         .setTitle("Pets");
 
     if (!user.settings.minimalPets) {
@@ -183,11 +184,17 @@ module.exports.execute = async function (bot, interaction) {
         }
     );
 
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/minecraft_dog.png"),
+        name: "minecraft_dog.png"
+    };
+
     return {
         content: isCapped
             ? "*Note: pet calculations are capped at 5000 shards to optimize performance*"
             : "",
-        embeds: [petEmbed]
+        embeds: [petEmbed],
+        file: thumbnail
     };
 }
 

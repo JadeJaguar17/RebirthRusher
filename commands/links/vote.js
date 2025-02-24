@@ -4,6 +4,7 @@
  * @typedef {import("eris").MessageContent} MessageContent 
  */
 
+const fs = require("fs");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../resources/embedColors.json");
 const { vote } = require("../../resources/links.json");
@@ -22,12 +23,18 @@ module.exports.execute = async function (bot, interaction) {
     const voteEmbed = new MessageEmbed()
         .setTitle("Vote!")
         .setAuthor(bot.user.username, bot.user.avatarURL)
-        .setThumbnail("https://i.imgur.com/f0ErbMs.png")
+        .setThumbnail("attachment://topgg_logo.png")
         .setDescription(`Vote for me to get extra tokens!`)
         .setColor(RBR);
 
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/topgg_logo.png"),
+        name: "topgg_logo.png"
+    };
+
     return {
         embeds: [voteEmbed],
+        file: thumbnail,
         components: [
             {
                 type: 1,

@@ -4,6 +4,7 @@
  * @typedef {import("eris").MessageContent} MessageContent 
  */
 
+const fs = require("fs");
 const MessageEmbed = require("../../system/MessageEmbed");
 const { RBR } = require("../../resources/embedColors.json");
 
@@ -21,7 +22,7 @@ module.exports.execute = async function (bot, interaction, pageNum = 1) {
     const guideEmbed = new MessageEmbed()
         .setColor(RBR)
         .setAuthor(bot.user.username, bot.user.avatarURL)
-        .setThumbnail("https://i.imgur.com/mXwagpH.png")
+        .setThumbnail("attachment://books.png")
         .setTitle("Guide")
         .setDescription("Use buttons to change the page");
 
@@ -109,8 +110,14 @@ module.exports.execute = async function (bot, interaction, pageNum = 1) {
             return "Please enter a valid page number";
     }
 
+    const thumbnail = {
+            file: fs.readFileSync("resources/thumbnails/books.png"),
+            name: "books.png"
+        };
+
     return {
         embeds: [guideEmbed],
+        file: thumbnail,
         components: [
             {
                 type: 1,

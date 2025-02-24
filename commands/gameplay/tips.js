@@ -27,7 +27,7 @@ module.exports.execute = async function (bot, interaction) {
         .setColor(RBR)
         .setAuthor(interaction.member.user.username, interaction.member.user.avatarURL)
         .setTitle("Idle Miner Tips")
-        .setThumbnail("https://i.imgur.com/0cv6ipB.png");
+        .setThumbnail("attachment://lightbulb.png");
 
     // no tip name provided, display tips menu
     if (!tipName) {
@@ -46,7 +46,15 @@ module.exports.execute = async function (bot, interaction) {
             .setDescription(tipsDescription)
             .addFields({ name: "Tips", value: tipsMenu });
 
-        return { embeds: [tipEmbed] };
+        const thumbnail = {
+            file: fs.readFileSync("resources/thumbnails/lightbulb.png"),
+            name: "lightbulb.png"
+        };
+
+        return {
+            embeds: [tipEmbed],
+            file: thumbnail,
+        };
     }
 
     // display specific tip

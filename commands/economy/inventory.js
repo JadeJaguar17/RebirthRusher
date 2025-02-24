@@ -4,9 +4,10 @@
  * @typedef {import("eris").MessageContent} MessageContent 
  */
 
+const fs = require("fs");
 const UserDB = require("../../database/controllers/userController");
-const { RBR } = require("../../resources/embedColors.json");
 const MessageEmbed = require("../../system/MessageEmbed");
+const { RBR } = require("../../resources/embedColors.json");
 const { token } = require("../../resources/emojis.json");
 
 module.exports.name = "inventory"
@@ -57,7 +58,7 @@ module.exports.execute = async function (bot, interaction, pageNum = 1) {
         .setDescription(
             `Tokens: ${user.inventory.tokens} ${token}\n`
             + `Buy more stuff at \`/shop\`!`)
-        .setThumbnail("https://i.imgur.com/K9TZLhE.png")
+        .setThumbnail("attachment://backpack.png")
         .addFields(
             {
                 name: "Colors",
@@ -83,12 +84,18 @@ module.exports.execute = async function (bot, interaction, pageNum = 1) {
         }
     }
 
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/backpack.png"),
+        name: "backpack.png"
+    };
+
     const components = buttons.length > 0
         ? [{ type: 1, components: buttons }]
         : undefined;
 
     return {
         embeds: [inventoryEmbed],
+        file: thumbnail,
         components
     };
 }
