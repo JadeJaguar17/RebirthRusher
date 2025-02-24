@@ -23,7 +23,10 @@ const { ERROR, RBR, SUCCESS } = require("./config/embedColors.json");
 const { DEV_SERVER_ID } = require("./config/discordIds.json");
 const { token } = require("./config/emojis.json");
 
+// constants
 const ONE_MINUTE = 60000;
+const TOPGG_DEV_PORT = 3000;
+const TOPGG_PROD_PORT = 1717;
 
 class RebirthRusher extends Eris.Client {
     /**
@@ -60,6 +63,7 @@ class RebirthRusher extends Eris.Client {
             try {
                 this.initTopGG();
                 this.loadAllFiles();
+                await this.deleteApplicationCommands();
                 await this.loadApplicationCommands();
 
                 await this.initDB();
@@ -162,8 +166,8 @@ class RebirthRusher extends Eris.Client {
 
     /**
      * Loads a folder of files into a bot collection
-     * @param {*} collectionName bot collection name
-     * @param {*} folderPath relative directory path
+     * @param {string} collectionName bot collection name
+     * @param {string} folderPath relative directory path
      */
     loadFolder(collectionName, folderPath) {
         const folder = fs
@@ -219,10 +223,34 @@ class RebirthRusher extends Eris.Client {
     }
 
     /**
+     * Deletes slash commands in config file
+     */
+    async deleteApplicationCommands() {
+        console.info("Deleting application commands...");
+
+        const updatedCommands = require("./config/deletedCommands.json");
+        const currentCommands = await this.getCommands();
+
+        await Promise.all(updatedCommands.map(async (commandName) => {
+            const slashCommand = currentCommands.find(c => c.name === commandName);
+            if (slashCommand) {
+                await this.deleteCommand(slashCommand.id);
+                console.info(` - Deleted [${commandName}]`);
+            }
+            else {
+                console.info(` - Could not find command with the name [${commandName}]`);
+            }
+        }));
+        console.info("Deleting application commands done");
+    }
+
+    /**
      * Creates a Discord application command
-     * @param {any} commandConfig command config to load in (determined by each
-     * property in module.exports)
-     * @param {boolean} isDev whether or not to create command only in dev server
+     * @param {Object} commandConfig command config to load in (determined by each property in module.exports)
+     * @param {string} commandConfig.name
+     * @param {string} commandConfig.description
+     * @param {string} commandConfig.options
+     * @param {Eris.ApplicationCommandOptions} isDev whether or not to create command only in dev server
      */
     async createApplicationCommand(commandConfig, isDev) {
         if (isDev) {
@@ -331,8 +359,8 @@ class RebirthRusher extends Eris.Client {
         const app = express();
         const webhook = new Webhook(process.env.TOPGG_AUTH);
         const PORT = process.env.NODE_ENV === "production"
-            ? 1717
-            : 3000;
+            ? TOPGG_PROD_PORT
+            : TOPGG_DEV_PORT;
 
         app.post("/dblwebhook", webhook.listener(vote => {
             this.rewardVote(vote.user);
@@ -387,8 +415,7 @@ class RebirthRusher extends Eris.Client {
 
     /**
      * Sends a message
-     * @param {Eris.Interaction} interaction interaction storing necessary info
-     * like guild and channel IDs
+     * @param {Eris.Interaction} interaction interaction storing necessary info like guild and channel IDs
      * @param {Eris.MessageContent} content content of message to send
      * @param {Eris.FileContent} file (optional) files to attach to message
      * @returns {Promise<Eris.Message | void>} Eris message on success, void on failure
@@ -451,9 +478,9 @@ class RebirthRusher extends Eris.Client {
      * Handles errors in the bot and logs it in a webhook channel
      * @param {string} source string to indicate file source of error
      * @param {Error} error error to handle
-     * @param {Eris.Message} trigger Idle Miner message that triggered the error
+     * @param {Eris.Message?} trigger Idle Miner message that triggered the error
      */
-    async error(source, error, trigger) {
+    async error(source, error, trigger = null) {
         try {
             this.errorCase++;
 
@@ -491,7 +518,7 @@ class RebirthRusher extends Eris.Client {
     /**
      * Sends a log entry to a webhook channel
      * @param {string} type type of log
-     * @param {Eris.Embed} embed embed to send in log channel
+     * @param {Eris.Embed | MessageEmbed} embed embed to send in log channel
      */
     async log(type, embed) {
         await this.executeWebhook(
@@ -507,11 +534,11 @@ class RebirthRusher extends Eris.Client {
     /**
      * Converts a time's string representation to seconds
      * @param {string} timeString time in string format
-     * @returns {number} time in seconds
+     * @returns {number?} time in seconds
      */
     stringToTime(timeString) {
         if (!timeString || timeString === "**FULL**" || timeString === "<1s") {
-            return undefined;
+            return null;
         } else if (timeString.includes("h")) {
             if (timeString.includes("m")) {
                 const [hours, minutes] = timeString.replace("h", ":").replace("m", ":").split(":");
