@@ -1,17 +1,67 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
+const fs = require("fs");
 const MessageEmbed = require("../../system/MessageEmbed");
 const UserDB = require("../../database/controllers/userController");
-const { RBR } = require("../../config/embedColors.json");
-const shop = require("../../config/shop.json");
-const { token } = require("../../config/emojis.json");
+const { RBR } = require("../../resources/embedColors.json");
+const shop = require("../../resources/shop.json");
+const { token } = require("../../resources/emojis.json");
 
 module.exports.name = "shop"
 module.exports.description = "Displays the shop"
 module.exports.syntax = "`/shop`"
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
-    const user = await UserDB.getUserById(interaction.member.user.id);
+/**
+ * Displays the shop
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
+    // generate shop menu embed
+    const shopMenuEmbed = new MessageEmbed()
+        .setTitle("Shop")
+        .setColor(RBR)
+        .setThumbnail("attachment://shopping_cart.png");
 
+    let graphStandards = "";
+    shop
+        .filter(i => i.id <= 12)
+        .forEach(color => {
+            const id = color.id < 10 ? ` ${color.id}` : color.id;
+            graphStandards += `\`${id}\` ${color.name}\n`;
+        });
+
+    let graphSpecials = "";
+    shop
+        .filter(i => i.id > 12 && i.id <= 15)
+        .forEach(color => {
+            graphSpecials += `\`${color.id}\` ${color.name} | ${color.price} ${token}\n`
+                + `${color.description}\n`;
+        });
+
+    let serverPerks = "";
+    shop
+        .filter(i => i.category == "server")
+        .forEach(perk => {
+            serverPerks += `\`${perk.id}\` ${perk.name} | ${perk.price} ${token}\n`
+                + `${perk.description}\n`;
+        });
+
+    shopMenuEmbed
+        .addFields(
+            { name: "Standard Colors (20 ${token} each)", value: graphStandards },
+            { name: "Graph Specials", value: graphSpecials },
+            { name: "Server Perks", value: serverPerks }
+        );
+
+    // get user info
+    const user = await UserDB.getUserById(interaction.member.user.id);
     shopMenuEmbed
         .setAuthor(bot.user.username, bot.user.avatarURL)
         .setDescription(
@@ -23,41 +73,13 @@ module.exports.execute = async function (interaction) {
             + `so far`
         );
 
-    return { embeds: [shopMenuEmbed] };
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/shopping_cart.png"),
+        name: "shopping_cart.png"
+    };
+
+    return {
+        embeds: [shopMenuEmbed],
+        file: thumbnail
+    };
 }
-
-const shopMenuEmbed = new MessageEmbed()
-    .setTitle("Shop")
-    .setColor(RBR)
-    .setThumbnail("https://i.imgur.com/x7GRidJ.png");
-
-let graphStandards = "";
-shop
-    .filter(i => i.id <= 12)
-    .forEach(color => {
-        const id = color.id < 10 ? ` ${color.id}` : color.id;
-        graphStandards += `\`${id}\` ${color.name}\n`;
-    });
-
-let graphSpecials = "";
-shop
-    .filter(i => i.id > 12 && i.id <= 15)
-    .forEach(color => {
-        graphSpecials += `\`${color.id}\` ${color.name} | ${color.price} ${token}\n`
-            + `${color.description}\n`;
-    });
-
-let serverPerks = "";
-shop
-    .filter(i => i.category == "server")
-    .forEach(perk => {
-        serverPerks += `\`${perk.id}\` ${perk.name} | ${perk.price} ${token}\n`
-            + `${perk.description}\n`;
-    });
-
-shopMenuEmbed
-    .addFields(
-        { name: "Standard Colors (20 ${token} each)", value: graphStandards },
-        { name: "Graph Specials", value: graphSpecials },
-        { name: "Server Perks", value: serverPerks }
-    );

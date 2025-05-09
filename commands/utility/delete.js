@@ -1,9 +1,21 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 module.exports.name = "delete"
 module.exports.description = "Deletes your user data"
 module.exports.syntax = "`/delete`"
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Deletes the user's account
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const confirm = `<@${interaction.member.user.id}> are you sure you want`
         + ` to **permamemtly** delete all your data? If so, please confirm `
         + `within the next 15s`;

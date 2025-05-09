@@ -1,12 +1,25 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
+const fs = require("fs");
 const MessageEmbed = require("../../system/MessageEmbed");
 const UserDB = require("../../database/controllers/userController");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 
 module.exports.name = "stats"
 module.exports.description = "Displays bot stats"
 module.exports.syntax = "`/stats`"
 
-module.exports.execute = async function () {
+/**
+ * Displays bot's user and server count
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const statEmbed = new MessageEmbed()
         .setColor(RBR)
         .setAuthor(bot.user.username, bot.user.avatarURL)
@@ -14,8 +27,16 @@ module.exports.execute = async function () {
             `**Servers:** ${bot.guilds.size}\n`
             + `**Users:** ${await UserDB.getUserCount()}`
         )
-        .setThumbnail("https://i.imgur.com/JUNFqEn.png")
+        .setThumbnail("attachment://graph.png")
         .setTitle("Stats");
 
-    return { embeds: [statEmbed] };
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/graph.png"),
+        name: "graph.png"
+    };
+
+    return {
+        embeds: [statEmbed],
+        file: thumbnail
+    };
 }

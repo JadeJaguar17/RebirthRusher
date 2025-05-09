@@ -1,7 +1,14 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
+const fs = require("fs");
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 const UserDB = require("../../database/controllers/userController");
-const { backpack, pick, gold, boost, shard } = require("../../config/emojis.json");
+const { backpack, pick, gold, boost, shard } = require("../../resources/emojis.json");
 
 const petPrices = {
     common: 10,
@@ -26,7 +33,13 @@ module.exports.syntax = "`/pets`"
 module.exports.aliases = ["p"]
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Analyzes pet data and calculates some stats
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const user = await UserDB.getUserById(interaction.member.user.id);
 
     // number of each pet
@@ -114,7 +127,7 @@ module.exports.execute = async function (interaction) {
     const petEmbed = new MessageEmbed()
         .setColor(RBR)
         .setAuthor(interaction.member.user.username, interaction.member.user.avatarURL)
-        .setThumbnail("https://i.imgur.com/q3j286y.png")
+        .setThumbnail("attachment://minecraft_dog.png")
         .setTitle("Pets");
 
     if (!user.settings.minimalPets) {
@@ -171,11 +184,17 @@ module.exports.execute = async function (interaction) {
         }
     );
 
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/minecraft_dog.png"),
+        name: "minecraft_dog.png"
+    };
+
     return {
         content: isCapped
             ? "*Note: pet calculations are capped at 5000 shards to optimize performance*"
             : "",
-        embeds: [petEmbed]
+        embeds: [petEmbed],
+        file: thumbnail
     };
 }
 

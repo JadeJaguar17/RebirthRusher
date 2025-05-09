@@ -1,12 +1,25 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
+const fs = require("fs");
 const { getTopTenTokens } = require("../../database/controllers/userController");
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 
 module.exports.name = "leaderboard"
 module.exports.description = "A leaderboard for the top 10 with the most tokens"
 module.exports.syntax = "`/leaderboard`"
 
-module.exports.execute = async function () {
+/**
+ * Displays a leaderboard for top 10 users with most tokens
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     // only get the top 10 users
     const places = await getTopTenTokens();
 
@@ -25,10 +38,18 @@ module.exports.execute = async function () {
     const leaderboardEmbed = new MessageEmbed()
         .setTitle("Token Leaderboard")
         .setDescription(leaderboard)
-        .setThumbnail("https://i.imgur.com/QGeVBwy.png")
+        .setThumbnail("attachment://trophy.png")
         .setColor(RBR);
 
-    return { embeds: [leaderboardEmbed] };
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/trophy.png"),
+        name: "trophy.png"
+    };
+
+    return {
+        embeds: [leaderboardEmbed],
+        file: thumbnail
+    };
 }
 
 // add commas to number string

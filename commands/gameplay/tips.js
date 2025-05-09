@@ -1,13 +1,25 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const fs = require("fs");
 const MessageEmbed = require("../../system/MessageEmbed");
-const { RBR } = require("../../config/embedColors.json");
-const tipsData = require("../../config/tips.json");
+const { RBR } = require("../../resources/embedColors.json");
+const tipsData = require("../../resources/tips.json");
 
 module.exports.name = "tips"
 module.exports.description = "Community-provided tips and tricks for Idle Miner"
 module.exports.syntax = "`/tips [tip]` (*[] = optional*)"
 
-module.exports.execute = async function (interaction) {
+/**
+ * Provides community tips and tricka
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const tipName = interaction.data.options?.[0]?.value;
 
     // create embed structure
@@ -15,7 +27,7 @@ module.exports.execute = async function (interaction) {
         .setColor(RBR)
         .setAuthor(interaction.member.user.username, interaction.member.user.avatarURL)
         .setTitle("Idle Miner Tips")
-        .setThumbnail("https://i.imgur.com/0cv6ipB.png");
+        .setThumbnail("attachment://lightbulb.png");
 
     // no tip name provided, display tips menu
     if (!tipName) {
@@ -34,7 +46,15 @@ module.exports.execute = async function (interaction) {
             .setDescription(tipsDescription)
             .addFields({ name: "Tips", value: tipsMenu });
 
-        return { embeds: [tipEmbed] };
+        const thumbnail = {
+            file: fs.readFileSync("resources/thumbnails/lightbulb.png"),
+            name: "lightbulb.png"
+        };
+
+        return {
+            embeds: [tipEmbed],
+            file: thumbnail,
+        };
     }
 
     // display specific tip
@@ -42,7 +62,7 @@ module.exports.execute = async function (interaction) {
     let file = undefined;
     if (tip.filename) {
         file = {
-            file: fs.readFileSync(`config/tips/${tip.filename}`),
+            file: fs.readFileSync(`resources/tips/${tip.filename}`),
             name: tip.filename
         };
         tipEmbed.setImage(`attachment://${tip.filename}`);

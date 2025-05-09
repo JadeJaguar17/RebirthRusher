@@ -1,8 +1,21 @@
+/**
+ * @typedef {import("../RebirthRusher.js")} RebirthRusher
+ */
+
 const UserDB = require("../database/controllers/userController");
 
 module.exports.name = "profileScan"
 
-module.exports.execute = async function (userID, embedPr, embedRb, embedRbDay) {
+/**
+ * Scans user's IM profile and updates rb/pr/rbday stats
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {string} userID user's Discord ID
+ * @param {Number} embedPr user's prestige count
+ * @param {Number} embedRb user's rebirth count
+ * @param {Number} embedRbDay user's rb/day
+ * @returns {Promise<void>}
+ */
+module.exports.execute = async function (bot, userID, embedPr, embedRb, embedRbDay) {
     if (isNaN(embedPr) || isNaN(embedRb) || isNaN(embedRbDay)) {
         return await bot.error("profileScan", new TypeError(`Invalid embed stats: [${embedPr}/${embedRb}/${embedRbDay}]`));
     }

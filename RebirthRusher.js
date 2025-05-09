@@ -1,14 +1,14 @@
 // Discord
 const Eris = require("eris");
-const MessageEmbed = require("./MessageEmbed.js");
+const MessageEmbed = require("./system/MessageEmbed.js");
 const { Webhook } = require("@top-gg/sdk");
 const express = require("express");
 
 // Database
 const mongoose = require("mongoose");
-const Timer = require("./Timer.js");
-const UserDB = require("../database/controllers/userController.js");
-const TimerDB = require("../database/controllers/timerController.js");
+const Timer = require("./system/Timer.js");
+const UserDB = require("./database/controllers/userController.js");
+const TimerDB = require("./database/controllers/timerController.js");
 
 // JS libraries
 const fs = require("fs")
@@ -19,17 +19,32 @@ const schedule = require("node-schedule");
 const dotenv = require("dotenv");
 dotenv.config()
 
-const { ERROR, RBR, SUCCESS } = require("../config/embedColors.json");
-const { DEV_SERVER_ID } = require("../config/discordIds.json");
-const { token } = require("../config/emojis.json");
+const { ERROR, RBR, SUCCESS } = require("./resources/embedColors.json");
+const { DEV_SERVER_ID } = require("./resources/discordIds.json");
+const { token } = require("./resources/emojis.json");
+
+// constants
+const ONE_MINUTE = 60000;
+const TOPGG_DEV_PORT = 3000;
+const TOPGG_PROD_PORT = 1717;
 
 class RebirthRusher extends Eris.Client {
+    /**
+     * Creates a new instance of RebirthRusher
+     * @param {string} token Discord bot token
+     */
     constructor(token) {
+        // use singleton pattern
+        if (RebirthRusher.instance) return RebirthRusher.instance;
+
+        // initialize RbR
         super(token, { restMode: true, intents: ["allNonPrivileged", "messageContent"] });
         this.commands = new Eris.Collection();
         this.timers = new Eris.Collection();
         this.scanners = new Eris.Collection();
         this.errorCase = 0;
+
+        RebirthRusher.instance = this;
     }
 
     /**
@@ -46,10 +61,9 @@ class RebirthRusher extends Eris.Client {
 
         this.once("ready", async () => {
             try {
-                const promises = [];
-
                 this.initTopGG();
                 this.loadAllFiles();
+                await this.deleteApplicationCommands();
                 await this.loadApplicationCommands();
 
                 await this.initDB();
@@ -58,7 +72,7 @@ class RebirthRusher extends Eris.Client {
                 await this.loadEvents();
 
                 this.initDailies();
-                setInterval(this.loadTimers, 60000);
+                setInterval(this.loadTimers, ONE_MINUTE);
 
                 this.editStatus("online", { name: "/help", type: 3 });
 
@@ -94,7 +108,7 @@ class RebirthRusher extends Eris.Client {
             const allUsers = await UserDB.getAllUsers();
             allUsers.forEach(async (user) => {
                 if (user.timers.kits.daily === "ready" && user.settings.daily) {
-                    await bot.send(
+                    await this.send(
                         {
                             channel: {
                                 id: user.settings.daily,
@@ -116,12 +130,12 @@ class RebirthRusher extends Eris.Client {
         console.info("Loading events...")
         this.removeAllListeners();
         const eventFiles = fs.readdirSync(`./events`).filter(file => file.endsWith(".js"));
-        eventFiles.forEach(async (file) => {
-            const resolve = require.resolve(`../events/${file}`);
+        await Promise.all(eventFiles.map(async (file) => {
+            const resolve = require.resolve(`./events/${file}`);
             delete require.cache[resolve];
-            const event = require(`../events/${file}`);
+            const event = require(`./events/${file}`);
             this.on(file.split(".")[0], await event.bind(null, this));
-        });
+        }))
     }
 
     /**
@@ -135,7 +149,7 @@ class RebirthRusher extends Eris.Client {
         commands
             .filter(f => !f.includes("."))
             .forEach(subFolder => {
-                this.loadFolder("commands", `../commands/${subFolder}`)
+                this.loadFolder("commands", `./commands/${subFolder}`)
             });
 
         // load timers
@@ -143,17 +157,17 @@ class RebirthRusher extends Eris.Client {
         timers
             .filter(f => !f.includes("."))
             .forEach(subFolder => {
-                this.loadFolder("timers", `../timers/${subFolder}`)
+                this.loadFolder("timers", `./timers/${subFolder}`)
             });
 
         // load scanners
-        this.loadFolder("scanners", "../scanners")
+        this.loadFolder("scanners", "./scanners")
     }
 
     /**
      * Loads a folder of files into a bot collection
-     * @param {*} collectionName bot collection name
-     * @param {*} folderPath relative directory path
+     * @param {string} collectionName bot collection name
+     * @param {string} folderPath relative directory path
      */
     loadFolder(collectionName, folderPath) {
         const folder = fs
@@ -174,20 +188,16 @@ class RebirthRusher extends Eris.Client {
     }
 
     /**
-     * Loads slash commands when applicable. Slash commands only need to be
-     * created if they're new or their command structure (command.options) has
-     * changed. Otherwise, it's a waste of API calls to create slash commands
-     * that haven't changed. Therefore we use a config file to indicate which
-     * slash commands have changed and need to be reloaded in the API.
+     * Loads slash commands in config file
      */
     async loadApplicationCommands() {
         console.info("Loading application commands...");
-        const updatedCommands = require("../config/updatedCommands.json");
+        const updatedCommands = require("./config/updatedCommands.json");
 
         await Promise.all(updatedCommands.map(async (commandPath) => {
             // specific command file
             if (commandPath.includes("/")) {
-                const command = require(`../commands/${commandPath}.js`);
+                const command = require(`./commands/${commandPath}.js`);
 
                 const category = commandPath.split("/")[0];
                 await this.createApplicationCommand(
@@ -199,24 +209,48 @@ class RebirthRusher extends Eris.Client {
             // whole subdirectory
             else {
                 const subfolder = fs.readdirSync(`./commands/${commandPath}`);
-                subfolder.forEach(async (file) => {
-                    const command = require(`../commands/${commandPath}/${file}`);
+                await Promise.all(subfolder.map(async (file) => {
+                    const command = require(`./commands/${commandPath}/${file}`);
 
                     await this.createApplicationCommand(
                         command,
                         commandPath === "dev" || process.env.NODE_ENV !== "production"
                     );
-                });
+                }));
             }
         }));
         console.info("Loading application commands done");
     }
 
     /**
-     * 
-     * @param {any} commandConfig command config to load in (determined by each
-     * property in module.exports)
-     * @param {boolean} isDev whether or not to create command only in dev server
+     * Deletes slash commands in config file
+     */
+    async deleteApplicationCommands() {
+        console.info("Deleting application commands...");
+
+        const updatedCommands = require("./config/deletedCommands.json");
+        const currentCommands = await this.getCommands();
+
+        await Promise.all(updatedCommands.map(async (commandName) => {
+            const slashCommand = currentCommands.find(c => c.name === commandName);
+            if (slashCommand) {
+                await this.deleteCommand(slashCommand.id);
+                console.info(` - Deleted [${commandName}]`);
+            }
+            else {
+                console.info(` - Could not find command with the name [${commandName}]`);
+            }
+        }));
+        console.info("Deleting application commands done");
+    }
+
+    /**
+     * Creates a Discord application command
+     * @param {Object} commandConfig command config to load in (determined by each property in module.exports)
+     * @param {string} commandConfig.name
+     * @param {string} commandConfig.description
+     * @param {string} commandConfig.options
+     * @param {Eris.ApplicationCommandOptions} isDev whether or not to create command only in dev server
      */
     async createApplicationCommand(commandConfig, isDev) {
         if (isDev) {
@@ -234,7 +268,11 @@ class RebirthRusher extends Eris.Client {
             }, 1);
         }
 
-        console.info(` - Updated command [${commandConfig.name}]`);
+        const commandType = isDev
+            ? "dev"
+            : "main";
+
+        console.info(` - Updated ${commandType} command /${commandConfig.name}`);
     }
 
     /**
@@ -293,14 +331,15 @@ class RebirthRusher extends Eris.Client {
                 await TimerDB.deleteTimer(timer._id);
             } else if (duration <= 60) {
                 if (user.timers[timer.timerCategory][timer.timerName] !== "off") {
-                    await new Timer().startTimer(
+                    await new Timer(
+                        this,
                         timer.message,
                         user,
                         timer.timerName,
                         timer.timerCategory,
                         Math.max(duration, 0),
                         timer._id
-                    );
+                    ).start();
                 }
                 await TimerDB.deleteTimer(timer._id);
             } else if (user.timers[timer.timerCategory][timer.timerName] === "ready") {
@@ -320,8 +359,8 @@ class RebirthRusher extends Eris.Client {
         const app = express();
         const webhook = new Webhook(process.env.TOPGG_AUTH);
         const PORT = process.env.NODE_ENV === "production"
-            ? 1717
-            : 3000;
+            ? TOPGG_PROD_PORT
+            : TOPGG_DEV_PORT;
 
         app.post("/dblwebhook", webhook.listener(vote => {
             this.rewardVote(vote.user);
@@ -376,11 +415,10 @@ class RebirthRusher extends Eris.Client {
 
     /**
      * Sends a message
-     * @param {Eris.Interaction} interaction interaction storing necessary info
-     * like guild and channel IDs
+     * @param {Eris.Interaction} interaction interaction storing necessary info like guild and channel IDs
      * @param {Eris.MessageContent} content content of message to send
      * @param {Eris.FileContent} file (optional) files to attach to message
-     * @returns Eris awaitable action or error
+     * @returns {Promise<Eris.Message | void>} Eris message on success, void on failure
      */
     async send(interaction, content, file) {
         if (!interaction || (!content && !file)) {
@@ -440,9 +478,9 @@ class RebirthRusher extends Eris.Client {
      * Handles errors in the bot and logs it in a webhook channel
      * @param {string} source string to indicate file source of error
      * @param {Error} error error to handle
-     * @param {Eris.Message} trigger Idle Miner message that triggered the error
+     * @param {Eris.Message?} trigger Idle Miner message that triggered the error
      */
-    async error(source, error, trigger) {
+    async error(source, error, trigger = null) {
         try {
             this.errorCase++;
 
@@ -480,7 +518,7 @@ class RebirthRusher extends Eris.Client {
     /**
      * Sends a log entry to a webhook channel
      * @param {string} type type of log
-     * @param {Eris.Embed} embed embed to send in log channel
+     * @param {Eris.Embed | MessageEmbed} embed embed to send in log channel
      */
     async log(type, embed) {
         await this.executeWebhook(
@@ -496,11 +534,11 @@ class RebirthRusher extends Eris.Client {
     /**
      * Converts a time's string representation to seconds
      * @param {string} timeString time in string format
-     * @returns time in seconds
+     * @returns {number?} time in seconds
      */
     stringToTime(timeString) {
         if (!timeString || timeString === "**FULL**" || timeString === "<1s") {
-            return undefined;
+            return null;
         } else if (timeString.includes("h")) {
             if (timeString.includes("m")) {
                 const [hours, minutes] = timeString.replace("h", ":").replace("m", ":").split(":");

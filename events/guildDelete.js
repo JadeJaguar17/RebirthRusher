@@ -1,11 +1,14 @@
-const Eris = require("eris");
-const RebirthRusher = require("../system/RebirthRusher");
+/**
+ * @typedef {import("../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").Guild} Guild
+ */
+
 const MessageEmbed = require("../system/MessageEmbed");
-const { ERROR2 } = require("../config/embedColors.json");
+const { ERROR2 } = require("../resources/embedColors.json");
 
 /**
- * @param {RebirthRusher} bot base class of RbR
- * @param {Eris.Guild} guild guild that got deleted
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {Guild} guild guild that got deleted
  */
 module.exports = async (bot, guild) => {
     if (!guild.name) return;

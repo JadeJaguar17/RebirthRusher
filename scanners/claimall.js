@@ -1,18 +1,30 @@
+/**
+ * @typedef {import("../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").Message} Message
+ */
+
 module.exports.name = "claimall"
 
-module.exports.execute = async function (interaction, userID) {
+/**
+ * Scans claimed kits from Idle Miner /claimall
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {Message} message triggering Eris interaction
+ * @param {string} userID user's Discord ID
+ * @returns {Promise<void>}
+ */
+module.exports.execute = async function (bot, message, userID) {
     const newMessage = {
         author: {
             id: userID
         },
-        channel: interaction.channel
+        channel: message.channel
     };
 
-    for (kit of interaction.embeds[0].description.split("\n")) {
+    for (const kit of message.embeds[0].description.split("\n")) {
         const name = kit.split("**")[1].toLowerCase();
 
         try {
-            await bot.timers.get(name).execute(newMessage, userID);
+            await bot.timers.get(name).execute(bot, newMessage, userID);
         } catch (error) { }
     }
 }

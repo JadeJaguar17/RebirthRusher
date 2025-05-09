@@ -1,4 +1,4 @@
-const RebirthRusher = require("./system/RebirthRusher");
+const RebirthRusher = require("./RebirthRusher.js");
 require("dotenv").config();
 
 const AUTH_TOKEN = process.env.NODE_ENV === "production"
@@ -20,8 +20,6 @@ else {
 // create RebirthRusher bot and start it up
 const rbr = new RebirthRusher(AUTH_TOKEN);
 rbr.init();
-
-global.bot = rbr;
 
 // deals with any unhandled rejected Promises
 process.on('unhandledRejection', error => {

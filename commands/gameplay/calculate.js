@@ -1,13 +1,25 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
 const MessageEmbed = require("../../system/MessageEmbed");
 const UserDB = require("../../database/controllers/userController");
-const { RBR } = require("../../config/embedColors.json");
+const { RBR } = require("../../resources/embedColors.json");
 
 module.exports.name = "calculate"
 module.exports.description = "Calculates the price of upgrading your pick/bp a certain number of levels"
 module.exports.syntax = "`/calculate <bp|pa> [current level] [levels]` (*<> = required, [] = optional, | = either works*)"
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction) {
+/**
+ * Calculates the upgrade price for tools
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction) {
     const tool = interaction.data.options[0].value;
     const currentLevel = interaction.data.options[1].value;
     const amount = interaction.data.options[2].value;

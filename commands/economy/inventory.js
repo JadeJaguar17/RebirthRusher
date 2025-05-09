@@ -1,14 +1,27 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").CommandInteraction} CommandInteraction
+ * @typedef {import("eris").MessageContent} MessageContent 
+ */
+
+const fs = require("fs");
 const UserDB = require("../../database/controllers/userController");
-const { RBR } = require("../../config/embedColors.json");
 const MessageEmbed = require("../../system/MessageEmbed");
-const { token } = require("../../config/emojis.json");
+const { RBR } = require("../../resources/embedColors.json");
+const { token } = require("../../resources/emojis.json");
 
 module.exports.name = "inventory"
-module.exports.description = "Displays all items that user has bought from the shop"
+module.exports.description = "Displays all your purchased items from `/shop`"
 module.exports.syntax = "`/inventory`"
 module.exports.needsAccount = true
 
-module.exports.execute = async function (interaction, pageNum = 1) {
+/**
+ * Lists all items that user has bought from the shop
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {CommandInteraction} interaction triggering Discord slash command
+ * @returns {Promise<MessageContent>} message to display to user
+ */
+module.exports.execute = async function (bot, interaction, pageNum = 1) {
     const user = await UserDB.getUserById(interaction.member.user.id);
 
     // create list of colors
@@ -45,7 +58,7 @@ module.exports.execute = async function (interaction, pageNum = 1) {
         .setDescription(
             `Tokens: ${user.inventory.tokens} ${token}\n`
             + `Buy more stuff at \`/shop\`!`)
-        .setThumbnail("https://i.imgur.com/K9TZLhE.png")
+        .setThumbnail("attachment://backpack.png")
         .addFields(
             {
                 name: "Colors",
@@ -71,12 +84,18 @@ module.exports.execute = async function (interaction, pageNum = 1) {
         }
     }
 
+    const thumbnail = {
+        file: fs.readFileSync("resources/thumbnails/backpack.png"),
+        name: "backpack.png"
+    };
+
     const components = buttons.length > 0
         ? [{ type: 1, components: buttons }]
         : undefined;
 
     return {
         embeds: [inventoryEmbed],
+        file: thumbnail,
         components
     };
 }

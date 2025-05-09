@@ -1,9 +1,22 @@
+/**
+ * @typedef {import("../../RebirthRusher.js")} RebirthRusher
+ * @typedef {import("eris").Message} Message 
+ */
+
 const UserDB = require("../../database/controllers/userController");
 const MessageCollector = require("../../system/collector/MessageCollector");
 
 module.exports.name = "backpack"
 
-module.exports.execute = async function (message, userID, time) {
+/**
+ * Starts backpack timer, which gets cancelled when user sells
+ * @param {RebirthRusher} bot RbR Discord client
+ * @param {Message} message triggering Discord message
+ * @param {string} userID user's Discord ID
+ * @param {Number} time remaining time for backpack (in seconds)
+ * @returns {Promise<void>}
+ */
+module.exports.execute = async function (bot, message, userID, time) {
     const user = await UserDB.getUserById(userID);
 
     if (user.timers.kits.backpack === "ready" && time >= 10) {
